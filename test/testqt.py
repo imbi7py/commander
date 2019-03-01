@@ -20,11 +20,13 @@ def load_qgis():
 
 import sys
 
+load_qgis()
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.uic import loadUi
 
 
+QApplication.addLibraryPath(pyqt_plugins)
 app = QApplication(sys.argv)
 
 class DemoImpl(QMainWindow):
