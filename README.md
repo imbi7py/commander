@@ -15,3 +15,4 @@ https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Window
 
 # references
 - https://qgis.org/pyqgis/master/
+- http://pyqt.sourceforge.net/Docs/PyQt5/class_reference.html
