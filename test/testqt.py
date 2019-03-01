@@ -1,40 +1,15 @@
-import logging
+import sys, logging
+sys.path.append('..')
+from load_qgis_qt import *
 
-qgispath = 'C:/Program Files/QGIS 3.6'
-pyqt_plugins = qgispath + '/apps/Qt5/plugins'
-qgis_pypath = qgispath + '/apps/qgis/python'
-qgis_python_sitepkgspath = qgispath + '/apps/Python37/Lib/site-packages'
+app = PyQt5.QtWidgets.QApplication(sys.argv)
 
-def load_qgis():
-    try:
-        import sys
-        sys.path = [qgis_pypath, qgis_python_sitepkgspath] + sys.path
-        import PyQt5
-        import qgis.core
-        import qgis.gui
-        return True
-    except Exception as e:
-        logging.error('load qgis failed')
-        logging.exception(e)
-        return False
-
-import sys
-
-load_qgis()
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.uic import loadUi
-
-
-QApplication.addLibraryPath(pyqt_plugins)
-app = QApplication(sys.argv)
-
-class DemoImpl(QMainWindow):
+class DemoImpl(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
-        QMainWindow.__init__(self)
-        loadUi('main_window.ui', self)
-    
-    @pyqtSlot()
+        PyQt5.QtWidgets.QMainWindow.__init__(self)
+        PyQt5.uic.loadUi('main_window.ui', self)
+
+    @PyQt5.QtCore.pyqtSlot()
     def on_testButton_clicked(self):
         for s in "This is a demo".split(" "):
             self.testList.addItem(s)
