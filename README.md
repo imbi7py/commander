@@ -1,6 +1,6 @@
 # commander
 
-# 依赖
+# 依赖环境(windows)
 ## QGIS
 http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到默认路径)  
 ## conda with py37
