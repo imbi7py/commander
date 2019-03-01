@@ -8,9 +8,9 @@ https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Window
 
 # 程序入口
 主服务
-```python main_server.py```
+```python main_server.py```  
 控制端口:
-```python control_client.py```
+```python control_client.py```  
 
 # references
 - https://qgis.org/pyqgis/master/
