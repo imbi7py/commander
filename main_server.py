@@ -1,4 +1,4 @@
-import os, time
+import os, time, logging
 import socket_utils
 import resource_context, controller, config
 
@@ -16,13 +16,14 @@ class Main_Server():
 
     def run(self):
         while not self.stopflag:
-            print ('[%s] main server is running' % time.asctime(time.localtime(time.time())))
+            logging.info('[%s] main server is running' % time.asctime(time.localtime(time.time())))
             time.sleep(30)
     
     def stop(self):
-        print ('stopped')
+        logging.info('stopped')
         exit()
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     Main_Server().run()

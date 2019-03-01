@@ -1,4 +1,4 @@
-import socket, threading, time
+import socket, threading, time, logging
 
 class BaseSocketServer():
     def __init__(self, rc, ip, port, recv_length=4096):
@@ -26,7 +26,7 @@ class ControlServer(BaseSocketServer, threading.Thread):
     def _get_info(self):
         conn, address = self.sk.accept()
         _cmd = conn.recv(self.recv_length).decode()
-        print ('[%s] got cmd: %s' % (time.asctime(time.localtime(time.time())), _cmd))
+        logging.info('[%s] got cmd: %s' % (time.asctime(time.localtime(time.time())), _cmd))
         _rsp = self.rc.controller.execute_command(_cmd, address)
         conn.sendall(_rsp.encode())
         conn.close()
