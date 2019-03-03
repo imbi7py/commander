@@ -18,3 +18,6 @@ else:
 import qgis, qgis.core, qgis.gui, PyQt5, PyQt5.uic
 
 PyQt5.QtWidgets.QApplication.addLibraryPath(pyqt_plugins)
+
+def get_imported_libs():
+    return qgis, PyQt5

@@ -1,6 +1,8 @@
-import sys, logging
-sys.path.append('..')
-from load_qgis_qt import *
+import os, sys, logging
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import load_qgis_qt
+
+qgis, PyQt5 = load_qgis_qt.get_imported_libs()
 
 app = PyQt5.QtWidgets.QApplication(sys.argv)
 
