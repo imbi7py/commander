@@ -8,10 +8,10 @@ http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到
 https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe  
 
 # 程序入口
-主服务
-```python main_server.py```  
-控制端口:
-```python control_client.py```  
+主窗口&后端服务
+```python main_window.py```  
+输入数据demo:
+```python data_client_demo.py```  
 
 # references
 - https://qgis.org/pyqgis/master/
