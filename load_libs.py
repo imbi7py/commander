@@ -7,7 +7,7 @@ if sys_name.startswith('darwin'):  # mac
     pyqt_plugins = qgispath + '/PlugIns'
     if qgis_pypath not in sys.path:
         sys.path = [qgis_pypath] + sys.path
-elif sys_name.startwith('win'):  # windows
+elif sys_name.startswith('win'):  # windows
     qgispath = 'C:/Program Files/QGIS 3.6'
     pyqt_plugins = qgispath + '/apps/Qt5/plugins'
     qgis_pypath = qgispath + '/apps/qgis/python'
