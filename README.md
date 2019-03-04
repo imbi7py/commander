@@ -16,4 +16,5 @@ https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Window
 # references
 - https://qgis.org/pyqgis/master/
 - http://pyqt.sourceforge.net/Docs/PyQt5/class_reference.html
-- http://www.resdc.cn/data.aspx?DATAID=200 地图数据下载
+- http://www.resdc.cn/data.aspx?DATAID=200 地图数据下载(省)
+- http://mapclub.cn/archives/1814/comment-page-23#comment-3130 地图数据下载(各种)
