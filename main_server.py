@@ -1,12 +1,13 @@
 import os, time, logging
 import socket_utils
 import resource_context, controller, config
+import load_qgis_qt
+
 
 class Main_Server():
     def __init__(self):
         self.rc = resource_context.ResourceContext()
         self.init_resource()
-        self.stopflag = False
     
     def init_resource(self):
         self.rc.main_server = self
