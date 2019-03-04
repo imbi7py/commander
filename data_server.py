@@ -19,7 +19,7 @@ class DataServer():
 
     class Handler_Class(socketserver.StreamRequestHandler):
         def handle(self):
-            data = str(self.request.recv(1024), 'ascii')
+            data = str(self.request.recv(1048576), 'ascii')
             response = DataServer.get_instance().handler_func(data)
             response = bytes(response, 'ascii')
             self.request.sendall(response)

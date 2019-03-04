@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Commonder</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="testButton">
     <property name="geometry">
@@ -37,6 +40,22 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="image_label">
+    <property name="geometry">
+     <rect>
+      <x>610</x>
+      <y>390</y>
+      <width>281</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -44,7 +63,7 @@
      <x>0</x>
      <y>0</y>
      <width>1038</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
