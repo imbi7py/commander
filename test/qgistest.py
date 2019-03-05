@@ -1,40 +1,64 @@
-# http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe
-# https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe
-# https://qgis.org/pyqgis/master/
+import os, sys, logging, platform
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+import load_libs
 
-import logging
+sys_name = platform.system().lower()
 
-qgispath = 'C:/Program Files/QGIS 3.6'
-pyqt_plugins = qgispath + '/apps/Qt5/plugins'
-qgis_pypath = qgispath + '/apps/qgis/python'
-qgis_python_sitepkgspath = qgispath + '/apps/Python37/Lib/site-packages'
+import qgis, PyQt5
+from qgis.gui import *
+#from qgis.PyQt.QtCore import SIGNAL, Qt, QString
+from qgis.PyQt.QtWidgets import QMainWindow, QAction
+from qgis.core import *
 
-def load_qgis():
-    try:
-        import sys
-        sys.path = [qgis_pypath, qgis_python_sitepkgspath] + sys.path
-        import PyQt5
-        import qgis.core
-        import qgis.gui
-        return True
-    except Exception as e:
-        logging.error('load qgis failed')
-        logging.exception(e)
-        return False
-        
+class MyWnd(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
+        layer = QgsVectorLayer("Polygon?crs=epsg:4326&field=fldtxt:string",
+                               "layer", "memory")
 
-def main():
-    assert load_qgis()
-    import qgis.core
-    import qgis.gui
-    qgis.core.QgsApplication.addLibraryPath(pyqt_plugins)
-    qgis.core.QgsApplication.setPrefixPath(qgispath, True)
-    qgs = qgis.core.QgsApplication([], True)
-    qgs.initQgis()
-    canvas = qgis.gui.QgsMapCanvas()
-    canvas.show()
 
-    qgs.exitQgis()
+        self.canvas = QgsMapCanvas()
+        f = QgsFeature()
+        f.setGeometry(QgsGeometry.fromRect(QgsRectangle(15, 31, 18, 33)))
+        layer.dataProvider().addFeatures([f])
+        f = QgsFeature()
+        f.setGeometry(QgsGeometry.fromRect(QgsRectangle(30, 20, 50, 80)))
+        layer.dataProvider().addFeatures([f])
+        f = QgsFeature()
+        f.setGeometry(QgsGeometry.fromRect(QgsRectangle(1, 1, 2, 2)))
+        layer.dataProvider().addFeatures([f])
 
-if __name__ == '__main__':
-    main()
+        filename = ''
+        if sys_name.startswith('darwin'):  # mac
+            filename = '/Applications/QGIS3.app/Contents/Resources/resources/data/world_map.shp'
+        elif sys_name.startswith('win'):  # windows
+            filename = 'C:/Program Files/QGIS 3.6/apps/qgis/resources/data'
+        else:
+            raise 'unknown system'
+
+        layer2 = QgsVectorLayer(filename, 'test', 'ogr')  # 失败
+
+        print (layer.isValid())
+        print (layer2.isValid())  # 如果成功会显实True
+
+        self.canvas.setLayers([layer])
+        self.canvas.setExtent(QgsRectangle(0, 0, 100, 100))
+        QgsProject.instance().addMapLayer(layer, True)
+        self.canvas.setVisible(True)
+        self.canvas.refresh()
+
+        self.setCentralWidget(self.canvas)
+        self.toolbar = self.addToolBar("Canvas actions")
+
+logging.basicConfig(level=logging.DEBUG)
+if sys_name.startswith('darwin'):  # mac
+    QgsApplication.setPrefixPath("/Applications/QGIS3.app/Contents/MacOS", True)
+elif sys_name.startswith('win'):  # windows
+    QgsApplication.setPrefixPath("C:/Program Files/QGIS 3.6/apps/qgis", True)
+else:
+    raise 'unknown system'
+
+app = PyQt5.QtWidgets.QApplication(sys.argv)
+form = MyWnd()
+form.show()
+sys.exit(app.exec_())
