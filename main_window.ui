@@ -6,69 +6,437 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1038</width>
-    <height>729</height>
+    <width>1073</width>
+    <height>611</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Commonder</string>
-  </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="testButton">
+   <widget class="QLabel" name="label_MainWindowTitle">
     <property name="geometry">
      <rect>
-      <x>660</x>
-      <y>260</y>
-      <width>75</width>
-      <height>23</height>
+      <x>430</x>
+      <y>20</y>
+      <width>211</width>
+      <height>51</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 14pt &quot;宋体&quot;;</string>
     </property>
     <property name="text">
-     <string>TestButton</string>
+     <string>遥感任务规划与传输监测</string>
     </property>
    </widget>
-   <widget class="QListWidget" name="testList">
+   <widget class="QLabel" name="label_Quickviewarea">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>190</y>
-      <width>256</width>
-      <height>192</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="image_label">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>390</y>
-      <width>281</width>
+      <x>10</x>
+      <y>140</y>
+      <width>441</width>
       <height>201</height>
      </rect>
     </property>
-    <property name="autoFillBackground">
-     <bool>true</bool>
-    </property>
     <property name="text">
-     <string/>
+     <string>   快视图显示区域
+（单个或者多个）</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="pushButton_Loadgeomap">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>210</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>地理地图载入</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Loadtract">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>250</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>航迹载入</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Loadquickview">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>170</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>快视图载入</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_Quickview">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>90</y>
+      <width>61</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>快视图显示</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_Screenselect">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>90</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>单屏显示</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>双屏显示</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>四屏显示</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_Geoinfor">
+    <property name="geometry">
+     <rect>
+      <x>810</x>
+      <y>90</y>
+      <width>81</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>地理信息显示</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_Createmission">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>360</y>
+      <width>201</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>创建观测任务（可多次创建任务）</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="tableWidget_Platformcoordinates_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>410</y>
+      <width>1041</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 8pt &quot;宋体&quot;;</string>
+    </property>
+    <row>
+     <property name="text">
+      <string>并行任务数量</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>2</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>3</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>4</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>5</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>6</string>
+     </property>
+    </row>
+    <row>
+     <property name="text">
+      <string>8</string>
+     </property>
+    </row>
+    <column>
+     <property name="text">
+      <string>任务类型</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>作业模式</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>观测区域范围</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>分辨率</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>盘旋直径</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>盘旋中心</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>平台类型</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>平台数量</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>航高</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>航速</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>航拍间隔</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>航拍时间</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>传感器类型</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>工作波段</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>焦距</string>
+     </property>
+    </column>
+    <item row="1" column="0">
+     <property name="text">
+      <string>中尺度洪涝灾害监测</string>
+     </property>
+    </item>
+    <item row="1" column="1">
+     <property name="text">
+      <string>死角区域观测</string>
+     </property>
+    </item>
+    <item row="1" column="2">
+     <property name="text">
+      <string>18km*12km</string>
+     </property>
+    </item>
+    <item row="1" column="3">
+     <property name="text">
+      <string>**（不同传感器要求不一样）</string>
+     </property>
+    </item>
+    <item row="1" column="4">
+     <property name="text">
+      <string>2m</string>
+     </property>
+    </item>
+    <item row="1" column="5">
+     <property name="text">
+      <string>116.75470E,29.13900N</string>
+     </property>
+    </item>
+    <item row="1" column="6">
+     <property name="text">
+      <string>轻小型无人机</string>
+     </property>
+    </item>
+    <item row="1" column="7">
+     <property name="text">
+      <string>4</string>
+     </property>
+    </item>
+    <item row="1" column="8">
+     <property name="text">
+      <string>200m</string>
+     </property>
+    </item>
+    <item row="1" column="9">
+     <property name="text">
+      <string>90-120km/h</string>
+     </property>
+    </item>
+    <item row="1" column="10">
+     <property name="text">
+      <string>1h</string>
+     </property>
+    </item>
+    <item row="1" column="11">
+     <property name="text">
+      <string>1h</string>
+     </property>
+    </item>
+    <item row="1" column="12">
+     <property name="text">
+      <string>大视场立体测绘相机、可见光、红外相机、MiniSAR</string>
+     </property>
+    </item>
+    <item row="1" column="13">
+     <property name="text">
+      <string>**</string>
+     </property>
+    </item>
+    <item row="1" column="14">
+     <property name="text">
+      <string>**</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_Geoinforarea">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>130</y>
+      <width>421</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>地理信息及航迹显示区域   
+（单个或者多个平台同时显示）</string>
+    </property>
+   </widget>
+   <zorder>tableWidget_Platformcoordinates_2</zorder>
+   <zorder>label_MainWindowTitle</zorder>
+   <zorder>label_Quickviewarea</zorder>
+   <zorder>pushButton_Loadgeomap</zorder>
+   <zorder>pushButton_Loadtract</zorder>
+   <zorder>pushButton_Loadquickview</zorder>
+   <zorder>label_Quickview</zorder>
+   <zorder>comboBox_Screenselect</zorder>
+   <zorder>label_Geoinfor</zorder>
+   <zorder>pushButton_Createmission</zorder>
+   <zorder>label_Geoinforarea</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1038</width>
-     <height>22</height>
+     <width>1073</width>
+     <height>23</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>pushButton_Loadquickview</sender>
+   <signal>clicked()</signal>
+   <receiver>label_Quickviewarea</receiver>
+   <slot>showFullScreen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>384</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Loadgeomap</sender>
+   <signal>clicked(bool)</signal>
+   <receiver>label_Geoinforarea</receiver>
+   <slot>showFullScreen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>596</x>
+     <y>219</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButton_Loadtract</sender>
+   <signal>clicked()</signal>
+   <receiver>label_Geoinforarea</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>674</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
