@@ -12,7 +12,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         PyQt5.uic.loadUi('main_window.ui', self)
 
-        self.set_image(Image.open('pics/emojis/0.png'))
+        #self.set_image(Image.open('pics/emojis/0.png'))
 
     def init_resource(self):
         self.rc = resource_context.ResourceContext()
