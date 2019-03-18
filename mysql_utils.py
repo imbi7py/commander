@@ -1,16 +1,21 @@
 # coding:utf-8
 
-import unittest, logging, warnings, time
+import unittest, logging, warnings, time, sys, platform
 import mysql.connector
 import base64
 
-def get_a_connection(option_files='C:\\mysql-8.0.15-winx64\\mysql-8.0.15-winx64\\my.ini'):
+sys_name = platform.system().lower()
+
+def get_a_connection():
+    option_files = 'my.ini'
+    if sys_name.startswith('darwin'):
+        option_files = 'my.ini.mac'
     warnings.simplefilter("ignore", ResourceWarning)
     return mysql.connector.connect(option_files=option_files)
 
 def _exec_rsp_cmd(cmd_, conn_):
     try:
-        mycursor = conn_.cursor()  # 使用cursor()方法获取操作游标 
+        mycursor = conn_.cursor()  # 使用cursor()方法获取操作游标
         mycursor.execute(cmd_)
         res_batch = []
         for x in mycursor:
@@ -78,7 +83,7 @@ class Mysql_Handler(object):
         self._db_name, self._table_name = db_name, table_name
         self._conn = get_a_connection(option_files=option_files)
         create_db_if_not_exist_and_select_it(self._db_name, self._conn)
-        create_table_if_not_exists(self._table_name, '(name VARCHAR(100), val VARCHAR(20000), UNIQUE KEY unique_name(name))', self._conn)   
+        create_table_if_not_exists(self._table_name, '(name VARCHAR(100), val VARCHAR(20000), UNIQUE KEY unique_name(name))', self._conn)
 
     def erase(self, k):
         cmd = "DELETE FROM %s WHERE name='%s'" % (self._table_name, k)
@@ -104,33 +109,10 @@ class Mysql_Handler(object):
         return res
 
 class _UnitTest(unittest.TestCase):
-    def sktest_listdb(self):
+    def test_get_a_connection(self):
         conn_ = get_a_connection()
-        create_db_if_not_exist_and_select_it('mission_planning_db', conn_)
-        drop_table_if_exists('mission_planning_table', conn_)
-        create_table('mission_planning_table', '(name VARCHAR(100), val VARCHAR(20000))', conn_)
-        #print (show_tables(conn_))
-        #print (desc_table('mission_planning_table', conn_))
+        print (conn_)
+        print (show_dbs(conn_))
 
-    def test_class(self):
-        image='C:/workspace/commander/pics/emojis/0.png'
-        #将图片encode为二进制字符串方法二
-        f=open(image,'rb')
-        f_str=base64.b64encode(f.read())
-        f_str=f_str.decode('utf-8')#二进制转换为十进制
-        f.close()
-        handler = Mysql_Handler()
-        #handler.push('0.png', f_str)
-        handler.erase('0.png')
-        handler.erase('testkey')
-        print (handler.select_all()) 
-        print(handler.get('testkey'))
-        '''
-        handler1 = Mysql_Handler()
-        #handler1.push('testkey1', 'testval1')
-        handler1.erase('testkey1')
-        print('1')
-        print (handler1.select_all()) 
-        '''    
 if __name__ == '__main__':
     unittest.main()
