@@ -35,14 +35,15 @@ class QuickviewStore():
         quickviews = []
         for i in range(len(res)):
             img_str_data,sensor_type,sensor_id,aircraft_type,aircraft_id,add_into_table_time = res[i]
-            quickviews.append({
+            one_quickview = {
                 'img_pil': img_utils.str_to_img(img_str_data),
                 'sensor_type': sensor_type,
                 'sensor_id': sensor_id,
                 'aircraft_type': aircraft_type,
                 'aircraft_id': aircraft_id,
                 'add_into_table_time': add_into_table_time
-            })
+            }
+            quickviews.append(one_quickview)
         return quickviews
 
 if __name__ == '__main__':
