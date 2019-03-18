@@ -1,7 +1,8 @@
 # coding:utf-8
 import unittest, json
 import numpy as np
-from PIL import Image
+import PIL
+import PIL.Image
 
 def np_to_list(input_):
     if type(input_) == np.ndarray:
@@ -18,12 +19,12 @@ def img_to_str(pil_img):
     np_format_ = np.array(pil_img)
     list_format_ = np_to_list(np_format_)
     res['data'] = list_format_
-    return json.dumps(res)
+    return json.dumps(res).replace(' ', '')
 
 def str_to_img(str_img):
     dict_like = json.loads(str_img)
     np_format_ = np.array(dict_like['data'], dtype=np.uint8)
-    return Image.fromarray(np_format_, mode=dict_like['mode'])
+    return PIL.Image.fromarray(np_format_, mode=dict_like['mode'])
 
 class _UnitTest(unittest.TestCase):
     def test_np_to_list(self):
@@ -37,9 +38,10 @@ class _UnitTest(unittest.TestCase):
         #print (list_format_)
 
     def test_img_to_str(self):
-        img = Image.open('pics/emojis/0.png')
+        img = PIL.Image.open('pics/emojis/0.png')
         to_str = img_to_str(img)
         restr_img = str_to_img(to_str)
+        print (isinstance(restr_img, PIL.Image.Image))
         restr_img.show()
 
 if __name__ == '__main__':

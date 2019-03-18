@@ -1,6 +1,7 @@
 # coding:utf-8
 import mysql_utils, img_utils
 import PIL
+import PIL.Image
 
 class QuickviewStore():
     def __init__(self, rc):
@@ -16,7 +17,7 @@ class QuickviewStore():
                         aircraft_type='unknown',
                         aircraft_id='unknown',
                         ):
-        assert type(img_pil) is PIL.PngImagePlugin.PngImageFile, 'Please use pillow image'
+        assert isinstance(img_pil, PIL.Image.Image), 'Please use pillow image'
         img_str_data = img_utils.img_to_str(img_pil).replace('\'', '\"')
         cmd = 'INSERT INTO %s ' % self.table_name
         cmd = cmd + '(img_str_data,sensor_type,sensor_id,aircraft_type,aircraft_id)'

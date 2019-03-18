@@ -364,6 +364,19 @@
 （单个或者多个平台同时显示）</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="show_history_quickviews_button">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>80</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>查看历史快视图</string>
+    </property>
+   </widget>
    <zorder>tableWidget_Platformcoordinates_2</zorder>
    <zorder>label_MainWindowTitle</zorder>
    <zorder>label_Quickviewarea</zorder>
@@ -375,6 +388,7 @@
    <zorder>label_Geoinfor</zorder>
    <zorder>pushButton_Createmission</zorder>
    <zorder>label_Geoinforarea</zorder>
+   <zorder>show_history_quickviews_button</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -382,7 +396,7 @@
      <x>0</x>
      <y>0</y>
      <width>1073</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
