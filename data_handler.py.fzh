@@ -1,0 +1,92 @@
+import json# 导入模块
+import base64
+from PIL import Image
+from mysqldb import Mysql_Handler
+import mysqldb
+
+class DataHandler():
+    def __init__(self, rc):
+        self.rc = rc
+    
+    def process_received_data(self, data,data2,data3,data4):
+
+        data = json.loads(data)#loads字符串转换成字典
+        data2 = json.loads(data2)#loads字符串转换成字典
+        data3 = json.loads(data3)#loads字符串转换成字典
+        data4 = json.loads(data4)#loads字符串转换成字典
+        img_name=data['type']#得到图片名
+        img_name2=data2['type']#得到图片名
+        img_name3=data3['type']#得到图片名
+        img_name4=data4['type']#得到图片名
+        img=data['data']#得到图片的十进制字符串
+        img2=data2['data']
+        img3=data3['data']#得到图片的十进制字符串
+        img4=data4['data']
+       
+        conn_ = mysqldb.get_a_connection()
+        mysqldb.create_db_if_not_exist_and_select_it('mission_planning_db', conn_)
+        mysqldb.drop_table_if_exists('mission_planning_table', conn_)
+        mysqldb.create_table('mission_planning_table', '(name VARCHAR(100), val VARCHAR(20000))', conn_)
+        print (mysqldb.show_tables(conn_))
+        #print (mysqldb.desc_table('mission_planning_table', conn_))
+        
+        handler = Mysql_Handler()
+        handler.push('type', img_name)
+        handler.push('data', img)
+        #print (handler.select_all()) 
+        #print(handler.get('data'))
+        img=handler.get('data')#得到图片的十进制字符串
+        img=img.encode('utf-8')#得到二进制字符串
+
+        handler2 = Mysql_Handler()
+        handler2.push('type', img_name2)
+        handler2.push('data', img2)
+        #print (handler.select_all()) 
+        #print(handler.get('data'))
+        img2=handler2.get('data')#得到图片的十进制字符串
+        img2=img2.encode('utf-8')#得到二进制字符串
+
+        handler3 = Mysql_Handler()
+        handler3.push('type', img_name3)
+        handler3.push('data', img3)
+        #print (handler.select_all()) 
+        #print(handler.get('data'))
+        img3=handler3.get('data')#得到图片的十进制字符串
+        img3=img3.encode('utf-8')#得到二进制字符串
+
+        handler4 = Mysql_Handler()
+        handler4.push('type', img_name4)
+        handler4.push('data', img4)
+        #print (handler.select_all()) 
+        #print(handler.get('data'))
+        img4=handler4.get('data')#得到图片的十进制字符串
+        img4=img4.encode('utf-8')#得到二进制字符串
+        
+        #将二进制字符串转换为图片
+        file_str=open('C:/workspace/commander/pics/emojis/1a.jpg','wb')
+        file_str.write(base64.b64decode(img))
+        file_str.close()
+        img =Image.open('C:/workspace/commander/pics/emojis/1a.jpg')
+
+        file_str2=open('C:/workspace/commander/pics/emojis/2a.jpg','wb')
+        file_str2.write(base64.b64decode(img2))
+        file_str2.close()
+        img2 =Image.open('C:/workspace/commander/pics/emojis/2a.jpg')
+
+        file_str3=open('C:/workspace/commander/pics/emojis/3a.jpg','wb')
+        file_str3.write(base64.b64decode(img3))
+        file_str3.close()
+        img3 =Image.open('C:/workspace/commander/pics/emojis/3a.jpg')
+
+        file_str4=open('C:/workspace/commander/pics/emojis/4a.jpg','wb')
+        file_str4.write(base64.b64decode(img4))
+        file_str4.close()
+        img4 =Image.open('C:/workspace/commander/pics/emojis/4a.jpg')
+        
+        #self.rc.main_window.set_image(Image.open(img))
+        self.rc.main_window.set_image(img,img2,img3,img4)
+        print ('[data handler]recv  %s' % img)
+
+        return '0'
+
+
