@@ -19,7 +19,7 @@ def send_string(ip, port, message):
     return 0
 
 def send_img(ip, port, pil_img):
-    data_ = json.dumps({'type': 'img', 'data': img_utils.img_to_str(pil_img)})
+    data_ = json.dumps({'type': 'quickview', 'data': img_utils.img_to_str(pil_img)})
     send_data_to_ip_port(ip, port, data_)
     print ('send img success')
 
