@@ -9,4 +9,4 @@ CREATE TABLE quick_view (
         aircraft_id VARCHAR(100), INDEX(aircraft_id),
         aircraft_type VARCHAR(100), INDEX(aircraft_type),
         data LONGTEXT
-)
+);
