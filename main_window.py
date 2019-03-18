@@ -1,4 +1,5 @@
 import os, sys, logging
+import mysql.connector
 import load_libs
 import PyQt5
 import resource_context
