@@ -86,8 +86,16 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
             if 'pil_img' not in one_quickview_data:
                 one_quickview_data['pil_img'] = img_utils.str_to_img(one_quickview_data['data'])
             self.show_img(one_quickview_data['pil_img'])
-
+            self.show_infor(one_quickview_data['uav_type'])
+           
+            
     def show_img(self, pil_img):
         tmp_file_name = '.quickview_monitor_tmp.%s.png' % self.name
         pil_img.save(tmp_file_name, 'png')
         self.imglabel.setPixmap(PyQt5.QtGui.QPixmap(tmp_file_name))
+        
+    def show_infor(self,one_quickview_data):
+        self.imglabel.setToolTip(one_quickview_data)
+    
+
+
