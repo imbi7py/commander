@@ -19,7 +19,13 @@ class DataServer():
 
     class Handler_Class(socketserver.StreamRequestHandler):
         def handle(self):
-            data = str(self.request.recv(1048576), 'utf8')
+            data = ''
+            patch = str(self.request.recv(10240), 'utf8')
+            while patch != 'end':
+                data = data + patch
+                response = 'go on'.encode('utf8')
+                self.request.sendall(response)
+                patch = str(self.request.recv(10240), 'utf8')
             response = DataServer.get_instance().handler_func(data)
             response = response.encode('utf8')
             self.request.sendall(response)

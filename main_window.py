@@ -3,6 +3,7 @@ import mysql.connector
 import load_libs
 import PyQt5
 import resource_context
+import quickview_monitor
 from PIL import Image
 
 
@@ -13,17 +14,36 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         PyQt5.uic.loadUi('main_window.ui', self)
         self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
+        self.init_quickview_monitors()
 
     def init_resource(self):
         self.rc = resource_context.ResourceContext()
         self.rc.init_resources(self)
 
-    def set_image_to_quickview_label(self, pillow_img):
-        self.set_image_to_label(pillow_img, self.label_Quickviewarea)
+    def init_quickview_monitors(self):
+        cols = 2
+        rows = 2
+        self.quickview_monitors = {}
 
-    def set_image_to_label(self, pillow_img, one_label):
-        pillow_img.save('.image_shown_in_image_label.png', 'png')
-        one_label.setPixmap(PyQt5.QtGui.QPixmap('.image_shown_in_image_label.png'))
+        def init_one_quickview_monitor(x, y):
+            name = '%d_%d' % (x, y)
+            one_monitor = quickview_monitor.Quickview_Monitor(self, self.rc, name)
+            self.quickview_monitors[name] = one_monitor
+            self.quickview_layout.addWidget(one_monitor, x, y)
+        for x in range(cols):
+            for y in range(rows):
+                init_one_quickview_monitor(x, y)
+
+    #def set_image_to_quickview_label(self, pillow_img):
+    #    self.set_image_to_label(pillow_img, self.label_Quickviewarea)
+
+    #def set_image_to_label(self, pillow_img, one_label):
+    #    pillow_img.save('.image_shown_in_image_label.png', 'png')
+    #    one_label.setPixmap(PyQt5.QtGui.QPixmap('.image_shown_in_image_label.png'))
+
+    def show_realtime_quickview(self, quickview_data):
+        for one_monitor in self.quickview_monitors.values():
+            one_monitor.check_and_show_quickview(quickview_data)
 
     def show_history_quickviews(self):
         quickviews = self.rc.quickview_store.get_all_quickviews()

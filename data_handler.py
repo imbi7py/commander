@@ -9,7 +9,7 @@ class DataHandler():
     def process_received_quickview(self, data):
         str_img = data['data']
         pil_img = img_utils.str_to_img(str_img)
-        self.rc.main_window.set_image_to_quickview_label(pil_img)
+        self.rc.main_window.show_realtime_quickview(data)
         self.rc.quickview_store.add_a_quickview(pil_img)
         print ('[data handler]recv an img')
 
