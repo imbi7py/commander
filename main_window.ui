@@ -274,24 +274,13 @@ font: 20pt &quot;黑体&quot;;</string>
     </property>
     <layout class="QGridLayout" name="quickview_layout"/>
    </widget>
-   <widget class="QWidget" name="gridLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>130</y>
-      <width>691</width>
-      <height>471</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="quickview_layout_2"/>
-   </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>230</x>
       <y>90</y>
       <width>304</width>
-      <height>26</height>
+      <height>32</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -339,15 +328,38 @@ font: 20pt &quot;黑体&quot;;</string>
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="debugButton">
+    <property name="geometry">
+     <rect>
+      <x>1140</x>
+      <y>60</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>debug</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>130</y>
+      <width>681</width>
+      <height>471</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gis_layout"/>
+   </widget>
    <zorder>tableWidget_Platformcoordinates_2</zorder>
    <zorder>label_MainWindowTitle</zorder>
-   <zorder>label_Quickview</zorder>
-   <zorder>comboBox_Screenselect</zorder>
    <zorder>label_Geoinfor</zorder>
    <zorder>pushButton_Createmission</zorder>
    <zorder>gridLayoutWidget</zorder>
+   <zorder>layoutWidget</zorder>
+   <zorder>debugButton</zorder>
    <zorder>gridLayoutWidget_2</zorder>
-   <zorder></zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -355,7 +367,7 @@ font: 20pt &quot;黑体&quot;;</string>
      <x>0</x>
      <y>0</y>
      <width>1420</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

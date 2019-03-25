@@ -4,6 +4,7 @@ import load_libs
 import PyQt5
 import resource_context
 import quickview_monitor
+import gis_canvas
 from PIL import Image
 
 
@@ -14,11 +15,21 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         PyQt5.uic.loadUi('main_window.ui', self)
         self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
+        self.debugButton.clicked.connect(self.debug_button_click)
         self.init_quickview_monitors()
+        self.init_gis_canvas()
+
+    def debug_button_click(self):
+        self.gis_canvas.zoom_to_china()
+        self.gis_canvas.refresh()
 
     def init_resource(self):
         self.rc = resource_context.ResourceContext()
         self.rc.init_resources(self)
+
+    def init_gis_canvas(self):
+        self.gis_canvas = gis_canvas.Gis_Canvas(self)
+        self.gis_layout.addWidget(self.gis_canvas, 0, 0)
 
     def init_quickview_monitors(self):
         cols = 2
@@ -43,6 +54,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         for quickview in quickviews:
             img = quickview['img_pil']
             img.show()
+
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
