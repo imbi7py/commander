@@ -2,7 +2,7 @@
 import sys, socket, config, json, os, time, random
 import img_utils
 
-cfg = config.load_config()
+cfg = config.get_config()
 
 
 def split_data(data_, part_length=4096):

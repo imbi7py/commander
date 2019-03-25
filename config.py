@@ -11,5 +11,5 @@ config = {
     },
 }
 
-def load_config():
+def get_config():
     return config
