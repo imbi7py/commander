@@ -34,13 +34,6 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             for y in range(rows):
                 init_one_quickview_monitor(x, y)
 
-    #def set_image_to_quickview_label(self, pillow_img):
-    #    self.set_image_to_label(pillow_img, self.label_Quickviewarea)
-
-    #def set_image_to_label(self, pillow_img, one_label):
-    #    pillow_img.save('.image_shown_in_image_label.png', 'png')
-    #    one_label.setPixmap(PyQt5.QtGui.QPixmap('.image_shown_in_image_label.png'))
-
     def show_realtime_quickview(self, quickview_data):
         for one_monitor in self.quickview_monitors.values():
             one_monitor.check_and_show_quickview(quickview_data)

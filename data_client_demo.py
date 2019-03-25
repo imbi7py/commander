@@ -28,11 +28,11 @@ def send_string(ip, port, message):
     print ('send string success')
     return 0
 
-def send_img(ip, port, pil_img, uav_type, sensor_type):
+def send_img(ip, port, pil_img, aircraft_type, sensor_type):
     data_ = json.dumps({
         'type': 'quickview',
         'data': img_utils.img_to_str(pil_img),
-        'uav_type': uav_type,
+        'aircraft_type': aircraft_type,
         'sensor_type': sensor_type,
     })
     send_data_to_ip_port(ip, port, data_)
@@ -50,17 +50,17 @@ def main():
     send_string(ip, port, "Hello World 1")
     send_string(ip, port, "Hello World 2")
     test_img_names = get_test_image_names('pics/emojis')
-    uav_types = ['uav_type1', 'uav_type2', 'uav_type3']
+    aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
     sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
     while True:
         for name_ in test_img_names:
-            uavtype = uav_types[random.randint(0, 2)]
-            sensortype = sensor_types[random.randint(0, 2)]
+            aircraft_type = aircraft_types[random.randint(0, 2)]
+            sensor_type = sensor_types[random.randint(0, 2)]
             img = Image.open(name_)
             img = img.resize((150, 150))
             draw = ImageDraw.Draw(img)
-            draw.text((00, 00), 'uavtype: %s\nsensortype: %s' % (uavtype, sensortype), fill = (255, 0 ,0))
-            send_img(ip, port, img, uavtype, sensortype)
+            draw.text((00, 00), 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type), fill = (255, 0 ,0))
+            send_img(ip, port, img, aircraft_type, sensor_type)
             time.sleep(2)
 
 
