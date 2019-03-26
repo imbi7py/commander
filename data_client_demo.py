@@ -49,7 +49,7 @@ def main():
     ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
     send_string(ip, port, "Hello World 1")
     send_string(ip, port, "Hello World 2")
-    test_img_names = get_test_image_names('pics/emojis')
+    test_img_names = get_test_image_names('pics/uav_img')
     aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
     sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
     while True:
@@ -57,7 +57,7 @@ def main():
             aircraft_type = aircraft_types[random.randint(0, 2)]
             sensor_type = sensor_types[random.randint(0, 2)]
             img = Image.open(name_)
-            img = img.resize((150, 150))
+            img = img.resize((50, 50))
             draw = ImageDraw.Draw(img)
             draw.text((00, 00), 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type), fill = (255, 0 ,0))
             send_img(ip, port, img, aircraft_type, sensor_type)
