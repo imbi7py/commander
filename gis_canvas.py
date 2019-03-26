@@ -5,9 +5,9 @@ import sys, qgis, qgis.core, qgis.gui, PyQt5
 
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent):
-        qgis.gui.QgsMapCanvas.__init__(self, parent)
+        super(Gis_Canvas, self).__init__(parent)
         self.setVisible(True)
-        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
+        self.set_projection('4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
         #self.load_online_map('openstreetmap')
@@ -15,6 +15,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
+        self.init_labels()
+
+    def init_labels(self):
+        self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
+        self.mouse_location_label.move(0, 0)
+        self.mouse_location_label.resize(300, 20)
+
+    def mouseMoveEvent(self, event):
+        p = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
+        text = 'x: %.3f  y: %.3f' % (p.x(), p.y())
+        self.mouse_location_label.setText(text)
+        super(Gis_Canvas, self).mouseMoveEvent(event)
 
     '''
     加载在线WMS地图
@@ -40,7 +52,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     '''
     设置显示投影
     '''
-    def set_projection(self, epsg_code='EPSG:4326'):
+    def set_projection(self, epsg_code='4326'):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
 
     def test_load_shapefile(self):
