@@ -10,9 +10,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
-        self.load_online_map('openstreetmap')
+        #self.load_online_map('openstreetmap')
         #self.test_add_geometry()
-        #self.test_load_shapefile()
+        self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
 
@@ -50,7 +50,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         if sys_name.startswith('darwin'):  # mac
             shapefile_name = '/Applications/QGIS3.app/Contents/Resources/resources/data/world_map.shp'
         elif sys_name.startswith('win'):  # windows
-            shapefile_name = 'C:/Program Files/QGIS 3.6/apps/qgis/resources/data'
+            shapefile_name = 'C:/Program Files/QGIS 3.6/apps/qgis/resources/data/world_map.shp'
         else:
             raise 'unknown system'
         shapefile_layer = qgis.core.QgsVectorLayer(shapefile_name, 'world_map_from_shapefile', 'ogr')
