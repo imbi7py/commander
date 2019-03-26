@@ -57,7 +57,7 @@ def main():
             aircraft_type = aircraft_types[random.randint(0, 2)]
             sensor_type = sensor_types[random.randint(0, 2)]
             img = Image.open(name_)
-            img = img.resize((50, 50))
+            img = img.resize((500,500))
             draw = ImageDraw.Draw(img)
             draw.text((00, 00), 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type), fill = (255, 0 ,0))
             send_img(ip, port, img, aircraft_type, sensor_type)

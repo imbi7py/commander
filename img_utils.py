@@ -38,7 +38,7 @@ class _UnitTest(unittest.TestCase):
         #print (list_format_)
 
     def test_img_to_str(self):
-        img = PIL.Image.open('pics/emojis/0.png')
+        img = PIL.Image.open('pics/uav_img/0.jpg')
         to_str = img_to_str(img)
         restr_img = str_to_img(to_str)
         print (isinstance(restr_img, PIL.Image.Image))
