@@ -21,20 +21,22 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.mouse_location_label.move(0, 0)
         self.mouse_location_label.resize(300, 20)
 
+    def mousePressEvent(self, event):
+        if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
+            self.press_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
+        super(Gis_Canvas, self).mousePressEvent(event)
+
     def mouseMoveEvent(self, event):
         mouse_map_coordinates = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
 
         self.mouse_location_label.setText('x: %.3f  y: %.3f' % (mouse_map_coordinates.x(), mouse_map_coordinates.y()))  # 显示鼠标位置
 
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
-            if 'last_mouse_pressed_map_coordinates' in dir(self) and self.last_mouse_pressed_map_coordinates is not None:
+            if 'press_location' in dir(self):
                 self.setCenter(qgis.core.QgsPointXY(
-                    self.center().x() - mouse_map_coordinates.x() + self.last_mouse_pressed_map_coordinates.x(),
-                    self.center().y() - mouse_map_coordinates.y() + self.last_mouse_pressed_map_coordinates.y()))
+                    self.center().x() - mouse_map_coordinates.x() + self.press_location.x(),
+                    self.center().y() - mouse_map_coordinates.y() + self.press_location.y()))
                 self.refresh()
-            self.last_mouse_pressed_map_coordinates = mouse_map_coordinates
-        else:
-            self.last_mouse_pressed_map_coordinates = None
 
         super(Gis_Canvas, self).mouseMoveEvent(event)
 
