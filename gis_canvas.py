@@ -1,3 +1,4 @@
+# coding:utf-8
 import load_libs
 import sys, qgis, qgis.core, qgis.gui, PyQt5
 
@@ -6,7 +7,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent):
         qgis.gui.QgsMapCanvas.__init__(self, parent)
         self.setVisible(True)
-        self.set_projection('EPSG:4326')
+        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
         self.load_online_map('openstreetmap')
@@ -15,6 +16,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.zoom_to_china()
         self.refresh()
 
+    '''
+    加载在线WMS地图
+    '''
     def load_online_map(self, source='openstreetmap'):
         service_uri = ''
         if source == 'openstreetmap':
@@ -33,6 +37,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.setLayers(self.mission_layers + self.base_map_layers)
         self.refresh()
 
+    '''
+    设置显示投影
+    '''
     def set_projection(self, epsg_code='EPSG:4326'):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
 
