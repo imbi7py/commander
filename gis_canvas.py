@@ -14,9 +14,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
-        self.init_labels()
+        self.init_member_widgets()
 
-    def init_labels(self):
+    def init_member_widgets(self):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
         self.mouse_location_label.move(0, 0)
         self.mouse_location_label.resize(300, 20)
