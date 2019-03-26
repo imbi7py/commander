@@ -24,6 +24,10 @@ else:
 
 import qgis, qgis.core, qgis.gui, PyQt5, PyQt5.uic
 
+if sys_name.startswith('win'):
+    gdal_datapath = qgispath + '/share/gdal'
+    os.environ['GDAL_DATA'] = gdal_datapath
+
 if sys_name.startswith('darwin'):  # mac
     qgis.core.QgsApplication.setPrefixPath("/Applications/QGIS3.app/Contents/MacOS", True)
 elif sys_name.startswith('win'):  # windows
