@@ -75,6 +75,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 
     def zoom_to_china(self):
         self.setExtent(qgis.core.QgsRectangle(74, 10, 135, 54))
+        self.refresh()
 
 
 class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
@@ -82,8 +83,16 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         self.resize(1000, 1000)
         self.canvas = Gis_Canvas(self)
-        self.canvas.resize(1000, 1000)
+        self.canvas.resize(1000, 800)
         self.canvas.move(0, 0)
+        self.button= PyQt5.QtWidgets.QPushButton(self)
+        self.button.move(0,800)
+        self.button.clicked.connect(self.onClick)
+
+    def onClick(self):
+        print('ok')
+        self.canvas.zoom_to_china()
+
 
 
 if __name__ == '__main__':
