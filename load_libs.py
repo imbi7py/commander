@@ -26,6 +26,7 @@ import qgis, qgis.core, qgis.gui, PyQt5, PyQt5.uic
 
 if sys_name.startswith('win'):
     gdal_datapath = qgispath + '/share/gdal'
+    # 解决 GDAL_DATA environment variable 报错
     os.environ['GDAL_DATA'] = gdal_datapath
 
 if sys_name.startswith('darwin'):  # mac
@@ -35,11 +36,14 @@ elif sys_name.startswith('win'):  # windows
 else:
     raise 'unknown system'
 
+# 让QGIS输出错误日志
 def write_log_message(message, tag, level):
     print ('{tag}({level}): {message}'.format(tag=tag, level=level, message=message))
 qgis.core.QgsApplication.messageLog().messageReceived.connect(write_log_message)
 
 if pyqt_plugins not in PyQt5.QtWidgets.QApplication.libraryPaths():
+    # 解决 Could not find the Qt platform plugin 报错
     PyQt5.QtWidgets.QApplication.addLibraryPath(pyqt_plugins)
 
+# 解决 No Data Providers 报错
 qgis.core.QgsProviderRegistry.instance(provider_path)

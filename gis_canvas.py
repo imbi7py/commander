@@ -1,3 +1,4 @@
+# coding:utf-8
 import load_libs
 import sys, qgis, qgis.core, qgis.gui, PyQt5
 
@@ -6,15 +7,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent):
         qgis.gui.QgsMapCanvas.__init__(self, parent)
         self.setVisible(True)
-        self.set_projection('EPSG:4326')
+        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
-        self.load_online_map('openstreetmap')
+        #self.load_online_map('openstreetmap')
         #self.test_add_geometry()
-        #self.test_load_shapefile()
+        self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
 
+    '''
+    加载在线WMS地图
+    '''
     def load_online_map(self, source='openstreetmap'):
         service_uri = ''
         if source == 'openstreetmap':
@@ -33,6 +37,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.setLayers(self.mission_layers + self.base_map_layers)
         self.refresh()
 
+    '''
+    设置显示投影
+    '''
     def set_projection(self, epsg_code='EPSG:4326'):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
 
@@ -43,7 +50,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         if sys_name.startswith('darwin'):  # mac
             shapefile_name = '/Applications/QGIS3.app/Contents/Resources/resources/data/world_map.shp'
         elif sys_name.startswith('win'):  # windows
-            shapefile_name = 'C:/Program Files/QGIS 3.6/apps/qgis/resources/data'
+            shapefile_name = 'C:/Program Files/QGIS 3.6/apps/qgis/resources/data/world_map.shp'
         else:
             raise 'unknown system'
         shapefile_layer = qgis.core.QgsVectorLayer(shapefile_name, 'world_map_from_shapefile', 'ogr')
@@ -68,6 +75,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 
     def zoom_to_china(self):
         self.setExtent(qgis.core.QgsRectangle(74, 10, 135, 54))
+        self.refresh()
 
 
 class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
@@ -75,8 +83,16 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         self.resize(1000, 1000)
         self.canvas = Gis_Canvas(self)
-        self.canvas.resize(1000, 1000)
+        self.canvas.resize(1000, 800)
         self.canvas.move(0, 0)
+        self.button= PyQt5.QtWidgets.QPushButton(self)
+        self.button.move(0,800)
+        self.button.clicked.connect(self.onClick)
+
+    def onClick(self):
+        print('ok')
+        self.canvas.zoom_to_china()
+
 
 
 if __name__ == '__main__':

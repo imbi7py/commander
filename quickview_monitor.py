@@ -99,8 +99,3 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         img_infor='平台：'
         img_infor=img_infor+one_quickview_data['aircraft_type']+'\n'+'传感器：'+one_quickview_data['sensor_type']
         self.imglabel.setToolTip(img_infor)
-           
-        
-    
-
-

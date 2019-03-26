@@ -7,6 +7,13 @@ http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到
 ## conda with py37
 https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe  
 
+## mysql.connector
+conda install -c anaconda mysql-connector-python
+
+## mysql后端服务
+linux/mac: conda install mysql
+windows: https://www.mysql.com/cn/downloads/
+
 # 程序入口
 主窗口&后端服务
 ```python main_window.py```  

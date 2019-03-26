@@ -1,11 +1,9 @@
 import os, sys, logging
-import mysql.connector
 import load_libs
 import PyQt5
 import resource_context
 import quickview_monitor
 import gis_canvas
-from PIL import Image
 
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
@@ -14,10 +12,15 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         PyQt5.uic.loadUi('main_window.ui', self)
-        self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
-        self.debugButton.clicked.connect(self.debug_button_click)
         self.init_quickview_monitors()
         self.init_gis_canvas()
+
+        self.init_actions()
+    
+    def init_actions(self):
+        self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
+        self.debugButton.clicked.connect(self.debug_button_click)
+        self.zoom_to_china.triggered.connect(self.gis_canvas.zoom_to_china)
 
     def debug_button_click(self):
         self.gis_canvas.zoom_to_china()

@@ -370,8 +370,44 @@ font: 20pt &quot;黑体&quot;;</string>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="map">
+    <property name="title">
+     <string>地图</string>
+    </property>
+    <addaction name="zoom_to_china"/>
+   </widget>
+   <widget class="QMenu" name="view">
+    <property name="title">
+     <string>界面视图</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="help">
+    <property name="title">
+     <string>帮助</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="quickview">
+    <property name="title">
+     <string>快视图</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>任务</string>
+    </property>
+   </widget>
+   <addaction name="menu"/>
+   <addaction name="map"/>
+   <addaction name="view"/>
+   <addaction name="quickview"/>
+   <addaction name="help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="zoom_to_china">
+   <property name="text">
+    <string>缩放至中国范围</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
