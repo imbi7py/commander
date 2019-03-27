@@ -48,7 +48,7 @@ class QuickviewStore():
 
 if __name__ == '__main__':
     store_ = QuickviewStore('testrc')
-    img = PIL.Image.open('pics/emojis/0.png')
+    img = PIL.Image.open('pics/uav_img/0.jpg')
     store_.delete_all_quickviews_in_db()
     print (store_.add_a_quickview(img))
     store_.get_all_quickviews()[0]['img_pil'].show()
