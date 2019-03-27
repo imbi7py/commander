@@ -2,12 +2,11 @@
 import load_libs
 import sys, qgis, qgis.core, qgis.gui, PyQt5
 
-
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent):
-        qgis.gui.QgsMapCanvas.__init__(self, parent)
+        super(Gis_Canvas, self).__init__(parent)
         self.setVisible(True)
-        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
+        self.set_projection('4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
         #self.load_online_map('openstreetmap')
@@ -15,6 +14,31 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
+        self.init_member_widgets()
+
+    def init_member_widgets(self):
+        self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
+        self.mouse_location_label.move(0, 0)
+        self.mouse_location_label.resize(300, 20)
+
+    def mousePressEvent(self, event):
+        if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
+            self.press_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
+        super(Gis_Canvas, self).mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        mouse_map_coordinates = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
+
+        self.mouse_location_label.setText('x: %.3f  y: %.3f' % (mouse_map_coordinates.x(), mouse_map_coordinates.y()))  # 显示鼠标位置
+
+        if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
+            if 'press_location' in dir(self):
+                self.setCenter(qgis.core.QgsPointXY(
+                    self.center().x() - mouse_map_coordinates.x() + self.press_location.x(),
+                    self.center().y() - mouse_map_coordinates.y() + self.press_location.y()))
+                self.refresh()
+
+        super(Gis_Canvas, self).mouseMoveEvent(event)
 
     '''
     加载在线WMS地图
@@ -40,7 +64,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     '''
     设置显示投影
     '''
-    def set_projection(self, epsg_code='EPSG:4326'):
+    def set_projection(self, epsg_code='4326'):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
 
     def test_load_shapefile(self):
