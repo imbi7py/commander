@@ -60,10 +60,12 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         for filter_name, combobox in self.filter_comboboxes.items():
             namelabel = PyQt5.QtWidgets.QLabel(self)
             namelabel.setText(filter_name+':')
-            horizontal_layout.addWidget(namelabel)
-            horizontal_layout.addWidget(combobox)
-        vertical_layout.addLayout(horizontal_layout)
-        vertical_layout.addWidget(self.imglabel)
+            label_cb_layout = PyQt5.QtWidgets.QVBoxLayout()
+            label_cb_layout.addWidget(namelabel)
+            label_cb_layout.addWidget(combobox)
+            horizontal_layout.addLayout(label_cb_layout)
+        vertical_layout.addLayout(horizontal_layout, 1)
+        vertical_layout.addWidget(self.imglabel, 8)
 
     def init_filter_comboboxes(self):
         self.filter_comboboxes = {}

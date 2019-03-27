@@ -16,22 +16,31 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         PyQt5.uic.loadUi('main_window.ui', self)
         self.init_widgets()
         self.init_actions()
+        self.init_language()
+        self.resize(1920, 1080)
 
     def init_widgets(self):
         self.init_quickview_monitors()
         self.init_gis_canvas()
         self.init_view()
         self.init_actions()
-        
+
     def init_actions(self):
-        self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
-        self.debugButton.clicked.connect(self.debug_button_click)
+        self.show_history_quickviews.triggered.connect(self.show_history_quickviews_func)
+        self.debug.triggered.connect(self.debug_button_click)
         self.zoom_to_china.triggered.connect(self.gis_canvas.zoom_to_china)
         self.use_chinese.triggered.connect(self.init_language)
     
     def init_view(self):
-        self.main_vertical_layout = PyQt5.QtWidgets.QVBoxLayout()
-        self.setLayout(self.main_vertical_layout)
+        self.main_widget = PyQt5.QtWidgets.QWidget(self)
+        self.main_vertical_layout = PyQt5.QtWidgets.QHBoxLayout(self)
+        self.main_widget.setLayout(self.main_vertical_layout)
+        self.setCentralWidget(self.main_widget)
+        self.init_main_vertical_layout()
+    
+    def init_main_vertical_layout(self):
+        self.main_vertical_layout.addLayout(self.quickview_layout, 1)
+        self.main_vertical_layout.addWidget(self.gis_canvas, 1)
 
     
     def init_language(self):
@@ -78,7 +87,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
     def init_gis_canvas(self):
         self.gis_canvas = gis_canvas.Gis_Canvas(self)
-        self.gis_layout.addWidget(self.gis_canvas, 0, 0)
+        #self.gis_layout.addWidget(self.gis_canvas, 0, 0)
 
     def init_quickview_monitors(self):
         self.quickview_layout = PyQt5.QtWidgets.QGridLayout(self)
@@ -99,7 +108,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         for one_monitor in self.quickview_monitors.values():
             one_monitor.check_and_show_quickview(quickview_data)
 
-    def show_history_quickviews(self):
+    def show_history_quickviews_func(self):
         quickviews = self.rc.quickview_store.get_all_quickviews()
         for quickview in quickviews:
             img = quickview['img_pil']

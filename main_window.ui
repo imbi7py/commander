@@ -13,354 +13,7 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_MainWindowTitle">
-    <property name="geometry">
-     <rect>
-      <x>560</x>
-      <y>20</y>
-      <width>321</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 14pt &quot;宋体&quot;;
-font: 20pt &quot;黑体&quot;;</string>
-    </property>
-    <property name="text">
-     <string>遥感任务规划与传输监测</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_Geoinfor">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>90</y>
-      <width>121</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;宋体&quot;;</string>
-    </property>
-    <property name="text">
-     <string>地理信息显示</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_Createmission">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>610</y>
-      <width>201</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>任务规划</string>
-    </property>
-   </widget>
-   <widget class="QTableWidget" name="tableWidget_Platformcoordinates_2">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>650</y>
-      <width>1381</width>
-      <height>101</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 8pt &quot;宋体&quot;;</string>
-    </property>
-    <row>
-     <property name="text">
-      <string>并行任务数量</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>1</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>2</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>3</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>4</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>5</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>6</string>
-     </property>
-    </row>
-    <row>
-     <property name="text">
-      <string>8</string>
-     </property>
-    </row>
-    <column>
-     <property name="text">
-      <string>任务类型</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>作业模式</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>观测区域范围</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>分辨率</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>盘旋直径</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>盘旋中心</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>平台类型</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>平台数量</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>航高</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>航速</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>航拍间隔</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>航拍时间</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>传感器类型</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>工作波段</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
-      <string>焦距</string>
-     </property>
-    </column>
-    <item row="1" column="0">
-     <property name="text">
-      <string>中尺度洪涝灾害监测</string>
-     </property>
-    </item>
-    <item row="1" column="1">
-     <property name="text">
-      <string>死角区域观测</string>
-     </property>
-    </item>
-    <item row="1" column="2">
-     <property name="text">
-      <string>18km*12km</string>
-     </property>
-    </item>
-    <item row="1" column="3">
-     <property name="text">
-      <string>**（不同传感器要求不一样）</string>
-     </property>
-    </item>
-    <item row="1" column="4">
-     <property name="text">
-      <string>2m</string>
-     </property>
-    </item>
-    <item row="1" column="5">
-     <property name="text">
-      <string>116.75470E,29.13900N</string>
-     </property>
-    </item>
-    <item row="1" column="6">
-     <property name="text">
-      <string>轻小型无人机</string>
-     </property>
-    </item>
-    <item row="1" column="7">
-     <property name="text">
-      <string>4</string>
-     </property>
-    </item>
-    <item row="1" column="8">
-     <property name="text">
-      <string>200m</string>
-     </property>
-    </item>
-    <item row="1" column="9">
-     <property name="text">
-      <string>90-120km/h</string>
-     </property>
-    </item>
-    <item row="1" column="10">
-     <property name="text">
-      <string>1h</string>
-     </property>
-    </item>
-    <item row="1" column="11">
-     <property name="text">
-      <string>1h</string>
-     </property>
-    </item>
-    <item row="1" column="12">
-     <property name="text">
-      <string>大视场立体测绘相机、可见光、红外相机、MiniSAR</string>
-     </property>
-    </item>
-    <item row="1" column="13">
-     <property name="text">
-      <string>**</string>
-     </property>
-    </item>
-    <item row="1" column="14">
-     <property name="text">
-      <string>**</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>130</y>
-      <width>691</width>
-      <height>471</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="quickview_layout"/>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>230</x>
-      <y>90</y>
-      <width>304</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_Quickview">
-       <property name="styleSheet">
-        <string notr="true">font: 12pt &quot;宋体&quot;;</string>
-       </property>
-       <property name="text">
-        <string>快视图显示</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QComboBox" name="comboBox_Screenselect">
-       <property name="styleSheet">
-        <string notr="true">font: 12pt &quot;宋体&quot;;</string>
-       </property>
-       <item>
-        <property name="text">
-         <string>单屏显示</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>双屏显示</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>四屏显示</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="show_history_quickviews_button">
-       <property name="styleSheet">
-        <string notr="true">font: 12pt &quot;宋体&quot;;</string>
-       </property>
-       <property name="text">
-        <string>查看历史快视图</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="debugButton">
-    <property name="geometry">
-     <rect>
-      <x>1140</x>
-      <y>60</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>debug</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>130</y>
-      <width>681</width>
-      <height>471</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gis_layout"/>
-   </widget>
-   <zorder>tableWidget_Platformcoordinates_2</zorder>
-   <zorder>label_MainWindowTitle</zorder>
-   <zorder>label_Geoinfor</zorder>
-   <zorder>pushButton_Createmission</zorder>
-   <zorder>gridLayoutWidget</zorder>
-   <zorder>layoutWidget</zorder>
-   <zorder>debugButton</zorder>
-   <zorder>gridLayoutWidget_2</zorder>
-  </widget>
+  <widget class="QWidget" name="centralwidget"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -395,6 +48,7 @@ font: 20pt &quot;黑体&quot;;</string>
     <property name="title">
      <string>quickview</string>
     </property>
+    <addaction name="show_history_quickviews"/>
    </widget>
    <widget class="QMenu" name="mainmenu_mission">
     <property name="title">
@@ -405,6 +59,7 @@ font: 20pt &quot;黑体&quot;;</string>
     <property name="title">
      <string>debug</string>
     </property>
+    <addaction name="debug"/>
    </widget>
    <addaction name="mainmenu_mission"/>
    <addaction name="mainmenu_view"/>
@@ -469,6 +124,16 @@ font: 20pt &quot;黑体&quot;;</string>
    </property>
    <property name="text">
     <string>chinese</string>
+   </property>
+  </action>
+  <action name="show_history_quickviews">
+   <property name="text">
+    <string>show_history_quickviews</string>
+   </property>
+  </action>
+  <action name="debug">
+   <property name="text">
+    <string>debug</string>
    </property>
   </action>
  </widget>
