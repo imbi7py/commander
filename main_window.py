@@ -14,18 +14,27 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
         PyQt5.QtWidgets.QMainWindow.__init__(self)
         PyQt5.uic.loadUi('main_window.ui', self)
+        self.init_widgets()
+        self.init_actions()
+
+    def init_widgets(self):
         self.init_quickview_monitors()
         self.init_gis_canvas()
+        self.init_view()
 
-        self.init_actions()
     
     def init_actions(self):
         self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
         self.debugButton.clicked.connect(self.debug_button_click)
         self.zoom_to_china.triggered.connect(self.gis_canvas.zoom_to_china)
-        self.use_chinese.triggered.connect(self.change_language)
+        self.use_chinese.triggered.connect(self.init_language)
     
-    def change_language(self):
+    def init_view(self):
+        self.main_vertical_layout = PyQt5.QtWidgets.QVBoxLayout()
+        self.setLayout(self.main_vertical_layout)
+
+    
+    def init_language(self):
         if self.use_chinese.isChecked():
             self.setWindowTitle('指挥车')
 
@@ -72,6 +81,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.gis_layout.addWidget(self.gis_canvas, 0, 0)
 
     def init_quickview_monitors(self):
+        self.quickview_layout = PyQt5.QtWidgets.QGridLayout(self)
         cols = 2
         rows = 2
         self.quickview_monitors = {}

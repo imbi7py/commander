@@ -401,11 +401,17 @@ font: 20pt &quot;黑体&quot;;</string>
      <string>mission</string>
     </property>
    </widget>
+   <widget class="QMenu" name="mainmenu_debug">
+    <property name="title">
+     <string>debug</string>
+    </property>
+   </widget>
    <addaction name="mainmenu_mission"/>
    <addaction name="mainmenu_view"/>
    <addaction name="mainmenu_map"/>
    <addaction name="mainmenu_quickview"/>
    <addaction name="mainmenu_help"/>
+   <addaction name="mainmenu_debug"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="zoom_to_china">
