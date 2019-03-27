@@ -21,8 +21,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.init_quickview_monitors()
         self.init_gis_canvas()
         self.init_view()
-
-    
+        self.init_actions()
+        
     def init_actions(self):
         self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
         self.debugButton.clicked.connect(self.debug_button_click)
