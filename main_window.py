@@ -1,3 +1,4 @@
+# coding:utf-8
 import os, sys, logging
 import mysql.connector
 import load_libs
@@ -22,6 +23,41 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_history_quickviews_button.clicked.connect(self.show_history_quickviews)
         self.debugButton.clicked.connect(self.debug_button_click)
         self.zoom_to_china.triggered.connect(self.gis_canvas.zoom_to_china)
+        self.use_chinese.triggered.connect(self.change_language)
+    
+    def change_language(self):
+        if self.use_chinese.isChecked():
+            self.setWindowTitle('指挥车')
+
+            self.mainmenu_mission.setTitle('任务')
+
+            self.mainmenu_view.setTitle('视图')
+            self.show_quickview.setText('显示快视图')
+            self.show_map.setText('显示地图')
+            self.show_mission.setText('显示任务视图')
+            self.use_chinese.setText('use chinese')
+
+            self.mainmenu_map.setTitle('地图控件')
+            self.zoom_to_china.setText('缩放至中国')
+
+            self.mainmenu_quickview.setTitle('快视图')
+
+            self.mainmenu_help.setTitle('帮助')
+        else:
+            self.setWindowTitle('commander')
+            self.mainmenu_mission.setTitle('mission')
+            self.mainmenu_view.setTitle('view')
+            self.show_quickview.setText('show quickview')
+            self.show_map.setText('show map')
+            self.show_mission.setText('show mission')
+            self.use_chinese.setText('中文')
+
+            self.mainmenu_map.setTitle('map')
+            self.zoom_to_china.setText('zoom to china')
+
+            self.mainmenu_quickview.setTitle('quickview')
+
+            self.mainmenu_help.setTitle('help')
 
     def debug_button_click(self):
         self.gis_canvas.zoom_to_china()

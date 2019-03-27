@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1420</width>
+    <width>1412</width>
     <height>782</height>
    </rect>
   </property>
@@ -366,46 +366,103 @@ font: 20pt &quot;黑体&quot;;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1420</width>
+     <width>1412</width>
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="map">
+   <widget class="QMenu" name="mainmenu_map">
     <property name="title">
-     <string>地图</string>
+     <string>map</string>
     </property>
     <addaction name="zoom_to_china"/>
    </widget>
-   <widget class="QMenu" name="view">
+   <widget class="QMenu" name="mainmenu_view">
     <property name="title">
-     <string>界面视图</string>
+     <string>view</string>
+    </property>
+    <addaction name="show_quickview"/>
+    <addaction name="show_map"/>
+    <addaction name="show_mission"/>
+    <addaction name="separator"/>
+    <addaction name="use_chinese"/>
+   </widget>
+   <widget class="QMenu" name="mainmenu_help">
+    <property name="title">
+     <string>help</string>
     </property>
    </widget>
-   <widget class="QMenu" name="help">
+   <widget class="QMenu" name="mainmenu_quickview">
     <property name="title">
-     <string>帮助</string>
+     <string>quickview</string>
     </property>
    </widget>
-   <widget class="QMenu" name="quickview">
+   <widget class="QMenu" name="mainmenu_mission">
     <property name="title">
-     <string>快视图</string>
+     <string>mission</string>
     </property>
    </widget>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>任务</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
-   <addaction name="map"/>
-   <addaction name="view"/>
-   <addaction name="quickview"/>
-   <addaction name="help"/>
+   <addaction name="mainmenu_mission"/>
+   <addaction name="mainmenu_view"/>
+   <addaction name="mainmenu_map"/>
+   <addaction name="mainmenu_quickview"/>
+   <addaction name="mainmenu_help"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="zoom_to_china">
    <property name="text">
-    <string>缩放至中国范围</string>
+    <string>zoom to china</string>
+   </property>
+  </action>
+  <action name="show_quickview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>quickview</string>
+   </property>
+  </action>
+  <action name="show_map">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>map</string>
+   </property>
+  </action>
+  <action name="show_mission">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>mission</string>
+   </property>
+  </action>
+  <action name="use_english">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>english</string>
+   </property>
+  </action>
+  <action name="use_chinese">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>chinese</string>
    </property>
   </action>
  </widget>
