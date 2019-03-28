@@ -1,10 +1,13 @@
 import sys, platform, os
 
 import mysql.connector
-import osgeo.ogr
+
+sys_name = platform.system().lower()
+
+if sys_name.startswith('darwin'):  # mac
+    import osgeo.ogr
 
 os.environ['QGIS_DEBUG'] = '9'
-sys_name = platform.system().lower()
 if sys_name.startswith('darwin'):  # mac
     qgispath = '/Applications/QGIS3.app/Contents'
     qgis_pypath = qgispath + '/Resources/python'
