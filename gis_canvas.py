@@ -24,7 +24,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.mission_layers = []
         self.load_online_map('openstreetmap')
         # self.test_add_geometry()
-        self.test_load_shapefile()
+        # self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
         self.init_member_widgets()
