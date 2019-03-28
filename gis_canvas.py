@@ -2,19 +2,33 @@
 import load_libs
 import sys, qgis, qgis.core, qgis.gui, PyQt5
 
+
+def points_to_QgsLine(points_list):
+    return qgis.core.QgsGeometry.fromPolyline(
+        [qgis.core.QgsPoint(x, y) for x, y in points_list]
+    )
+
+
+def points_to_simple_QgsPolygon(points_list):
+    return qgis.core.QgsGeometry.fromPolygonXY([
+        [qgis.core.QgsPointXY(x, y) for x, y in points_list]
+    ])
+
+
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent):
         super(Gis_Canvas, self).__init__(parent)
         self.setVisible(True)
-        self.set_projection('4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
+        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
-        #self.load_online_map('openstreetmap')
-        #self.test_add_geometry()
-        self.test_load_shapefile()
+        self.load_online_map('openstreetmap')
+        # self.test_add_geometry()
+        # self.test_load_shapefile()
         self.zoom_to_china()
         self.refresh()
         self.init_member_widgets()
+        self.refresh()
 
     def init_member_widgets(self):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
@@ -43,7 +57,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     '''
     加载在线WMS地图
     '''
-    def load_online_map(self, source='openstreetmap'):
+    def load_online_map(self, source):
         service_uri = ''
         if source == 'openstreetmap':
             url = 'a.tile.openstreetmap.org/{z}/{x}/{y}.png?apikey=99d9c81a71684632866e776b7a9035db'
@@ -83,6 +97,46 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.setLayers(self.mission_layers + self.base_map_layers)
         self.refresh()
 
+    def show_temp_polyline_from_points_list(self,
+                                           points_list,
+                                           epsgcode,
+                                           color=PyQt5.QtCore.Qt.black,
+                                           width=3,
+                                           line_style=PyQt5.QtCore.Qt.SolidLine, #DashLine, DotLine, DashDotLine, DashDotDotLine
+                                           ):
+        poly = qgis.gui.QgsRubberBand(self, False)
+        poly.setToGeometry(points_to_QgsLine(points_list), None)
+        poly.setColor(color)
+        poly.setWidth(width)
+        poly.setLineStyle(line_style)
+        poly.show()
+
+    def show_temp_polygon_from_points_list(self, points_list, epsgcode):
+        poly = qgis.gui.QgsRubberBand(self)
+        poly.setToGeometry(points_to_simple_QgsPolygon(points_list), None)
+        poly.setColor(PyQt5.QtGui.QColor(0, 0, 255))
+        poly.setFillColor(PyQt5.QtGui.QColor(255,255,0))
+        poly.setWidth(3)
+        poly.show()
+
+    def add_polygon_layer_from_points_list(self, points_list, epsgcode):
+        layer = qgis.core.QgsVectorLayer("Polygon?crs=epsg:%s&field=fldtxt:string" % epsgcode, "layer", "memory")
+        f = qgis.core.QgsFeature()
+        g = points_to_simple_QgsPolygon(points_list)
+        f.setGeometry(g)
+        layer.dataProvider().addFeatures([f])
+        qgis.core.QgsProject.instance().addMapLayer(layer, True)
+        self.setLayers([layer] + self.layers())
+
+    def add_polygon_layer_from_wkt(self, wkt_str, epsgcode):
+        layer = qgis.core.QgsVectorLayer("Polygon?crs=epsg:%s&field=fldtxt:string" % epsgcode, "layer", "memory")
+        f = qgis.core.QgsFeature()
+        geo = qgis.core.QgsGeometry.fromWkt(wkt_str)
+        f.setGeometry(geo)
+        layer.dataProvider().addFeatures([f])
+        qgis.core.QgsProject.instance().addMapLayer(layer, True)
+        self.setLayers([layer] + self.layers())
+
     def test_add_geometry(self):
         layer = qgis.core.QgsVectorLayer("Polygon?crs=epsg:4326&field=fldtxt:string", "layer", "memory")
         f = qgis.core.QgsFeature()
@@ -97,9 +151,15 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         qgis.core.QgsProject.instance().addMapLayer(layer, True)
         self.setLayers([layer] + self.layers())
 
-    def zoom_to_china(self):
-        self.setExtent(qgis.core.QgsRectangle(74, 10, 135, 54))
+    def zoom_to_rectangle(self, min_x, min_y, max_x, max_y):
+        self.setExtent(qgis.core.QgsRectangle(min_x, min_y, max_x, max_y))
         self.refresh()
+
+    def zoom_to_china(self):
+        self.zoom_to_rectangle(74, 10, 135, 54)
+
+    def zoom_to_pku(self):
+        self.zoom_to_rectangle(116.294, 39.980, 116.315, 40)
 
 
 class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):

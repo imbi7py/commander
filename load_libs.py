@@ -1,5 +1,8 @@
 import sys, platform, os
 
+import mysql.connector
+import osgeo.ogr
+
 os.environ['QGIS_DEBUG'] = '9'
 sys_name = platform.system().lower()
 if sys_name.startswith('darwin'):  # mac
