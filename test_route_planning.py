@@ -8,13 +8,21 @@ import mission_planning.route_planning
 class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
-        self.resize(1000, 1000)
+
+        self.fix_screen_resolution(0.9)
+
+        self.main_widget = PyQt5.QtWidgets.QWidget(self)
+        self.main_layout = PyQt5.QtWidgets.QVBoxLayout(self)
+        self.main_widget.setLayout(self.main_layout)
+        self.setCentralWidget(self.main_widget)
+
         self.canvas = gis_canvas.Gis_Canvas(self)
-        self.canvas.resize(1000, 800)
-        self.canvas.move(0, 0)
-        self.button = PyQt5.QtWidgets.QPushButton(self)
-        self.button.move(0, 800)
+        self.main_layout.addWidget(self.canvas)
+
+        self.button= PyQt5.QtWidgets.QPushButton(self)
+        self.main_layout.addWidget(self.button)
         self.button.clicked.connect(self.onClick)
+
         self.canvas.zoom_to_pku()
 
         shoot_coors_geo, photo_ground_rectangles_geo, debug_info = mission_planning.route_planning.plan_a_route_for_test()
@@ -32,6 +40,10 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
                                                            color=PyQt5.QtCore.Qt.red,
                                                            width=1,
                                                            line_style=PyQt5.QtCore.Qt.SolidLine)
+
+    def fix_screen_resolution(self, percentage=0.9):
+        screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()  #获取屏幕分辨率
+        self.resize(screenRect.width()*percentage, screenRect.height()*percentage)
 
     def onClick(self):
         print('ok')
