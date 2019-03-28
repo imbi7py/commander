@@ -1,6 +1,6 @@
 # commander
 
-# 依赖环境(windows)
+# 依赖环境及安装方式(windows)
 ## QGIS
 http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到默认路径)  
 ```qt_desinger : C:\Program Files\QGIS 3.6\apps\Qt5\bin\designer.exe```  
@@ -11,6 +11,12 @@ conda install numpy mysql-connector-python pillow
 ## mysql后端服务
 linux/mac: conda install mysql
 windows: https://www.mysql.com/cn/downloads/
+
+## GDAL
+下载 https://download.lfd.uci.edu/pythonlibs/u2hcgva4/GDAL-2.3.3-cp37-cp37m-win_amd64.whl  
+提供者:(https://www.lfd.uci.edu/~gohlke/pythonlibs/#gdal)  
+pip install GDAL-2.3.3-cp37-cp37m-win_amd64.whl
+
 
 # 程序入口
 主窗口&后端服务
