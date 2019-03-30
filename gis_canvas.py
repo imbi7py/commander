@@ -18,16 +18,19 @@ def points_to_simple_QgsPolygon(points_list):
 
 
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
-    def __init__(self, parent):
+    def __init__(self, parent, rc=None):
         super(Gis_Canvas, self).__init__(parent)
+        self.rc = rc
+        if self.rc is not None:
+            self.rc.gis_canvas = self
         self.setVisible(True)
         self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
         self.on_draw_polygon = False
-        # self.load_online_map('openstreetmap')
+        self.load_online_map('openstreetmap')
         # self.test_add_geometry()
-        self.test_load_shapefile()
+        # self.test_load_shapefile()
         self.zoom_to_china()
         self.init_member_widgets()
         self.refresh()
@@ -176,12 +179,12 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.show()
         return poly
 
-    def show_temp_polygon_from_points_list(self, points_list, epsgcode):
+    def show_temp_polygon_from_points_list(self, points_list, epsgcode=None, width=3, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow):
         poly = qgis.gui.QgsRubberBand(self)
         poly.setToGeometry(points_to_simple_QgsPolygon(points_list), None)
-        poly.setColor(PyQt5.QtGui.QColor(0, 0, 255))
-        poly.setFillColor(PyQt5.QtGui.QColor(255,255,0))
-        poly.setWidth(3)
+        poly.setColor(edgecolor)
+        poly.setFillColor(fillcolor)
+        poly.setWidth(width)
         poly.show()
         return poly
 
