@@ -18,23 +18,17 @@ def points_to_simple_QgsPolygon(points_list):
 
 
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
-    def __init__(self, parent,handle):
+    def __init__(self, parent):
         super(Gis_Canvas, self).__init__(parent)
         self.setVisible(True)
         self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
-        self.on_draw=False
-        self.on_draw_points=[]
-        self.handle=handle
-        self.poly = qgis.gui.QgsRubberBand(self)
-        self.all_temp_layer=[]
-        #self.if_finish_polygon=False
-        #self.load_online_map('openstreetmap')
+        self.on_draw_polygon = False
+        # self.load_online_map('openstreetmap')
         # self.test_add_geometry()
         self.test_load_shapefile()
         self.zoom_to_china()
-        self.refresh()
         self.init_member_widgets()
         self.refresh()
 
@@ -48,41 +42,60 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         point_window_x=self.center().x()+(point.x()-center.x())/self.mapUnitsPerPixel()
         point_window_y=self.center().y()-(point.y()-center.y())/self.mapUnitsPerPixel()
         return (point_window_x, point_window_y)
+    
+    def start_draw_polygon(self, handler_func):
+        self.on_draw_polygon = True
+        self.handler_func = handler_func
+        self.reset_drawing_polygon()
+    
+    def reset_drawing_polygon(self):
+        self.on_draw_polygon_points=[]
+        if 'poly' in dir(self):
+            self.poly.hide()
+            del(self.poly)
+        self.poly = qgis.gui.QgsRubberBand(self)
+    
+    def add_draw_polygon_point(self, new_point_map_location):
+        assert self.on_draw_polygon
+        self.on_draw_polygon_points.append(
+            (new_point_map_location.x(), new_point_map_location.y()))
+    
+    def on_draw_polygon_mouse_move(self, new_mouse_location):
+        assert self.on_draw_polygon
+        if len(self.on_draw_polygon_points) > 0:
+            self.poly.hide()
+            del(self.poly)
+            poly_to_show = self.on_draw_polygon_points + \
+                [(new_mouse_location.x(), new_mouse_location.y())] + \
+                self.on_draw_polygon_points[:1]
+            self.poly = self.show_temp_polyline_from_points_list(poly_to_show, 'EPSG:4326')
+            self.refresh()
+    
+    def finish_draw_a_polygon(self):
+        if len(self.on_draw_polygon_points) > 3:
+            transfer_points_list=self.clockwise_on_draw_points(self.on_draw_polygon_points)
+            if not POLYGON_AS_CLOCKWISE:
+                transfer_points_list.reverse()
+            self.handler_func(transfer_points_list)
+        self.reset_drawing_polygon()
+
+    def stop_draw_polygon(self):
+        self.on_draw_polygon = False
+        self.reset_drawing_polygon()
 
     def mousePressEvent(self, event):
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
-            self.press_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
-            if self.on_draw==True:
-                self.on_draw_points.append(self.press_location)
-                on_draw_points_window=[]
-                for point in self.on_draw_points:
-                    on_draw_points_window.append((point.x(),point.y()))
-                if len(self.on_draw_points)>0:
-                    on_draw_points_window.append((self.on_draw_points[0].x(),self.on_draw_points[0].y()))
+            self.press_location = mouse_map_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
+            if self.on_draw_polygon:
+                self.add_draw_polygon_point(mouse_map_location)
 
-                self.hide_temp_polyline_from_points_list(self.poly)
-                self.poly=self.show_temp_polyline_from_points_list(on_draw_points_window,'EPSG:4326')
-                self.refresh()
-
-        if self.on_draw==True and event.buttons()==PyQt5.QtCore.Qt.RightButton:
-            self.on_draw_points = []
-            self.hide_temp_polyline_from_points_list(self.poly)
+        if self.on_draw_polygon and event.buttons() == PyQt5.QtCore.Qt.RightButton:
+            self.reset_drawing_polygon()
         super(Gis_Canvas, self).mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
-        if self.on_draw==True:
-            self.hide_temp_polyline_from_points_list(self.poly)
-            on_draw_polygon_window=[]
-            for point in self.on_draw_points:
-                on_draw_polygon_window.append((point.x(), point.y()))
-            poly=self.show_temp_polygon_from_points_list(on_draw_polygon_window, 'EPSG:4326')
-            self.all_temp_layer.append(poly)
-            transfer_points_list=self.clickwise_on_draw_points(self.on_draw_points)
-            if POLYGON_AS_CLOCKWISE ==False:
-                transfer_points_list.reverse()
-            self.handle(transfer_points_list)
-            self.on_draw_points=[]
-            self.refresh()
+        if self.on_draw_polygon==True:
+            self.finish_draw_a_polygon()
         super(Gis_Canvas, self).mouseDoubleClickEvent(event)
 
 
@@ -91,15 +104,8 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 
         self.mouse_location_label.setText('x: %.3f  y: %.3f' % (mouse_map_coordinates.x(), mouse_map_coordinates.y()))  # 显示鼠标位置
 
-        if self.on_draw==True and len(self.on_draw_points)!=0:
-            self.hide_temp_polyline_from_points_list(self.poly)
-            on_draw_points_window = []
-            for point in self.on_draw_points:
-                on_draw_points_window.append((point.x(), point.y()))
-            on_draw_points_window.append((mouse_map_coordinates.x(),mouse_map_coordinates.y()))
-            on_draw_points_window.append((self.on_draw_points[0].x(),self.on_draw_points[0].y()))
-            self.poly = self.show_temp_polyline_from_points_list(on_draw_points_window, 'EPSG:4326')
-            self.refresh()
+        if self.on_draw_polygon:
+            self.on_draw_polygon_mouse_move(mouse_map_coordinates)
 
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
             if 'press_location' in dir(self):
@@ -169,9 +175,6 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.show()
         return poly
 
-    def hide_temp_polyline_from_points_list(self,poly):
-        poly.hide()
-
     def show_temp_polygon_from_points_list(self, points_list, epsgcode):
         poly = qgis.gui.QgsRubberBand(self)
         poly.setToGeometry(points_to_simple_QgsPolygon(points_list), None)
@@ -180,9 +183,6 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.setWidth(3)
         poly.show()
         return poly
-
-    def hide_temp_polygon_from_points_list(self,poly):
-        poly.hide()
 
     def add_polygon_layer_from_points_list(self, points_list, epsgcode):
         layer = qgis.core.QgsVectorLayer("Polygon?crs=epsg:%s&field=fldtxt:string" % epsgcode, "layer", "memory")
@@ -226,29 +226,29 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def zoom_to_pku(self):
         self.zoom_to_rectangle(116.294, 39.980, 116.315, 40)
 
-    def clickwise_on_draw_points(self,points):
+    def clockwise_on_draw_points(self,points):
         n=0
-        x_min_value=points[0].x()
-        y_value=points[0].y()
+        x_min_value=points[0][0]
+        y_value=points[0][1]
         length=len(points)
         for i in range(length):
-            if points[i].x()<x_min_value:
+            if points[i][0]<x_min_value:
                 n=i
-                x_min_value=points[i].x()
-            elif points[i].x()==x_min_value:
-                if points[i].y()>y_value:
+                x_min_value=points[i][0]
+            elif points[i][0]==x_min_value:
+                if points[i][1]>y_value:
                     n = i
-                    x_min_value = points[i].x()
-                    y_value=points[i].y()
+                    x_min_value = points[i][0]
+                    y_value=points[i][1]
         #作差积，判断多边形为顺时针还是逆时针
-        x1=points[n].x()-points[(n-1+length)%length].x()
-        y1=points[n].y()-points[(n-1+length)%length].y()
-        x2 = points[(n + 1) % length].x() - points[n].x()
-        y2 = points[(n + 1) % length].y() - points[n].y()
+        x1=points[n][1]-points[(n-1+length)%length][0]
+        y1=points[n][1]-points[(n-1+length)%length][1]
+        x2 = points[(n + 1) % length][0] - points[n][0]
+        y2 = points[(n + 1) % length][1] - points[n][1]
         vector=x1*y2-x2*y1
         points_list=[]
         for point in points:
-            points_list.append((point.x(),point.y()))
+            points_list.append((point[0],point[1]))
         if(vector>0):
             points_list.reverse()
         return points_list
@@ -262,10 +262,11 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.main_layout = PyQt5.QtWidgets.QVBoxLayout(self)
         self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
-        self.handle_func = lambda polygon: print(polygon)
 
-        self.canvas = Gis_Canvas(self,self.handle_func)
+        self.canvas = Gis_Canvas(self)
         self.main_layout.addWidget(self.canvas)
+        self.drawed_polygon = []
+        self.drawed_polygon_rubber_band = []
 
 
         #设置button布局
@@ -309,21 +310,28 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         #self.resize(screenRect.width()*0.8, screenRect.height()*0.8)
         self.canvas.zoom_to_china()
 
+    def draw_polygon_handler_func(self, one_polygon):
+        self.drawed_polygon.append([one_polygon])
+        self.drawed_polygon_rubber_band.append(
+            self.canvas.show_temp_polygon_from_points_list(one_polygon, 'EPSG:4326'))
+
     def start_draw_click(self):
-        self.canvas.on_draw = True
+        self.canvas.start_draw_polygon(self.draw_polygon_handler_func)
 
     def stop_draw_click(self):
-        self.canvas.on_draw = False
+        self.canvas.stop_draw_polygon()
 
     def clean_current_click(self):
-        if len(self.canvas.all_temp_layer)>0:
-            self.canvas.hide_temp_polygon_from_points_list(self.canvas.all_temp_layer[-1])
-        del(self.canvas.all_temp_layer[-1])
+        if len(self.drawed_polygon):
+            self.drawed_polygon_rubber_band[-1].hide()
+            del(self.drawed_polygon[-1])
+            del(self.drawed_polygon_rubber_band[-1])
 
     def clean_all_click(self):
-        for poly in self.canvas.all_temp_layer:
-            self.canvas.hide_temp_polygon_from_points_list(poly)
-
+        for i in range(len(self.drawed_polygon)):
+            self.drawed_polygon_rubber_band[-1].hide()
+            del(self.drawed_polygon[-1])
+            del(self.drawed_polygon_rubber_band[-1])
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
