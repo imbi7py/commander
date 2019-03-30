@@ -50,7 +50,7 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):
         self.type = type_
         self.binding_object = binding_object
         self.setText(0, binding_object.name)
-        self.attribute = []
+        self.set_checked(True)
     
     def get_right_click_menu(self):
         menu = PyQt5.QtWidgets.QMenu(self.rc.main_window)
@@ -60,6 +60,22 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):
             menu_item = menu.addAction('删除观测区域')
             menu_item.triggered.connect(lambda: print('TODO 删除观测区域'))
         return menu
+    
+    def on_click(self):
+        self.on_checked_changed()
+    
+    def set_checked(self, is_checked):
+        if is_checked:
+            self.setCheckState(0, PyQt5.QtCore.Qt.Checked)
+        else:
+            self.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
+        self.on_checked_changed()
+    
+    def on_checked_changed(self):
+        if self.checkState(0) == PyQt5.QtCore.Qt.Checked:
+            self.binding_object.show()
+        else:
+            self.binding_object.hide()
 
 class Mission_Widget(PyQt5.QtWidgets.QTreeWidget):
     def __init__(self, main_window, rc):
@@ -67,10 +83,14 @@ class Mission_Widget(PyQt5.QtWidgets.QTreeWidget):
         self.rc = rc
         self.rc.mission_widget = self
         self.setHeaderLabels(['所有飞行区域'])
+        self.itemClicked.connect(self.on_itemclicked)
+    
+    def on_itemclicked(self, item, column):
+        item.on_click()
 
     def mousePressEvent(self, event):
+        item = self.itemAt(event.pos())
         if event.buttons() == PyQt5.QtCore.Qt.RightButton:
-            item = self.itemAt(event.pos())
             if item:
                 menu = item.get_right_click_menu()
                 menu.move(event.globalPos())

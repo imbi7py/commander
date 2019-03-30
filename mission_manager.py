@@ -10,6 +10,12 @@ class Area():
         self.missions = {}
         self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
+    
+    def show(self):
+        self.rubber_band.show()
+    
+    def hide(self):
+        self.rubber_band.hide()
 
 class MissionManager():
     def __init__(self, rc):
