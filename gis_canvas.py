@@ -88,9 +88,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             self.press_location = mouse_map_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
             if self.on_draw_polygon:
                 self.add_draw_polygon_point(mouse_map_location)
+        elif event.buttons() == PyQt5.QtCore.Qt.RightButton:
+            if self.on_draw_polygon:
+                self.reset_drawing_polygon()
 
-        if self.on_draw_polygon and event.buttons() == PyQt5.QtCore.Qt.RightButton:
-            self.reset_drawing_polygon()
         super(Gis_Canvas, self).mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
@@ -306,8 +307,6 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.resize(screenRect.width()*percentage, screenRect.height()*percentage)
 
     def to_china_click(self):
-        screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()  #获取屏幕分辨率
-        #self.resize(screenRect.width()*0.8, screenRect.height()*0.8)
         self.canvas.zoom_to_china()
 
     def draw_polygon_handler_func(self, one_polygon):
