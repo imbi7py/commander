@@ -121,26 +121,33 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.debug.triggered.connect(self.debug_button_click)
         self.zoom_to_china.triggered.connect(self.gis_canvas.zoom_to_china)
         self.use_chinese.triggered.connect(self.init_language)
-        self.show_quickview.triggered.connect(self.reset_main_vertical_layout)
-        self.show_mission.triggered.connect(self.reset_main_vertical_layout)
+        self.show_quickview.triggered.connect(self.refresh_widgets_visible)
+        self.show_mission.triggered.connect(self.refresh_widgets_visible)
+        self.show_map.triggered.connect(self.refresh_widgets_visible)
     
     def init_view(self):
         self.main_widget = PyQt5.QtWidgets.QWidget(self)
         self.main_vertical_layout = PyQt5.QtWidgets.QHBoxLayout(self)
         self.main_widget.setLayout(self.main_vertical_layout)
         self.setCentralWidget(self.main_widget)
-        self.reset_main_vertical_layout()
-    
-    def reset_main_vertical_layout(self):
-        for i in range(self.main_vertical_layout.count()):
-            self.main_vertical_layout.removeItem(
-                self.main_vertical_layout.itemAt(0)
-            )
-        if self.show_quickview.isChecked():
-            self.main_vertical_layout.addLayout(self.quickview_layout, 2)
-        if self.show_mission.isChecked():
-            self.main_vertical_layout.addWidget(self.mission_widget, 1)
+        self.main_vertical_layout.addWidget(self.quickview_widget, 2)
+        self.main_vertical_layout.addWidget(self.mission_widget, 1)
         self.main_vertical_layout.addWidget(self.gis_canvas, 2)
+        self.refresh_widgets_visible()
+
+    def refresh_widgets_visible(self):
+        if self.show_quickview.isChecked():
+            self.quickview_widget.show()
+        else:
+            self.quickview_widget.hide()
+        if self.show_mission.isChecked():
+            self.mission_widget.show()
+        else:
+            self.mission_widget.hide()
+        if self.show_map.isChecked():
+            self.gis_canvas.show()
+        else:
+            self.gis_canvas.hide()
     
     def init_language(self):
         if self.use_chinese.isChecked():
@@ -191,7 +198,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.gis_canvas = gis_canvas.Gis_Canvas(self, self.rc)
 
     def init_quickview_monitors(self):
+        self.quickview_widget = PyQt5.QtWidgets.QWidget(self)
         self.quickview_layout = PyQt5.QtWidgets.QGridLayout(self)
+        self.quickview_widget.setLayout(self.quickview_layout)
         cols = 2
         rows = 2
         self.quickview_monitors = {}
