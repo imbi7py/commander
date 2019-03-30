@@ -39,6 +39,11 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
         self.mouse_location_label.move(0, 0)
         self.mouse_location_label.resize(300, 20)
+        self.roam_check_box = PyQt5.QtWidgets.QCheckBox(self)
+        self.roam_check_box.move(300, 0)
+        self.roam_check_box.setText('漫游')
+        self.roam_check_box.set_checked = lambda checked: self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Checked) if checked else self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Unchecked)
+        self.roam_check_box.set_checked(True)
 
     def to_window_point(self,point):
         center=self.getCoordinateTransform().toMapCoordinates(self.center().x(),self.center().y())
@@ -50,6 +55,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.on_draw_polygon = True
         self.handler_func = handler_func
         self.reset_drawing_polygon()
+        self.roam_check_box.set_checked(False)
     
     def reset_drawing_polygon(self):
         self.on_draw_polygon_points=[]
@@ -85,6 +91,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def stop_draw_polygon(self):
         self.on_draw_polygon = False
         self.reset_drawing_polygon()
+        self.roam_check_box.set_checked(True)
 
     def mousePressEvent(self, event):
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
@@ -112,7 +119,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             self.on_draw_polygon_mouse_move(mouse_map_coordinates)
 
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
-            if 'press_location' in dir(self):
+            if self.roam_check_box.isChecked() and 'press_location' in dir(self):
                 self.setCenter(qgis.core.QgsPointXY(
                     self.center().x() - mouse_map_coordinates.x() + self.press_location.x(),
                     self.center().y() - mouse_map_coordinates.y() + self.press_location.y()))

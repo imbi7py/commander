@@ -17,9 +17,7 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.start_draw()
     
     def start_draw(self):
-        if 'polygon_rubber_band' in dir(self):
-            self.polygon_rubber_band.hide()
-            del(self.polygon_rubber_band)
+        self.clear_rubber_band()
         self.rc.gis_canvas.start_draw_polygon(self.draw_finished)
     
     def draw_finished(self, polygon):
@@ -27,6 +25,15 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.coors_label.setText(str(self.polygon))
         self.rc.gis_canvas.stop_draw_polygon()
         self.polygon_rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow)
+    
+    def clear_rubber_band(self):
+        if 'polygon_rubber_band' in dir(self):
+            self.polygon_rubber_band.hide()
+            del(self.polygon_rubber_band)
+
+    def done(self, r):
+        self.clear_rubber_band()
+        PyQt5.QtWidgets.QDialog.done(self, r)
     
     def accept(self):
         if self.polygon is None:
@@ -38,8 +45,6 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
             if not success:
                 PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: %s' % ret)
             else:
-                self.polygon_rubber_band.hide()
-                del(self.polygon_rubber_band)
                 self.close()
 
 class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):
