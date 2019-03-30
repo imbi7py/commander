@@ -160,14 +160,14 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.setLayers(self.mission_layers + self.base_map_layers)
         self.refresh()
 
-    def show_temp_polyline_from_points_list(self,
-                                            points_list,
-                                            epsgcode,
-                                            color=PyQt5.QtCore.Qt.black,
-                                            size=30,
-                                            width=10,
-                                            line_style=PyQt5.QtCore.Qt.SolidLine, #DashLine, DotLine, DashDotLine, DashDotDotLine
-                                           ):
+    def show_temp_polyline_from_points_list( \
+            self,
+            points_list,
+            epsgcode,
+            color=PyQt5.QtCore.Qt.black,
+            width=10,
+            line_style=PyQt5.QtCore.Qt.SolidLine, #DashLine, DotLine, DashDotLine, DashDotDotLine
+                ):
         poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.LineGeometry)
         poly.setToGeometry(points_to_QgsLine(points_list), None)
         poly.setColor(color)
