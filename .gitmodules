@@ -1,0 +1,3 @@
+[submodule "mission_planning"]
+	path = mission_planning
+	url = https://github.com/lab505/mission_planning.git
