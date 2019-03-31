@@ -6,121 +6,7 @@ import PyQt5
 import resource_context
 import quickview_monitor
 import gis_canvas
-
-class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
-    def __init__(self, parent, rc):
-        PyQt5.QtWidgets.QDialog.__init__(self, parent)
-        PyQt5.uic.loadUi('add_area_dialog.ui', self)
-        self.rc = rc
-        self.reDraw.clicked.connect(self.start_draw)
-        self.polygon = None
-        self.start_draw()
-    
-    def start_draw(self):
-        self.clear_rubber_band()
-        self.rc.gis_canvas.start_draw_polygon(self.draw_finished)
-    
-    def draw_finished(self, polygon):
-        self.polygon = polygon
-        self.coors_label.setText(str(self.polygon))
-        self.rc.gis_canvas.stop_draw_polygon()
-        self.polygon_rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow)
-    
-    def clear_rubber_band(self):
-        if 'polygon_rubber_band' in dir(self):
-            self.polygon_rubber_band.hide()
-            del(self.polygon_rubber_band)
-
-    def done(self, r):
-        self.clear_rubber_band()
-        PyQt5.QtWidgets.QDialog.done(self, r)
-    
-    def accept(self):
-        if self.polygon is None:
-            PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: please draw a polygon')
-        else:
-            area_name = self.area_name_textedit.toPlainText()
-            area_polygon = self.polygon
-            success, ret = self.rc.mission_manager.add_area(area_name, area_polygon)
-            if not success:
-                PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: %s' % ret)
-            else:
-                self.close()
-
-class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):
-    def __init__(self, parent, rc, type_, binding_object):
-        PyQt5.QtWidgets.QTreeWidgetItem.__init__(self, parent)
-        self.parent = parent
-        self.rc = rc
-        self.type = type_
-        self.binding_object = binding_object
-        self.setText(0, binding_object.name)
-        self.set_checked(True)
-    
-    def get_right_click_menu(self):
-        menu = PyQt5.QtWidgets.QMenu(self.rc.main_window)
-        if self.type == 'area':
-            menu_item = menu.addAction('添加飞行任务')
-            menu_item.triggered.connect(lambda: print('TODO 完成添加飞行任务'))
-            menu_item = menu.addAction('删除观测区域')
-            menu_item.triggered.connect(lambda: print('TODO 删除观测区域'))
-        return menu
-    
-    def on_click(self):
-        self.on_checked_changed()
-    
-    def set_checked(self, is_checked):
-        if is_checked:
-            self.setCheckState(0, PyQt5.QtCore.Qt.Checked)
-        else:
-            self.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
-        self.on_checked_changed()
-    
-    def on_checked_changed(self):
-        if self.checkState(0) == PyQt5.QtCore.Qt.Checked:
-            self.binding_object.show()
-        else:
-            self.binding_object.hide()
-
-class Mission_Widget(PyQt5.QtWidgets.QTreeWidget):
-    def __init__(self, main_window, rc):
-        PyQt5.QtWidgets.QTreeWidget.__init__(self, main_window)
-        self.rc = rc
-        self.rc.mission_widget = self
-        self.setHeaderLabels(['所有飞行区域'])
-        self.itemClicked.connect(self.on_itemclicked)
-    
-    def on_itemclicked(self, item, column):
-        item.on_click()
-
-    def mousePressEvent(self, event):
-        item = self.itemAt(event.pos())
-        if event.buttons() == PyQt5.QtCore.Qt.RightButton:
-            if item:
-                menu = item.get_right_click_menu()
-                menu.move(event.globalPos())
-                menu.show()
-            else:
-                menu = self.get_right_click_menu()
-                menu.move(event.globalPos())
-                menu.show()
-        super(Mission_Widget, self).mousePressEvent(event)
-    
-    def get_right_click_menu(self):
-        menu = PyQt5.QtWidgets.QMenu(self)
-        menu_item = menu.addAction('添加飞行区域')
-        menu_item.triggered.connect(self.add_area_dialog)
-        return menu
-    
-    def add_area_dialog(self):
-        dialog = Add_Area_Dialog(self.rc.main_window, self.rc)
-        dialog.move(self.mapToGlobal(self.pos()))
-        dialog.show()
-    
-    def add_area(self, area_object):
-        area_item = Mission_Widget_Item(self, self.rc, 'area', area_object)
-        area_item.setExpanded(True)
-        return area_item
+import mission_widget
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -217,7 +103,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.rc.init_resources(self)
     
     def init_mission_widget(self):
-        self.mission_widget = Mission_Widget(self, self.rc)
+        self.mission_widget = mission_widget.Mission_Widget(self, self.rc)
 
     def init_gis_canvas(self):
         self.gis_canvas = gis_canvas.Gis_Canvas(self, self.rc)

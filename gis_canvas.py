@@ -173,7 +173,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def show_temp_polyline_from_points_list( \
             self,
             points_list,
-            epsgcode,
+            epsgcode=None,
             color=PyQt5.QtCore.Qt.black,
             width=10,
             line_style=PyQt5.QtCore.Qt.SolidLine, #DashLine, DotLine, DashDotLine, DashDotDotLine
