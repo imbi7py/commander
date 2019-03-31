@@ -1,5 +1,12 @@
 # commander
 
+# 代码下载
+```
+git clone https://github.com/lab505/commander.git
+cd commander
+git pull --recurse-submodules
+```
+
 # 依赖环境及安装方式(windows)
 ## QGIS
 http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到默认路径)  
