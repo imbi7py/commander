@@ -4,7 +4,8 @@
 ```
 git clone https://github.com/lab505/commander.git
 cd commander
-git pull --recurse-submodules
+git submodule init
+git submodule update
 ```
 
 # 依赖环境及安装方式(windows)
