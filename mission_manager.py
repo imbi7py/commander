@@ -37,6 +37,20 @@ class Fly_Mission():
             binding_object=rubber_band
         )
         self.son_mission_widget_items.append(item)
+    
+    def create_points_rubber_band(self, name, points, color, width, line_style):
+        rubber_band = self.rc.gis_canvas.show_temp_points_from_points_list(
+            points,
+            color=color, width=width)
+        rubber_band.name = name
+        self.rubber_bands.append(rubber_band)
+        item = mission_widget.Mission_Widget_Item(
+            rc=self.rc,
+            parent=self.mission_widget_item,
+            type_='geometry',
+            binding_object=rubber_band
+        )
+        self.son_mission_widget_items.append(item)
 
     def create_rubber_bands(self):
         self.create_polyline_rubber_band(
@@ -49,6 +63,12 @@ class Fly_Mission():
             name='航线',
             polyline=self.mission_attribute['shoot_coors_geo'],
             color=PyQt5.QtCore.Qt.blue,
+            width=2,
+            line_style=PyQt5.QtCore.Qt.SolidLine)
+        self.create_points_rubber_band(
+            name='拍摄点',
+            points=self.mission_attribute['shoot_coors_geo'],
+            color=PyQt5.QtCore.Qt.green,
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
     

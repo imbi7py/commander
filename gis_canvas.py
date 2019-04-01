@@ -186,6 +186,15 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.show()
         return poly
 
+    def show_temp_points_from_points_list(self, points_list, epsgcode=None, width=3, color=PyQt5.QtCore.Qt.black):
+        poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.PointGeometry)
+        for x, y in points_list:
+            poly.addPoint(qgis.core.QgsPointXY(x, y))
+        poly.setColor(color)
+        poly.setWidth(width)
+        poly.show()
+        return poly
+
     def show_temp_polygon_from_points_list(self, points_list, epsgcode=None, width=3, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow):
         poly = qgis.gui.QgsRubberBand(self)
         poly.setToGeometry(points_to_simple_QgsPolygon(points_list), None)
@@ -323,6 +332,7 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.drawed_polygon.append([one_polygon])
         self.drawed_polygon_rubber_band.append(
             self.canvas.show_temp_polygon_from_points_list(one_polygon, 'EPSG:4326'))
+        self.canvas.show_temp_points_from_points_list(one_polygon, width=100)
 
     def start_draw_click(self):
         self.canvas.start_draw_polygon(self.draw_polygon_handler_func)
