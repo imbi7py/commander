@@ -14,11 +14,14 @@ http://qgis.org/downloads/QGIS-OSGeo4W-3.6.0-1-Setup-x86_64.exe (建议安装到
 ```qt_desinger : C:\Program Files\QGIS 3.6\apps\Qt5\bin\designer.exe```  
 ## conda with py37
 https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Windows-x86_64.exe  
-conda install numpy mysql-connector-python pillow
+```
+conda install numpy mysql-connector-python
+pip install geographiclib pillow
+```
 
 ## mysql后端服务
-linux/mac: conda install mysql
-windows: https://www.mysql.com/cn/downloads/
+linux/mac: conda install mysql  
+windows: https://dev.mysql.com/downloads/mysql/
 
 ## GDAL
 下载 https://download.lfd.uci.edu/pythonlibs/u2hcgva4/GDAL-2.3.3-cp37-cp37m-win_amd64.whl  
