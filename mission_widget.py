@@ -77,6 +77,7 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):
             'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
         }
+        print('reso', params['ground_resolution_m'])
         succ, ret = mission_planning.mission_planning(
             area_points_list=params['area'],
             mission_name=params['mission_name'],
