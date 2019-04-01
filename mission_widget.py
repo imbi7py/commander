@@ -105,6 +105,7 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.rc = rc
         self.reDraw.clicked.connect(self.start_draw)
         self.polygon = None
+        self.coors_label.setWordWrap(True)
         self.start_draw()
     
     def start_draw(self):
