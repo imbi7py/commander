@@ -128,6 +128,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def show_realtime_quickview(self, quickview_data):
         for one_monitor in self.quickview_monitors.values():
             one_monitor.check_and_show_quickview(quickview_data)
+            
 
     def show_history_quickviews_func(self):
         quickviews = self.rc.quickview_store.get_all_quickviews()
