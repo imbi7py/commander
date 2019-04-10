@@ -1,4 +1,4 @@
-# coding:utf-8
+ # coding:utf-8
 
 import PyQt5
 import mission_widget
@@ -13,7 +13,7 @@ class Fly_Mission():
         self.rubber_bands = []
         self.mission_widget_item = self.create_mission_widget_item()
         self.create_rubber_bands()
-    
+        
     def create_mission_widget_item(self):
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
@@ -23,7 +23,6 @@ class Fly_Mission():
         )
         item.setExpanded(True)
         return item
-    
     def create_polyline_rubber_band(self, name, polyline, color, width, line_style):
         rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
             polyline,
@@ -72,6 +71,9 @@ class Fly_Mission():
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
     
+    def showtype(self):
+        print(self.mission_attribute)
+
     def show(self):
         if 'mission_widget_item' in dir(self):
             if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Checked:
@@ -84,7 +86,7 @@ class Fly_Mission():
             if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Unchecked:
                 self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
         for item in self.son_mission_widget_items:
-            item.set_checked(False)
+            item.set_checked(False)   
 
 class Area():
     def __init__(self, rc, name, polygon):
@@ -92,7 +94,7 @@ class Area():
         self.name = name
         self.polygon = polygon
         self.missions = {}
-        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)
+        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
     
     def show(self):
@@ -106,7 +108,7 @@ class Area():
             if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Unchecked:
                 self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
         self.rubber_band.hide()
-    
+        
     def create_fly_mission(self, mission_attribute):
         newmission_name = mission_attribute['name']
         if newmission_name in self.missions:
@@ -115,8 +117,15 @@ class Area():
         self.missions[newmission_name] = newmission
         self.hide()
         return True, None
-        
 
+    def delet_missions(self):
+        self.hide()
+        del self.rubber_band
+        for key in list(self.missions):
+            self.missions.pop(key)
+        del self.mission_widget_item
+        del self
+            
 class MissionManager():
     def __init__(self, rc):
         self.rc = rc
