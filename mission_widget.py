@@ -86,7 +86,8 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
             'ground_resolution_m': self.ground_resolution_m_textedit.toPlainText(),
             'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
-        }#获取控件中的信息，判断单选框是否被选中
+        }
+        print('reso', self.params['ground_resolution_m'])
         succ, ret = mission_planning.mission_planning(
             area_points_list=self.params['area'],
             mission_name=self.params['mission_name'],

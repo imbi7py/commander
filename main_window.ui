@@ -54,6 +54,7 @@
     <property name="title">
      <string>mission</string>
     </property>
+    <addaction name="actionstart_fly"/>
    </widget>
    <widget class="QMenu" name="mainmenu_debug">
     <property name="title">
@@ -140,6 +141,11 @@
   <action name="debug">
    <property name="text">
     <string>debug</string>
+   </property>
+  </action>
+  <action name="actionstart_fly">
+   <property name="text">
+    <string>start_fly</string>
    </property>
   </action>
  </widget>
