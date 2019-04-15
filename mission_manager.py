@@ -3,7 +3,7 @@
 任务数据实体
 """
 
-import PyQt5
+import PyQt5, PyQt5.QtWidgets
 import mission_widget
 
 class Fly_Mission():
