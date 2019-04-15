@@ -13,6 +13,15 @@ class Fly_Mission():
         self.rubber_bands = []
         self.mission_widget_item = self.create_mission_widget_item()
         self.create_rubber_bands()
+    
+    def delete(self):
+        self.hide()
+        del self.rubber_bands[:]
+        for item in self.son_mission_widget_items:
+            item.parent.removeChild(item)
+        self.mission_widget_item.parent.removeChild(self.mission_widget_item)
+        del self.area.missions[self.name]
+        del self
         
     def create_mission_widget_item(self):
         item = mission_widget.Mission_Widget_Item(
@@ -86,7 +95,7 @@ class Fly_Mission():
             if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Unchecked:
                 self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
         for item in self.son_mission_widget_items:
-            item.set_checked(False)   
+            item.set_checked(False)
 
 class Area():
     def __init__(self, rc, name, polygon):
@@ -117,13 +126,13 @@ class Area():
         self.missions[newmission_name] = newmission
         self.hide()
         return True, None
-
-    def delet_missions(self):
+    
+    def delete(self):
         self.hide()
-        del self.rubber_band
-        for key in list(self.missions):
-            self.missions.pop(key)
+        for mission_name in list(self.missions.keys()):
+            self.missions[mission_name].delete()
         del self.mission_widget_item
+        self.rc.mission_manager.del_area(self.name)
         del self
             
 class MissionManager():
@@ -139,3 +148,6 @@ class MissionManager():
         newarea = Area(self.rc, area_name, area_polygon)
         self.areas[area_name] = newarea
         return True, newarea
+    
+    def del_area(self, area_name):
+        del self.areas[area_name]

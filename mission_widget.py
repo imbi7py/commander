@@ -87,7 +87,6 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
             'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
         }
-        print('reso', self.params['ground_resolution_m'])
         succ, ret = mission_planning.mission_planning(
             area_points_list=self.params['area'],
             mission_name=self.params['mission_name'],
@@ -167,42 +166,24 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):#飞行区域的列�
             menu_item = menu.addAction('添加飞行任务')#向QMeau小控件中添加一个操作按钮，其中包括文字或者涂图标，删除菜单菜单栏额内容用clear（）
             menu_item.triggered.connect(self.show_add_fly_mission_dialog)
             menu_item = menu.addAction('删除观测区域')
-            menu_item.triggered.connect(self.delete_mission)
+            menu_item.triggered.connect(self.delete)
+        elif self.type == 'fly_mission':
+            menu_item = menu.addAction('删除飞行任务')
+            menu_item.triggered.connect(self.delete)
         return menu
 
     def show_add_fly_mission_dialog(self):#显示添加飞行任务的框，创建框的对象
         dialog = Add_Fly_Mission_Dialog(self.rc.main_window, self.rc, self.binding_object)
         dialog.show()
 
-    def delete_mission(self):
-        #print('type:', type(self.binding_object))
-        print('bo:', self.binding_object)
-        print('missions:', self.binding_object.missions)
-        #print(self.binding_object.mission_widget_item)
-        for key in list(self.binding_object.missions):
-            self.binding_object.missions[key].hide()
-            #print('missions_attribute:',self.binding_object.missions[key].mission_attribute)
-            rubber_band=self.binding_object.missions[key].rubber_bands[:]
-            print(rubber_band)
-            for item in rubber_band[:]:
-                rubber_band.remove(item)
-            print(rubber_band)
-            del rubber_band
-            son_mission_widget_item=self.binding_object.missions[key].son_mission_widget_items[:]
-            print(son_mission_widget_item)
-            for item in son_mission_widget_item[:]:
-                son_mission_widget_item.remove(item)
-            print(son_mission_widget_item)
-            del son_mission_widget_item
-            mission_attribute=self.binding_object.missions[key].mission_attribute
-            for key in list(mission_attribute):
-                mission_attribute.pop(key)
-            print('mission_attribute:',mission_attribute)
-        mission_manager.Area.delet_missions(self.binding_object)
-        #del self.binding_object
+    def delete(self):
+        self.binding_object.delete()
+        del self.binding_object
+        if self.type == 'area':
+            self.parent.takeTopLevelItem(self.parent.indexOfTopLevelItem(self))
+        else:
+            self.parent.removeChild(self)
         del self
-        
-        #最后删除item自己
 
     def on_click(self):#点击后决定是显示还是隐藏
         self.on_checked_changed()
