@@ -1,4 +1,7 @@
+# coding:utf-8
 '''
+任务控件(Mission Widget相关)
+
 1.先是建立了飞行任务的框Add_Fly_Mission_Dialog，设置了飞行的框里所有值的获取方式，以及当任务发生变化的时候，任务名称、应用范围、载荷以载荷参数的变化，以及平台载荷发生变化后相应的属性值跟着变化
 2.框中所有值的获取根据上面设定的获取方式
 3.先是定义了创建区域添加框的类Add_Area_Dialog，以及所有值的获取方式，多边形的绘制和坐标的获取（gis_canvas.py）
@@ -7,7 +10,6 @@
 6.代码的顺序把实际操作的过程反过来了
 
 '''
-# coding:utf-8
 import PyQt5
 import mission_manager
 from mission_planning import camera, aerocraft, preload_missions, mission_planning

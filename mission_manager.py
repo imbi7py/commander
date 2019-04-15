@@ -1,9 +1,16 @@
  # coding:utf-8
+"""
+任务数据实体
+"""
 
 import PyQt5
 import mission_widget
 
 class Fly_Mission():
+    """
+    飞行任务(Fly_Mission)
+    一个飞行区域(Area)中可以有很多个飞行任务
+    """
     def __init__(self, rc, name, area, mission_attribute):
         self.rc = rc
         self.name = name
@@ -98,6 +105,9 @@ class Fly_Mission():
             item.set_checked(False)
 
 class Area():
+    """
+    飞行区域(Area)
+    """
     def __init__(self, rc, name, polygon):
         self.rc = rc
         self.name = name
@@ -136,6 +146,10 @@ class Area():
         del self
             
 class MissionManager():
+    """
+    任务管理器
+    可以包含很多个飞行区域
+    """
     def __init__(self, rc):
         self.rc = rc
         self.rc.mission_manager = self
