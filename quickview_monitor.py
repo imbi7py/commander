@@ -1,4 +1,5 @@
-import PyQt5
+import sys
+import PyQt5, PyQt5.QtWidgets
 import img_utils
 
 class Filter_Combobox(PyQt5.QtWidgets.QComboBox):
@@ -12,9 +13,10 @@ class Filter_Combobox(PyQt5.QtWidgets.QComboBox):
 
     def init_items(self):
         self.items = ['All', 'None']
-        self.items = self.items + self.rc.cfg.get(
-            'quickview_filter_item_preload', {}).get(
-                self.filter_name, [])
+        if self.rc is not None:  # 测试时self.rc可能是None
+            self.items = self.items + self.rc.cfg.get(
+                'quickview_filter_item_preload', {}).get(
+                    self.filter_name, [])
         for item in self.items:
             self.addItem(item)
         self.setCurrentIndex(self.findText('All'))
@@ -49,6 +51,19 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         self.imglabel = PyQt5.QtWidgets.QLabel(self)
         self.init_filter_comboboxes()
         self.init_layout()
+
+    def mousePressEvent(self, event):
+        if event.buttons() == PyQt5.QtCore.Qt.RightButton:#右键
+            menu = PyQt5.QtWidgets.QMenu(self)
+            menu_item = menu.addAction('放大显示')
+            menu_item.triggered.connect(self.show_large_img)
+            menu.move(event.globalPos())
+            menu.show()
+        super(Quickview_Monitor, self).mousePressEvent(event)
+
+    def show_large_img(self):
+        if 'img' in dir(self):
+            self.img.show()
 
     def clear_img(self):
         self.imglabel.clear()
@@ -91,7 +106,9 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
             self.show_infor(one_quickview_data)
 
     def show_img(self, pil_img):
+        self.img = pil_img
         labelsize = self.imglabel.size()
+        print(labelsize)
         pil_img = pil_img.resize((labelsize.width(), labelsize.height()))
         tmp_file_name = '.quickview_monitor_tmp.%s.png' % self.name
         pil_img.save(tmp_file_name, 'png')
@@ -101,3 +118,20 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         img_infor='平台：'
         img_infor=img_infor+one_quickview_data['aircraft_type']+'\n'+'传感器：'+one_quickview_data['sensor_type']
         self.imglabel.setToolTip(img_infor)
+
+if __name__ == '__main__':
+    class Test_Main(PyQt5.QtWidgets.QMainWindow):
+        def __init__(self):
+            PyQt5.QtWidgets.QMainWindow.__init__(self)
+            self.resize(800, 600)
+            self.quickview_monitor_widget = Quickview_Monitor(self, None, 'qm')
+            self.setCentralWidget(self.quickview_monitor_widget)
+    
+    app = PyQt5.QtWidgets.QApplication(sys.argv)
+    form = Test_Main()
+    form.show()
+    
+    from PIL import Image
+    img = Image.open('pics/uav_img/0.jpg')
+    form.quickview_monitor_widget.show_img(img)
+    sys.exit(app.exec_())
