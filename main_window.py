@@ -86,6 +86,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.zoom_to_china.setText('缩放至中国')
 
             self.mainmenu_quickview.setTitle('快视图')
+            self.show_history_quickviews.setText('显示历史快视图')
             self.actionshow_1_quickviews.setText('显示1张快视图')
             self.actionshow_2_quickviews_h.setText('水平显示2张快视图')
             self.actionshow_2_quickviews_v.setText('垂直显示2张快视图')
@@ -105,10 +106,11 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.zoom_to_china.setText('zoom to china')
 
             self.mainmenu_quickview.setTitle('quickview')
-            self.actionshow_1_quickviews.setTitle('show 1 quickviews')
-            self.actionshow_2_quickviews_h.setTitle('show 2 quickviews horizontal')
-            self.actionshow_2_quickviews_v.setTitle('show 2 quickviews vertical')
-            self.actionshow_4_quickviews.setTitle('show 4 quickviews')
+            self.show_history_quickviews.setText('show history quickviews')
+            self.actionshow_1_quickviews.setText('show 1 quickviews')
+            self.actionshow_2_quickviews_h.setText('show 2 quickviews horizontal')
+            self.actionshow_2_quickviews_v.setText('show 2 quickviews vertical')
+            self.actionshow_4_quickviews.setText('show 4 quickviews')
 
             self.mainmenu_help.setTitle('help')
 
