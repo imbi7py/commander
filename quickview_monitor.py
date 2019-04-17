@@ -62,11 +62,12 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         super(Quickview_Monitor, self).mousePressEvent(event)
 
     def show_large_img(self):
-        if 'img' in dir(self):
+        if 'img' in dir(self) and self.img:
             self.img.show()
 
     def clear_img(self):
         self.imglabel.clear()
+        self.img = None
 
     def init_layout(self):
         vertical_layout = PyQt5.QtWidgets.QVBoxLayout()

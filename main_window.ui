@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1412</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="mainmenu_map">
@@ -49,6 +49,11 @@
      <string>quickview</string>
     </property>
     <addaction name="show_history_quickviews"/>
+    <addaction name="separator"/>
+    <addaction name="actionshow_1_quickviews"/>
+    <addaction name="actionshow_2_quickviews_h"/>
+    <addaction name="actionshow_2_quickviews_v"/>
+    <addaction name="actionshow_4_quickviews"/>
    </widget>
    <widget class="QMenu" name="mainmenu_mission">
     <property name="title">
@@ -146,6 +151,26 @@
   <action name="actionstart_fly">
    <property name="text">
     <string>start_fly</string>
+   </property>
+  </action>
+  <action name="actionshow_1_quickviews">
+   <property name="text">
+    <string>show 1 quickviews</string>
+   </property>
+  </action>
+  <action name="actionshow_2_quickviews_h">
+   <property name="text">
+    <string>show 2 quickviews horizontal</string>
+   </property>
+  </action>
+  <action name="actionshow_2_quickviews_v">
+   <property name="text">
+    <string>show 2 quickviews vertical</string>
+   </property>
+  </action>
+  <action name="actionshow_4_quickviews">
+   <property name="text">
+    <string>show 4 quickviews</string>
    </property>
   </action>
  </widget>

@@ -1,5 +1,5 @@
 # coding:utf-8
-import os, sys, logging
+import os, sys, logging, functools
 import mysql.connector
 import load_libs
 import PyQt5
@@ -21,7 +21,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.gis_canvas.zoom_to_pku()
 
     def init_widgets(self):
-        self.init_quickview_monitors()
+        self.init_quickview_monitors_widgets()
+        self.init_quickview_monitors_view(2, 2)
         self.init_gis_canvas()
         self.init_mission_widget()
         self.init_view()
@@ -35,6 +36,11 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_quickview.triggered.connect(self.refresh_widgets_visible)
         self.show_mission.triggered.connect(self.refresh_widgets_visible)
         self.show_map.triggered.connect(self.refresh_widgets_visible)
+
+        self.actionshow_1_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 1))
+        self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))
+        self.actionshow_2_quickviews_v.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 2))
+        self.actionshow_4_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 2))
     
     def init_view(self):
         self.main_widget = PyQt5.QtWidgets.QWidget(self)
@@ -47,6 +53,10 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.refresh_widgets_visible()
 
     def refresh_widgets_visible(self):
+        for x in range(self.quickview_layout.maxcols):
+            for y in range(self.quickview_layout.maxrows):
+                self.quickview_monitors_mat[y][x].clear_img()
+
         if self.show_quickview.isChecked():
             self.quickview_widget.show()
         else:
@@ -76,6 +86,10 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.zoom_to_china.setText('缩放至中国')
 
             self.mainmenu_quickview.setTitle('快视图')
+            self.actionshow_1_quickviews.setText('显示1张快视图')
+            self.actionshow_2_quickviews_h.setText('水平显示2张快视图')
+            self.actionshow_2_quickviews_v.setText('垂直显示2张快视图')
+            self.actionshow_4_quickviews.setText('显示4张快视图')
 
             self.mainmenu_help.setTitle('帮助')
         else:
@@ -91,6 +105,10 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.zoom_to_china.setText('zoom to china')
 
             self.mainmenu_quickview.setTitle('quickview')
+            self.actionshow_1_quickviews.setTitle('show 1 quickviews')
+            self.actionshow_2_quickviews_h.setTitle('show 2 quickviews horizontal')
+            self.actionshow_2_quickviews_v.setTitle('show 2 quickviews vertical')
+            self.actionshow_4_quickviews.setTitle('show 4 quickviews')
 
             self.mainmenu_help.setTitle('help')
 
@@ -107,23 +125,35 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
     def init_gis_canvas(self):
         self.gis_canvas = gis_canvas.Gis_Canvas(self, self.rc)
-
-    def init_quickview_monitors(self):
+    
+    def init_quickview_monitors_widgets(self):
         self.quickview_widget = PyQt5.QtWidgets.QWidget(self)
         self.quickview_layout = PyQt5.QtWidgets.QGridLayout(self)
         self.quickview_widget.setLayout(self.quickview_layout)
-        cols = 2
-        rows = 2
+        self.quickview_layout.maxrows = 2
+        self.quickview_layout.maxcols = 2
         self.quickview_monitors = {}
+        self.quickview_monitors_mat = []
 
         def init_one_quickview_monitor(x, y):
             name = '%d_%d' % (x, y)
             one_monitor = quickview_monitor.Quickview_Monitor(self, self.rc, name)
             self.quickview_monitors[name] = one_monitor
             self.quickview_layout.addWidget(one_monitor, x, y)
-        for x in range(cols):
-            for y in range(rows):
-                init_one_quickview_monitor(x, y)
+            return one_monitor
+        for x in range(self.quickview_layout.maxcols):
+            self.quickview_monitors_mat.append([])
+            for y in range(self.quickview_layout.maxrows):
+                self.quickview_monitors_mat[x].append(init_one_quickview_monitor(x, y))
+
+    def init_quickview_monitors_view(self, rows, cols):
+        for x in range(self.quickview_layout.maxcols):
+            for y in range(self.quickview_layout.maxrows):
+                self.quickview_monitors_mat[y][x].clear_img()
+                if x < cols and y < rows:
+                    self.quickview_monitors_mat[y][x].show()
+                else:
+                    self.quickview_monitors_mat[y][x].hide()
 
     def show_realtime_quickview(self, quickview_data):
         for one_monitor in self.quickview_monitors.values():
