@@ -139,10 +139,12 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         menu.addAction('使用web墨卡托投影(epsg3857)').triggered.connect(lambda: self.set_projection('EPSG:3857'))
         menu.addAction('使用wgs84经纬度投影(epsg4326)').triggered.connect(lambda: self.set_projection('EPSG:4326'))
         menu.addSeparator()
-        menu.addAction('使用 open street map').triggered.connect(lambda: self.load_online_map('openstreetmap'))
-        menu.addAction('使用 open street map cycle').triggered.connect(lambda: self.load_online_map('openstreetmap_cycle'))
-        menu.addAction('使用高德地图(有偏)').triggered.connect(lambda: self.load_online_map('amap7'))
-        menu.addAction('使用高德卫星图(有偏)').triggered.connect(lambda: self.load_online_map('amap6'))
+        menu.addAction('使用 open street map(较快)').triggered.connect(lambda: self.load_online_map('openstreetmap'))
+        menu.addAction('使用 google 卫星图(快)').triggered.connect(lambda: self.load_online_map('google_sate'))
+        menu.addAction('使用 google 带路网的卫星图(有偏,慢)').triggered.connect(lambda: self.load_online_map('google_sate_with_road'))
+        menu.addAction('使用 open street map cycle(较快)').triggered.connect(lambda: self.load_online_map('openstreetmap_cycle'))
+        menu.addAction('使用高德地图(有偏,快)').triggered.connect(lambda: self.load_online_map('amap7'))
+        menu.addAction('使用高德卫星图(有偏,快)').triggered.connect(lambda: self.load_online_map('amap6'))
         menu.move(pos)
         menu.show()
 
@@ -188,20 +190,33 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     加载在线WMS地图
     '''
     def load_online_map(self, source):
-        service_uri = ''
+        new_base_map_layer = None
         if source == 'openstreetmap':
             url = 'a.tile.openstreetmap.org/{z}/{x}/{y}.png?apikey=99d9c81a71684632866e776b7a9035db'
             service_uri = "type=xyz&zmin=0&zmax=19&url=http://" + url
+            new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
         elif source == 'openstreetmap_cycle':
             url = 'tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=99d9c81a71684632866e776b7a9035db'
             service_uri = "type=xyz&zmin=0&zmax=19&url=http://" + url
+            new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
         elif source == 'amap6':
             service_uri = "type=xyz&url=http://webst04.is.autonavi.com/appmaptile?style%3D6%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0"
+            new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
         elif source == 'amap7':
             service_uri = "type=xyz&url=http://webst04.is.autonavi.com/appmaptile?style%3D7%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0"
+            new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
+        elif source == 'google_sate':
+            new_base_map_layer = qgis.core.QgsRasterLayer(
+                'type=xyz&url=http://www.google.com/maps/vt?lyrs%3Ds@189%26gl%3Dus%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=21&zmin=0',
+                'base_map', 'wms')
+        elif source == 'google_sate_with_road':
+            new_base_map_layer = qgis.core.QgsRasterLayer(
+                'type=xyz&url=http://www.google.com/maps/vt?lyrs%3Dy@189%26gl%3Dus%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=21&zmin=0',
+                'base_map', 'wms')
+        elif source == 'ESRI_Imagery_World_2D':
+            new_base_map_layer = qgis.core.QgsRasterLayer("http://server.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer?f=json&pretty=true","raster")
         else:
             raise 'unknown online map source %s' % str(source)
-        new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
         for old_base_map_layer in self.base_map_layers:
             qgis.core.QgsProject.instance().removeMapLayer(old_base_map_layer)
         self.base_map_layers = [new_base_map_layer]
