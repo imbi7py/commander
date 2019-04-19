@@ -131,11 +131,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def show_right_click_menu(self, pos):
         menu = PyQt5.QtWidgets.QMenu(self)
         if self.isFullScreen():
-            menu_item = menu.addAction('退出全屏显示')
-            menu_item.triggered.connect(self.exit_fullscreen)
+            menu.addAction('退出全屏显示').triggered.connect(self.exit_fullscreen)
         else:
-            menu_item = menu.addAction('全屏显示')
-            menu_item.triggered.connect(self.fullscreen)
+            menu.addAction('全屏显示').triggered.connect(self.fullscreen)
+        
+        menu.addSeparator()
+        menu.addAction('使用web墨卡托投影').triggered.connect(lambda: self.set_projection('EPSG:3857'))
+        menu.addAction('使用wgs84经纬度投影').triggered.connect(lambda: self.set_projection('EPSG:4326'))
+        menu.addSeparator()
+        menu.addAction('使用 open street map').triggered.connect(lambda: self.load_online_map('openstreetmap'))
+        menu.addAction('使用 open street map cycle').triggered.connect(lambda: self.load_online_map('openstreetmap_cycle'))
+        menu.addAction('使用高德地图(有偏)').triggered.connect(lambda: self.load_online_map('amap7'))
+        menu.addAction('使用高德卫星图(有偏)').triggered.connect(lambda: self.load_online_map('amap6'))
         menu.move(pos)
         menu.show()
 
