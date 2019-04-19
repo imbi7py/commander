@@ -31,8 +31,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.load_online_map('openstreetmap')
         # self.test_add_geometry()
         # self.test_load_shapefile()
-        self.zoom_to_china()
+        self.zoom_to_pku()
         self.init_member_widgets()
+        self.setParallelRenderingEnabled(True)
+        self.setCachingEnabled(True)
         self.refresh()
 
     def init_member_widgets(self):
@@ -138,6 +140,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         elif source == 'openstreetmap_cycle':
             url = 'tile.thunderforest.com/cycle/{z}/{x}/{y}.png?apikey=99d9c81a71684632866e776b7a9035db'
             service_uri = "type=xyz&zmin=0&zmax=19&url=http://" + url
+        elif source == 'amap6':
+            service_uri = "type=xyz&url=http://webst04.is.autonavi.com/appmaptile?style%3D6%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0"
+        elif source == 'amap7':
+            service_uri = "type=xyz&url=http://webst04.is.autonavi.com/appmaptile?style%3D7%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&zmax=18&zmin=0"
         else:
             raise 'unknown online map source %s' % str(source)
         new_base_map_layer = qgis.core.QgsRasterLayer(service_uri, 'base_map', 'wms')
@@ -316,6 +322,21 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.clean_all_button = PyQt5.QtWidgets.QPushButton('删除所有多边形', self)
         self.button_layout.addWidget(self.clean_all_button, 0, 4)
         self.clean_all_button.clicked.connect(self.clean_all_click)
+
+        import functools
+        b = PyQt5.QtWidgets.QPushButton('use_amap', self)
+        self.button_layout.addWidget(b, 0, 5)
+        b.clicked.connect(functools.partial(
+            self.canvas.load_online_map, 'amap6'))
+
+        b = PyQt5.QtWidgets.QPushButton('use_openstreetmap', self)
+        self.button_layout.addWidget(b, 0, 6)
+        b.clicked.connect(functools.partial(
+            self.canvas.load_online_map, 'openstreetmap'))
+
+        b = PyQt5.QtWidgets.QPushButton('zoom to pku', self)
+        self.button_layout.addWidget(b, 0, 7)
+        b.clicked.connect(self.canvas.zoom_to_pku)
 
         self.main_layout.addLayout(self.hbox)
         self.fix_screen_resolution()
