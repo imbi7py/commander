@@ -136,8 +136,8 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             menu.addAction('全屏显示').triggered.connect(self.fullscreen)
         
         menu.addSeparator()
-        menu.addAction('使用web墨卡托投影').triggered.connect(lambda: self.set_projection('EPSG:3857'))
-        menu.addAction('使用wgs84经纬度投影').triggered.connect(lambda: self.set_projection('EPSG:4326'))
+        menu.addAction('使用web墨卡托投影(epsg3857)').triggered.connect(lambda: self.set_projection('EPSG:3857'))
+        menu.addAction('使用wgs84经纬度投影(epsg4326)').triggered.connect(lambda: self.set_projection('EPSG:4326'))
         menu.addSeparator()
         menu.addAction('使用 open street map').triggered.connect(lambda: self.load_online_map('openstreetmap'))
         menu.addAction('使用 open street map cycle').triggered.connect(lambda: self.load_online_map('openstreetmap_cycle'))
