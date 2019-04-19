@@ -41,6 +41,11 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))
         self.actionshow_2_quickviews_v.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 2))
         self.actionshow_4_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 2))
+
+        self.actionuse_open_street_map.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'openstreetmap'))
+        self.actionuse_open_street_map_cycle.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'openstreetmap_cycle'))
+        self.actionuse_amap_6.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'amap6'))
+        self.actionuse_amap_7.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'amap7'))
     
     def init_view(self):
         self.main_widget = PyQt5.QtWidgets.QWidget(self)
@@ -84,6 +89,12 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
             self.mainmenu_map.setTitle('地图控件')
             self.zoom_to_china.setText('缩放至中国')
+            
+            self.actionuse_open_street_map.setText('使用Open street map')
+            self.actionuse_open_street_map_cycle.setText('使用Open street map cycle')
+            self.actionuse_amap_6.setText('使用高德卫星(有偏)')
+            self.actionuse_amap_7.setText('使用高德地图(有偏)')
+ 
 
             self.mainmenu_quickview.setTitle('快视图')
             self.show_history_quickviews.setText('显示历史快视图')
@@ -104,6 +115,11 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
             self.mainmenu_map.setTitle('map')
             self.zoom_to_china.setText('zoom to china')
+            
+            self.actionuse_open_street_map.setText('use Open street map')
+            self.actionuse_open_street_map_cycle.setText('use Open street map cycle')
+            self.actionuse_amap_6.setText('use amap 6')
+            self.actionuse_amap_7.setText('use amap 7')
 
             self.mainmenu_quickview.setTitle('quickview')
             self.show_history_quickviews.setText('show history quickviews')

@@ -28,6 +28,11 @@
      <string>map</string>
     </property>
     <addaction name="zoom_to_china"/>
+    <addaction name="separator"/>
+    <addaction name="actionuse_open_street_map"/>
+    <addaction name="actionuse_open_street_map_cycle"/>
+    <addaction name="actionuse_amap_6"/>
+    <addaction name="actionuse_amap_7"/>
    </widget>
    <widget class="QMenu" name="mainmenu_view">
     <property name="title">
@@ -171,6 +176,26 @@
   <action name="actionshow_4_quickviews">
    <property name="text">
     <string>show 4 quickviews</string>
+   </property>
+  </action>
+  <action name="actionuse_open_street_map">
+   <property name="text">
+    <string>use open street map</string>
+   </property>
+  </action>
+  <action name="actionuse_amap_6">
+   <property name="text">
+    <string>use amap 6</string>
+   </property>
+  </action>
+  <action name="actionuse_amap_7">
+   <property name="text">
+    <string>use amap 7</string>
+   </property>
+  </action>
+  <action name="actionuse_open_street_map_cycle">
+   <property name="text">
+    <string>use open street map cycle</string>
    </property>
   </action>
  </widget>
