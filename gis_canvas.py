@@ -16,6 +16,18 @@ def points_to_simple_QgsPolygon(points_list):
         [qgis.core.QgsPointXY(x, y) for x, y in points_list]
     ])
 
+def trans_point(source_crs, dest_crs, x, y):
+    ori_p = qgis.core.QgsPoint(x, y)
+    res_p = trans_geometry(source_crs, dest_crs, ori_p)
+    return res_p.x(), res_p.y()
+
+def trans_geometry(source_crs, dest_crs, geometry):
+    transform = qgis.core.QgsCoordinateTransform(
+        qgis.core.QgsCoordinateReferenceSystem(source_crs),
+        qgis.core.QgsCoordinateReferenceSystem(dest_crs),
+        qgis.core.QgsProject.instance())
+    geometry.transform(transform)
+    return geometry
 
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent, rc=None):
@@ -23,8 +35,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.rc = rc
         if self.rc is not None:
             self.rc.gis_canvas = self
+        self.init_member_widgets()
+        self.destinationCrsChanged.connect(lambda: self.proj_label.setText(self.get_projection()))
         self.setVisible(True)
-        self.set_projection('EPSG:4326')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
+        self.set_projection('EPSG:3857')  # 设置显示投影(4326:wgs84经纬坐标直接投影)
         self.base_map_layers = []
         self.mission_layers = []
         self.on_draw_polygon = False
@@ -32,7 +46,6 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         # self.test_add_geometry()
         # self.test_load_shapefile()
         self.zoom_to_pku()
-        self.init_member_widgets()
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
         self.refresh()
@@ -41,13 +54,17 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
         self.mouse_location_label.move(0, 0)
         self.mouse_location_label.resize(300, 20)
+        self.proj_label = PyQt5.QtWidgets.QLabel(self)
+        self.proj_label.move(300, 0)
+        self.proj_label.resize(100, 20)
+        self.proj_label.setText(self.get_projection())
         self.roam_check_box = PyQt5.QtWidgets.QCheckBox(self)
-        self.roam_check_box.move(300, 0)
+        self.roam_check_box.move(400, 0)
         self.roam_check_box.setText('漫游')
         self.roam_check_box.set_checked = lambda checked: self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Checked) if checked else self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Unchecked)
         self.roam_check_box.set_checked(True)
 
-    def to_window_point(self,point):
+    def to_window_point(self, point):
         center=self.getCoordinateTransform().toMapCoordinates(self.center().x(),self.center().y())
         point_window_x=self.center().x()+(point.x()-center.x())/self.mapUnitsPerPixel()
         point_window_y=self.center().y()-(point.y()-center.y())/self.mapUnitsPerPixel()
@@ -159,6 +176,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     '''
     def set_projection(self, epsg_code='4326'):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
+        self.refresh()
+    
+    def get_projection(self):
+        return self.mapSettings().destinationCrs().authid()
 
     def test_load_shapefile(self):
         import platform
@@ -242,15 +263,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         qgis.core.QgsProject.instance().addMapLayer(layer, True)
         self.setLayers([layer] + self.layers())
 
-    def zoom_to_rectangle(self, min_x, min_y, max_x, max_y):
-        self.setExtent(qgis.core.QgsRectangle(min_x, min_y, max_x, max_y))
+    def zoom_to_rectangle(self, min_x, min_y, max_x, max_y, epsg_code):
+        map_epsg_code = self.get_projection()
+        min_x_map, min_y_map = trans_point(epsg_code, map_epsg_code, min_x, min_y)
+        max_x_map, max_y_map = trans_point(epsg_code, map_epsg_code, max_x, max_y)
+        self.setExtent(qgis.core.QgsRectangle(min_x_map, min_y_map, max_x_map, max_y_map))
         self.refresh()
 
     def zoom_to_china(self):
-        self.zoom_to_rectangle(74, 10, 135, 54)
+        self.zoom_to_rectangle(74, 10, 135, 54, 'EPSG:4326')
 
     def zoom_to_pku(self):
-        self.zoom_to_rectangle(116.294, 39.980, 116.315, 40)
+        self.zoom_to_rectangle(116.294, 39.980, 116.315, 40, 'EPSG:4326')
 
     def clockwise_on_draw_points(self,points):
         n=0
@@ -303,6 +327,8 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.gridGroupBox.setLayout(self.button_layout)
         self.hbox.addWidget(self.gridGroupBox)
 
+        import functools
+
         self.to_china_button = PyQt5.QtWidgets.QPushButton('移动到中国',self)
         self.button_layout.addWidget(self.to_china_button,0,0)
         self.to_china_button.clicked.connect(self.to_china_click)
@@ -323,7 +349,6 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.button_layout.addWidget(self.clean_all_button, 0, 4)
         self.clean_all_button.clicked.connect(self.clean_all_click)
 
-        import functools
         b = PyQt5.QtWidgets.QPushButton('use_amap', self)
         self.button_layout.addWidget(b, 0, 5)
         b.clicked.connect(functools.partial(
@@ -337,6 +362,11 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         b = PyQt5.QtWidgets.QPushButton('zoom to pku', self)
         self.button_layout.addWidget(b, 0, 7)
         b.clicked.connect(self.canvas.zoom_to_pku)
+
+        b = PyQt5.QtWidgets.QPushButton('set_epsg4326', self)
+        self.button_layout.addWidget(b, 0, 8)
+        b.clicked.connect(functools.partial(
+            self.canvas.set_projection, 'EPSG:4326'))
 
         self.main_layout.addLayout(self.hbox)
         self.fix_screen_resolution()
