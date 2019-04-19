@@ -46,6 +46,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.actionuse_open_street_map_cycle.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'openstreetmap_cycle'))
         self.actionuse_amap_6.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'amap6'))
         self.actionuse_amap_7.triggered.connect(functools.partial(self.gis_canvas.load_online_map, 'amap7'))
+
+        self.actionuse_epsg4326.triggered.connect(functools.partial(self.gis_canvas.set_projection, 'EPSG:4326'))
+        self.actionuse_epsg3857.triggered.connect(functools.partial(self.gis_canvas.set_projection, 'EPSG:3857'))
     
     def init_view(self):
         self.main_widget = PyQt5.QtWidgets.QWidget(self)

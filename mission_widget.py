@@ -11,7 +11,7 @@
 
 '''
 import PyQt5
-import mission_manager
+import mission_manager, gis_canvas
 from mission_planning import camera, aerocraft, preload_missions, mission_planning
 
 class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
@@ -124,11 +124,13 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.clear_rubber_band()#
         self.rc.gis_canvas.start_draw_polygon(self.draw_finished)
     
-    def draw_finished(self, polygon):
+    def draw_finished(self, polygon, epsgcode):
+        polygon = gis_canvas.trans_points_list(epsgcode, 'EPSG:4326', polygon)
         self.polygon = polygon
         self.coors_label.setText(str(self.polygon))
         self.rc.gis_canvas.stop_draw_polygon()
-        self.polygon_rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow)
+        self.polygon_rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
+            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow)
     
     def clear_rubber_band(self):
         if 'polygon_rubber_band' in dir(self):

@@ -39,9 +39,11 @@ class Fly_Mission():
         )
         item.setExpanded(True)
         return item
+    
     def create_polyline_rubber_band(self, name, polyline, color, width, line_style):
         rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
             polyline,
+            'EPSG:4326',
             color=color, width=width, line_style=line_style)
         rubber_band.name = name
         self.rubber_bands.append(rubber_band)
@@ -56,6 +58,7 @@ class Fly_Mission():
     def create_points_rubber_band(self, name, points, color, width, line_style):
         rubber_band = self.rc.gis_canvas.show_temp_points_from_points_list(
             points,
+            'EPSG:4326',
             color=color, width=width)
         rubber_band.name = name
         self.rubber_bands.append(rubber_band)
@@ -113,7 +116,8 @@ class Area():
         self.name = name
         self.polygon = polygon
         self.missions = {}
-        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(self.polygon, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
+        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
+            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
     
     def show(self):

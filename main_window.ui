@@ -33,6 +33,9 @@
     <addaction name="actionuse_open_street_map_cycle"/>
     <addaction name="actionuse_amap_6"/>
     <addaction name="actionuse_amap_7"/>
+    <addaction name="separator"/>
+    <addaction name="actionuse_epsg4326"/>
+    <addaction name="actionuse_epsg3857"/>
    </widget>
    <widget class="QMenu" name="mainmenu_view">
     <property name="title">
@@ -196,6 +199,16 @@
   <action name="actionuse_open_street_map_cycle">
    <property name="text">
     <string>use open street map cycle</string>
+   </property>
+  </action>
+  <action name="actionuse_epsg4326">
+   <property name="text">
+    <string>use epsg4326</string>
+   </property>
+  </action>
+  <action name="actionuse_epsg3857">
+   <property name="text">
+    <string>use epsg3857</string>
    </property>
   </action>
  </widget>

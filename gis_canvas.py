@@ -21,6 +21,9 @@ def trans_point(source_crs, dest_crs, x, y):
     res_p = trans_geometry(source_crs, dest_crs, ori_p)
     return res_p.x(), res_p.y()
 
+def trans_points_list(source_crs, dest_crs, points_list):
+    return [trans_point(source_crs, dest_crs, x, y) for x, y in points_list]
+
 def trans_geometry(source_crs, dest_crs, geometry):
     transform = qgis.core.QgsCoordinateTransform(
         qgis.core.QgsCoordinateReferenceSystem(source_crs),
@@ -53,13 +56,13 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def init_member_widgets(self):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
         self.mouse_location_label.move(0, 0)
-        self.mouse_location_label.resize(300, 20)
+        self.mouse_location_label.resize(500, 20)
         self.proj_label = PyQt5.QtWidgets.QLabel(self)
-        self.proj_label.move(300, 0)
+        self.proj_label.move(500, 0)
         self.proj_label.resize(100, 20)
         self.proj_label.setText(self.get_projection())
         self.roam_check_box = PyQt5.QtWidgets.QCheckBox(self)
-        self.roam_check_box.move(400, 0)
+        self.roam_check_box.move(600, 0)
         self.roam_check_box.setText('漫游')
         self.roam_check_box.set_checked = lambda checked: self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Checked) if checked else self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Unchecked)
         self.roam_check_box.set_checked(True)
@@ -96,7 +99,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             poly_to_show = self.on_draw_polygon_points + \
                 [(new_mouse_location.x(), new_mouse_location.y())] + \
                 self.on_draw_polygon_points[:1]
-            self.poly = self.show_temp_polyline_from_points_list(poly_to_show, 'EPSG:4326')
+            self.poly = self.show_temp_polyline_from_points_list(poly_to_show, self.get_projection())
             self.refresh()
     
     def finish_draw_a_polygon(self):
@@ -104,7 +107,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             transfer_points_list=self.clockwise_on_draw_points(self.on_draw_polygon_points)
             if not POLYGON_AS_CLOCKWISE:
                 transfer_points_list.reverse()
-            self.handler_func(transfer_points_list)
+            self.handler_func(transfer_points_list, self.get_projection())
         self.reset_drawing_polygon()
 
     def stop_draw_polygon(self):
@@ -132,7 +135,10 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def mouseMoveEvent(self, event):
         mouse_map_coordinates = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
 
-        self.mouse_location_label.setText('x: %.3f  y: %.3f' % (mouse_map_coordinates.x(), mouse_map_coordinates.y()))  # 显示鼠标位置
+        mouse_map_x, mouse_map_y = mouse_map_coordinates.x(), mouse_map_coordinates.y()
+        mouse_lon, mouse_lat = trans_point(self.get_projection(), 'EPSG:4326', mouse_map_x, mouse_map_y)
+        self.mouse_location_label.setText('x: %.3f        y: %.3f        lon: %.3f        lat: %.3f' % (
+            mouse_map_x, mouse_map_y, mouse_lon, mouse_lat))
 
         if self.on_draw_polygon:
             self.on_draw_polygon_mouse_move(mouse_map_coordinates)
@@ -174,7 +180,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     '''
     设置显示投影
     '''
-    def set_projection(self, epsg_code='4326'):
+    def set_projection(self, epsg_code):
         self.setDestinationCrs(qgis.core.QgsCoordinateReferenceSystem(epsg_code))
         self.refresh()
     
@@ -200,31 +206,37 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def show_temp_polyline_from_points_list( \
             self,
             points_list,
-            epsgcode=None,
+            epsgcode,
             color=PyQt5.QtCore.Qt.black,
             width=10,
             line_style=PyQt5.QtCore.Qt.SolidLine, #DashLine, DotLine, DashDotLine, DashDotDotLine
                 ):
         poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.LineGeometry)
-        poly.setToGeometry(points_to_QgsLine(points_list), None)
+        geom = points_to_QgsLine(points_list)
+        geom = trans_geometry(epsgcode, self.get_projection(), geom)
+        poly.setToGeometry(geom, None)
         poly.setColor(color)
         poly.setWidth(width)
         poly.setLineStyle(line_style)
         poly.show()
         return poly
 
-    def show_temp_points_from_points_list(self, points_list, epsgcode=None, width=1, color=PyQt5.QtCore.Qt.black):
+    def show_temp_points_from_points_list(self, points_list, epsgcode, width=1, color=PyQt5.QtCore.Qt.black):
         poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.PointGeometry)
+        map_epsgcode = self.get_projection()
         for x, y in points_list:
+            x, y = trans_point(epsgcode, map_epsgcode, x, y)
             poly.addPoint(qgis.core.QgsPointXY(x, y))
         poly.setColor(color)
         poly.setWidth(width)
         poly.show()
         return poly
 
-    def show_temp_polygon_from_points_list(self, points_list, epsgcode=None, width=1, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow):
+    def show_temp_polygon_from_points_list(self, points_list, epsgcode, width=1, edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow):
         poly = qgis.gui.QgsRubberBand(self)
-        poly.setToGeometry(points_to_simple_QgsPolygon(points_list), None)
+        geom = points_to_simple_QgsPolygon(points_list)
+        geom = trans_geometry(epsgcode, self.get_projection(), geom)
+        poly.setToGeometry(geom, None)
         poly.setColor(edgecolor)
         poly.setFillColor(fillcolor)
         poly.setWidth(width)
@@ -379,11 +391,11 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
     def to_china_click(self):
         self.canvas.zoom_to_china()
 
-    def draw_polygon_handler_func(self, one_polygon):
+    def draw_polygon_handler_func(self, one_polygon, epsgcode):
         self.drawed_polygon.append([one_polygon])
         self.drawed_polygon_rubber_band.append(
-            self.canvas.show_temp_polygon_from_points_list(one_polygon, 'EPSG:4326'))
-        self.canvas.show_temp_points_from_points_list(one_polygon, width=100)
+            self.canvas.show_temp_polygon_from_points_list(one_polygon, epsgcode))
+        self.canvas.show_temp_points_from_points_list(one_polygon, width=100, epsgcode=epsgcode)
 
     def start_draw_click(self):
         self.canvas.start_draw_polygon(self.draw_polygon_handler_func)
