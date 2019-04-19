@@ -55,12 +55,12 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.main_vertical_layout = PyQt5.QtWidgets.QHBoxLayout(self)
         self.main_widget.setLayout(self.main_vertical_layout)
         self.setCentralWidget(self.main_widget)
-        self.main_vertical_layout.addWidget(self.mission_widget, 1)
-        self.main_vertical_layout.addWidget(self.gis_canvas, 2)
-        self.main_vertical_layout.addWidget(self.quickview_widget, 2)
         self.refresh_widgets_visible()
 
     def refresh_widgets_visible(self):
+        self.main_vertical_layout.addWidget(self.mission_widget, 1)
+        self.main_vertical_layout.addWidget(self.gis_canvas, 2)
+        self.main_vertical_layout.addWidget(self.quickview_widget, 2)
         for x in range(self.quickview_layout.maxcols):
             for y in range(self.quickview_layout.maxrows):
                 self.quickview_monitors_mat[y][x].clear_img()
@@ -134,8 +134,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.mainmenu_help.setTitle('help')
 
     def debug_button_click(self):
-        self.gis_canvas.zoom_to_china()
-        self.gis_canvas.refresh()
+        self.gis_canvas.setParent(None)
+        self.gis_canvas.showMaximized()
+        self.gis_canvas.show()
 
     def init_resource(self):
         self.rc = resource_context.ResourceContext()

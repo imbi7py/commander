@@ -34,6 +34,7 @@ def trans_geometry(source_crs, dest_crs, geometry):
 
 class Gis_Canvas(qgis.gui.QgsMapCanvas):
     def __init__(self, parent, rc=None):
+        self.oriparent = parent
         super(Gis_Canvas, self).__init__(parent)
         self.rc = rc
         if self.rc is not None:
@@ -52,6 +53,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
         self.refresh()
+
+    def fullscreen(self):
+        self.oriparent = self.parentWidget()
+        self.setParent(None)
+        self.showFullScreen()
+
+    def exit_fullscreen(self):
+        self.setParent(self.oriparent)
+        self.showNormal()
+        if 'rc' in dir(self):
+            if 'main_window' in dir(self.rc):
+                self.rc.main_window.refresh_widgets_visible()
 
     def init_member_widgets(self):
         self.mouse_location_label = PyQt5.QtWidgets.QLabel(self)
@@ -115,6 +128,17 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.reset_drawing_polygon()
         self.roam_check_box.set_checked(True)
 
+    def show_right_click_menu(self, pos):
+        menu = PyQt5.QtWidgets.QMenu(self)
+        if self.isFullScreen():
+            menu_item = menu.addAction('退出全屏显示')
+            menu_item.triggered.connect(self.exit_fullscreen)
+        else:
+            menu_item = menu.addAction('全屏显示')
+            menu_item.triggered.connect(self.fullscreen)
+        menu.move(pos)
+        menu.show()
+
     def mousePressEvent(self, event):
         if event.buttons() == PyQt5.QtCore.Qt.LeftButton:
             self.press_location = mouse_map_location = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
@@ -123,6 +147,8 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         elif event.buttons() == PyQt5.QtCore.Qt.RightButton:
             if self.on_draw_polygon:
                 self.reset_drawing_polygon()
+            else:
+                self.show_right_click_menu(event.globalPos())
 
         super(Gis_Canvas, self).mousePressEvent(event)
 
@@ -130,7 +156,6 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         if self.on_draw_polygon==True:
             self.finish_draw_a_polygon()
         super(Gis_Canvas, self).mouseDoubleClickEvent(event)
-
 
     def mouseMoveEvent(self, event):
         mouse_map_coordinates = self.getCoordinateTransform().toMapCoordinates(event.x(), event.y())
@@ -379,6 +404,14 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         self.button_layout.addWidget(b, 0, 8)
         b.clicked.connect(functools.partial(
             self.canvas.set_projection, 'EPSG:4326'))
+
+        b = PyQt5.QtWidgets.QPushButton('fullscreen', self)
+        self.button_layout.addWidget(b, 0, 9)
+        b.clicked.connect(self.canvas.fullscreen)
+
+        b = PyQt5.QtWidgets.QPushButton('exit fullscreen', self)
+        self.button_layout.addWidget(b, 0, 10)
+        b.clicked.connect(self.canvas.exit_fullscreen)
 
         self.main_layout.addLayout(self.hbox)
         self.fix_screen_resolution()
