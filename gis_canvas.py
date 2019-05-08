@@ -2,6 +2,8 @@
 import load_libs
 import sys, qgis, qgis.core, qgis.gui, PyQt5
 
+import geo_polygons
+
 
 POLYGON_AS_CLOCKWISE = True
 
@@ -46,10 +48,8 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.base_map_layers = []
         self.mission_layers = []
         self.on_draw_polygon = False
-        self.load_online_map('openstreetmap')
-        # self.test_add_geometry()
-        # self.test_load_shapefile()
-        self.zoom_to_pku()
+        self.load_online_map('google_sate')
+        self.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
         self.refresh()
@@ -328,6 +328,16 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         max_x_map, max_y_map = trans_point(epsg_code, map_epsg_code, max_x, max_y)
         self.setExtent(qgis.core.QgsRectangle(min_x_map, min_y_map, max_x_map, max_y_map))
         self.refresh()
+    
+    def zoom_to_polygon(self, vertex, epsg_code):
+        minx = maxx = vertex[0][0]
+        miny = maxy = vertex[0][1]
+        for x, y in vertex:
+            minx = min(minx, x)
+            maxx = max(maxx, x)
+            maxy = max(maxy, y)
+            miny = min(miny, y)
+        self.zoom_to_rectangle(minx, miny, maxx, maxy, epsg_code)
 
     def zoom_to_china(self):
         self.zoom_to_rectangle(74, 10, 135, 54, 'EPSG:4326')
@@ -366,6 +376,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
         PyQt5.QtWidgets.QMainWindow.__init__(self)
+        self.fix_screen_resolution()
 
         self.main_widget = PyQt5.QtWidgets.QWidget(self)
         self.main_layout = PyQt5.QtWidgets.QVBoxLayout(self)
@@ -418,9 +429,9 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         b.clicked.connect(functools.partial(
             self.canvas.load_online_map, 'openstreetmap'))
 
-        b = PyQt5.QtWidgets.QPushButton('zoom to pku', self)
+        b = PyQt5.QtWidgets.QPushButton('zoom to aoxiang', self)
         self.button_layout.addWidget(b, 0, 7)
-        b.clicked.connect(self.canvas.zoom_to_pku)
+        b.clicked.connect(lambda: self.canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref']))
 
         b = PyQt5.QtWidgets.QPushButton('set_epsg4326', self)
         self.button_layout.addWidget(b, 0, 8)
@@ -436,7 +447,6 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         b.clicked.connect(self.canvas.exit_fullscreen)
 
         self.main_layout.addLayout(self.hbox)
-        self.fix_screen_resolution()
 
     
     def fix_screen_resolution(self, percentage=0.9):
