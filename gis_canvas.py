@@ -49,7 +49,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.mission_layers = []
         self.on_draw_polygon = False
         self.load_online_map('google_sate')
-        self.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])
+        self.zoom_to_aoxiang()
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
         self.refresh()
@@ -344,6 +344,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 
     def zoom_to_pku(self):
         self.zoom_to_rectangle(116.294, 39.980, 116.315, 40, 'EPSG:4326')
+    
+    def zoom_to_aoxiang(self):
+        self.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])
 
     def clockwise_on_draw_points(self,points):
         n=0
