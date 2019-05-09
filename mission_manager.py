@@ -3,6 +3,7 @@
 任务数据实体
 """
 
+import json, logging
 import PyQt5, PyQt5.QtWidgets
 import mission_widget
 
@@ -20,6 +21,25 @@ class Fly_Mission():
         self.rubber_bands = []
         self.mission_widget_item = self.create_mission_widget_item()
         self.create_rubber_bands()
+
+    @staticmethod
+    def create_from_text(rc, area, text_):
+        try:
+            dic_ = json.loads(text_)
+            assert dic_['type'] == 'Fly_Mission'
+            fly_mission_ = Fly_Mission(rc, dic_['name'], area, dic_['mission_attribute'])
+            return True, fly_mission_
+        except Exception as e:
+            logging.exception(e)
+            return False, None
+    
+    def to_text(self):
+        dic_ = {
+            'type': 'Fly_Mission',
+            'name': self.name,
+            'mission_attribute': self.mission_attribute,
+        }
+        return json.dumps(dic_)
     
     def delete(self):
         self.hide()
@@ -119,6 +139,34 @@ class Area():
         self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
             self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
+    
+    @staticmethod
+    def create_from_text(rc, area, text_):
+        try:
+            dic_ = json.loads(text_)
+            assert dic_['type'] == 'Area'
+            area_ = Area(rc, dic_['name'], dic_['polygon'])
+            missions = dic_['missions']
+            for mission_name in missions:
+                succ, ret = Fly_Mission.create_from_text(rc, area, missions[mission_name])
+                assert succ
+                area.missions[mission_name] = ret
+            return True, area_
+        except Exception as e:
+            logging.exception(e)
+            return False, None
+    
+    def to_text(self):
+        text_missions = {}
+        for mission_name in self.missions:
+            text_missions[mission_name] = self.missions[mission_name].to_text()
+        dic_ = {
+            'type': 'Area',
+            'name': self.name,
+            'polygon': self.polygon,
+            'missions': text_missions,
+        }
+        return json.dumps(dic_)
     
     def show(self):
         if 'mission_widget_item' in dir(self):
