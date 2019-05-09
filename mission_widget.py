@@ -10,7 +10,7 @@
 6.代码的顺序把实际操作的过程反过来了
 
 '''
-import PyQt5
+import PyQt5, functools
 import mission_manager, gis_canvas
 from mission_planning import camera, aerocraft, preload_missions, mission_planning
 
@@ -171,10 +171,26 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):#飞行区域的列�
             menu_item.triggered.connect(self.show_add_fly_mission_dialog)
             menu_item = menu.addAction('删除观测区域')
             menu_item.triggered.connect(self.delete)
+            menu_item = menu.addAction('转换为字符')
+            menu_item.triggered.connect(self.to_text)
         elif self.type == 'fly_mission':
             menu_item = menu.addAction('删除飞行任务')
             menu_item.triggered.connect(self.delete)
+            menu_item = menu.addAction('转换为字符')
+            menu_item.triggered.connect(self.to_text)
         return menu
+    
+    def to_text(self):
+        str_ = self.binding_object.to_text()
+        dialog = PyQt5.QtWidgets.QMainWindow(self.rc.main_window)
+        screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()
+        percentage = 0.8
+        dialog.resize(screenRect.width()*percentage, screenRect.height()*percentage)
+        dialog.setWindowTitle('转换为字符')
+        text_edit = PyQt5.QtWidgets.QPlainTextEdit(dialog)
+        dialog.setCentralWidget(text_edit)
+        text_edit.setPlainText(str_)
+        dialog.show()
 
     def show_add_fly_mission_dialog(self):#显示添加飞行任务的框，创建框的对象
         dialog = Add_Fly_Mission_Dialog(self.rc.main_window, self.rc, self.binding_object)
@@ -231,14 +247,42 @@ class Mission_Widget(PyQt5.QtWidgets.QTreeWidget):
     
     def get_right_click_menu(self):
         menu = PyQt5.QtWidgets.QMenu(self)
-        menu_item = menu.addAction('添加飞行区域')
+        menu_item = menu.addAction('添加飞行区域 - 手动绘制')
         menu_item.triggered.connect(self.show_add_area_dialog)
+        menu_item = menu.addAction('添加飞行区域 - 从字符串')
+        menu_item.triggered.connect(self.show_add_area_from_text_dialog)
         return menu
     
     def show_add_area_dialog(self):#弹出添加区域的框
         dialog = Add_Area_Dialog(self.rc.main_window, self.rc)
         dialog.move(self.mapToGlobal(self.pos()))
         dialog.show()
+    
+    def show_add_area_from_text_dialog(self):
+        dialog = PyQt5.QtWidgets.QMainWindow(self.rc.main_window)
+        screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()
+        percentage = 0.5
+        dialog.resize(screenRect.width()*percentage, screenRect.height()*percentage)
+        dialog.setWindowTitle('从字符串添加飞行区域')
+
+        ok_button = PyQt5.QtWidgets.QPushButton('OK', dialog)
+        text_edit = PyQt5.QtWidgets.QTextEdit(dialog)
+
+        ok_func = functools.partial(self.add_area_from_text, dialog, text_edit)
+        ok_button.clicked.connect(ok_func)
+
+        layout = PyQt5.QtWidgets.QVBoxLayout(dialog)
+        layout.addWidget(text_edit, 1)
+        layout.addWidget(ok_button, 2)
+        centralwidget = PyQt5.QtWidgets.QWidget(dialog)
+        centralwidget.setLayout(layout)
+        dialog.setCentralWidget(centralwidget)
+        dialog.show()
+
+    def add_area_from_text(self, dialog, text_edit):
+        str_ = text_edit.toPlainText()
+        print(str_)
+        dialog.close()
     
     def add_area(self, area_object):#创建了第一个item
         area_item = Mission_Widget_Item(self, self.rc, 'area', area_object)

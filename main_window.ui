@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1412</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="mainmenu_map">
@@ -67,7 +67,7 @@
     <property name="title">
      <string>mission</string>
     </property>
-    <addaction name="actionstart_fly"/>
+    <addaction name="actioncreate_area"/>
    </widget>
    <widget class="QMenu" name="mainmenu_debug">
     <property name="title">
@@ -156,9 +156,9 @@
     <string>debug</string>
    </property>
   </action>
-  <action name="actionstart_fly">
+  <action name="actioncreate_area">
    <property name="text">
-    <string>start_fly</string>
+    <string>create area</string>
    </property>
   </action>
   <action name="actionshow_1_quickviews">

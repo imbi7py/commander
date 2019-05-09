@@ -36,6 +36,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_quickview.triggered.connect(self.refresh_widgets_visible)
         self.show_mission.triggered.connect(self.refresh_widgets_visible)
         self.show_map.triggered.connect(self.refresh_widgets_visible)
+        self.actioncreate_area.triggered.connect(self.rc.mission_widget.show_add_area_dialog)
 
         self.actionshow_1_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 1))
         self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))
@@ -83,6 +84,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.setWindowTitle('指挥车')
 
             self.mainmenu_mission.setTitle('任务')
+            self.actioncreate_area.setText('添加飞行区域')
 
             self.mainmenu_view.setTitle('视图')
             self.show_quickview.setText('显示快视图')
@@ -115,6 +117,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.show_map.setText('show map')
             self.show_mission.setText('show mission')
             self.use_chinese.setText('中文')
+
+            self.actioncreate_area.setText('create area')
 
             self.mainmenu_map.setTitle('map')
             self.zoom_to_china.setText('zoom to china')
