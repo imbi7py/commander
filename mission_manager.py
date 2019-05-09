@@ -91,6 +91,8 @@ class Fly_Mission():
         self.son_mission_widget_items.append(item)
 
     def create_rubber_bands(self):
+        shoot_coors_geo = [
+            (fly_route_point_info['longitude'], fly_route_point_info['latitude']) for fly_route_point_info in self.mission_attribute['route_coors']]
         self.create_polyline_rubber_band(
             name='任务区域',
             polyline=self.mission_attribute['mission_area']+self.mission_attribute['mission_area'][:1],
@@ -99,13 +101,13 @@ class Fly_Mission():
             line_style=PyQt5.QtCore.Qt.DashLine)
         self.create_polyline_rubber_band(
             name='航线',
-            polyline=self.mission_attribute['shoot_coors_geo'],
+            polyline=shoot_coors_geo,
             color=PyQt5.QtCore.Qt.blue,
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
         self.create_points_rubber_band(
             name='拍摄点',
-            points=self.mission_attribute['shoot_coors_geo'],
+            points=shoot_coors_geo,
             color=PyQt5.QtCore.Qt.green,
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
