@@ -41,10 +41,8 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
         self.ground_resolution_m_textedit.setText(str(mission_attribute['ground_resolution_m']))
         self.forward_overlap_textedit.setText(str(mission_attribute['forward_overlap']))
         self.sideway_overlap_textedit.setText(str(mission_attribute['sideway_overlap']))
-        if mission_attribute['fly_east_west_direction']:
-            self.fly_east_west_checkbox.setCheckState(PyQt5.QtCore.Qt.Checked)
-        else:
-            self.fly_east_west_checkbox.setCheckState(PyQt5.QtCore.Qt.Unchecked)
+        self.aerocraft_num.setText(str(mission_attribute['aerocraft_num']))
+        self.fly_direction.setText(str(mission_attribute['fly_direction']))
     
     def camera_or_aercraft_selected_changed(self):
         self.selected_camera = self.camera_cbox.currentText()#currentText()获取当前cbox的文本，是QString类型
@@ -84,10 +82,11 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
             'application': self.application_textedit.toPlainText(),
             'cameras': self.camera_cbox.currentText(),
             'aerocraft': self.aerocraft_cbox.currentText(),
-            'fly_east_west_direction': self.fly_east_west_checkbox.isChecked(),
+            'fly_direction': self.fly_direction.toPlainText(),
             'ground_resolution_m': self.ground_resolution_m_textedit.toPlainText(),
             'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
+            'aerocraft_num': self.aerocraft_num.toPlainText(),
         }
         succ, ret = mission_planning.mission_planning(
             area_points_list=self.params['area'],
@@ -97,8 +96,9 @@ class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
             ground_resolution_m=self.params['ground_resolution_m'],
             forward_overlap=self.params['forward_overlap'],
             sideway_overlap=self.params['sideway_overlap'],
-            fly_east_west_direction=self.params['fly_east_west_direction'],
+            fly_direction=self.params['fly_direction'],
             application=self.params['application'],
+            aerocraft_num=self.params['aerocraft_num'],
             )
         if not succ:
             PyQt5.QtWidgets.QMessageBox.critical(self, '错误', str(ret))

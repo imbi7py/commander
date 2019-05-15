@@ -91,21 +91,27 @@ class Fly_Mission():
         self.son_mission_widget_items.append(item)
 
     def create_rubber_bands(self):
+        mission_area = self.mission_attribute[0]['mission_area']
+        shoot_coors_geo = []
+        for aerocraft_mission in self.mission_attribute:
+            for coor in aerocraft_mission['route_coors']:
+                x, y = coor['longitude'], coor['latitude']
+                shoot_coors_geo.append((x, y))
         self.create_polyline_rubber_band(
             name='任务区域',
-            polyline=self.mission_attribute['mission_area']+self.mission_attribute['mission_area'][:1],
+            polyline=mission_area,
             color=PyQt5.QtCore.Qt.red,
             width=1,
             line_style=PyQt5.QtCore.Qt.DashLine)
         self.create_polyline_rubber_band(
             name='航线',
-            polyline=self.mission_attribute['shoot_coors_geo'],
+            polyline=shoot_coors_geo,
             color=PyQt5.QtCore.Qt.blue,
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
         self.create_points_rubber_band(
             name='拍摄点',
-            points=self.mission_attribute['shoot_coors_geo'],
+            points=shoot_coors_geo,
             color=PyQt5.QtCore.Qt.green,
             width=2,
             line_style=PyQt5.QtCore.Qt.SolidLine)
@@ -181,10 +187,10 @@ class Area():
         self.rubber_band.hide()
         
     def create_fly_mission(self, mission_attribute):
-        newmission_name = mission_attribute['name']
+        newmission_name = mission_attribute[0]['name']
         if newmission_name in self.missions:
             return False, 'ERROR:该区域已有同名任务 %s' % newmission_name
-        newmission = Fly_Mission(self.rc, mission_attribute['name'], self, mission_attribute)
+        newmission = Fly_Mission(self.rc, mission_attribute[0]['name'], self, mission_attribute)
         self.missions[newmission_name] = newmission
         self.hide()
         return True, None
