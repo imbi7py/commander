@@ -26,18 +26,24 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
 
         self.canvas.zoom_to_aoxiang()
 
-        shoot_coors_geo, photo_ground_rectangles_geo, debug_info = mission_planning.route_planning.plan_a_route_for_test()
+        fly_route, photo_ground_rectangles_geo, debug_info = mission_planning.route_planning.plan_a_route_for_test()
         shooting_area = debug_info['shooting_area']
-        self.canvas.show_temp_points_from_points_list(shoot_coors_geo, 'EPSG:4326')
-        self.canvas.show_temp_polyline_from_points_list(shoot_coors_geo, 'EPSG:4326',
-                                                       color=PyQt5.QtCore.Qt.blue,
-                                                       width=1,
-                                                       line_style=PyQt5.QtCore.Qt.SolidLine)
-        #for rec in photo_ground_rectangles_geo:
-        #    self.canvas.show_temp_polyline_from_points_list(rec+rec[:1], '4326',
-        #                                                   color=PyQt5.QtCore.Qt.red,
-        #                                                   width=1,
-        #                                                   line_style=PyQt5.QtCore.Qt.SolidLine)
+        fly_route_points = [
+            (fly_route_point_info['longitude'], fly_route_point_info['latitude']) for fly_route_point_info in fly_route]
+        self.canvas.show_temp_points_from_points_list(
+            fly_route_points, 'EPSG:4326')
+        self.canvas.show_temp_polyline_from_points_list(
+            fly_route_points, 'EPSG:4326',
+            color=PyQt5.QtCore.Qt.blue,
+            width=1,
+            line_style=PyQt5.QtCore.Qt.SolidLine)
+        for rec in photo_ground_rectangles_geo:
+            rec_to_draw = rec+rec[:1]
+            self.canvas.show_temp_polyline_from_points_list(
+                rec_to_draw, 'EPSG:4326',
+                color=PyQt5.QtCore.Qt.red,
+                width=1,
+                line_style=PyQt5.QtCore.Qt.SolidLine)
 
     def fix_screen_resolution(self, percentage=0.9):
         screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()  #获取屏幕分辨率
@@ -46,7 +52,6 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
     def onClick(self):
         print('ok')
         self.canvas.zoom_to_china()
-
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
