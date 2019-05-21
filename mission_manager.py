@@ -219,7 +219,9 @@ class MissionManager():
         
         newarea = Area(self.rc, area_name, area_polygon)
         self.areas[area_name] = newarea
+        self.rc.fly_mission_widget.init_areas()
         return True, newarea
     
     def del_area(self, area_name):
+        self.rc.fly_mission_widget.init_areas()
         del self.areas[area_name]

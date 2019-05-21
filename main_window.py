@@ -7,6 +7,7 @@ import resource_context
 import quickview_monitor
 import gis_canvas
 import mission_widget
+import fly_mission_widget
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -17,13 +18,18 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.init_widgets()
         self.init_actions()
         self.init_language()
-        self.resize(1920, 1080)
+        self.fix_screen_resolution(percentage=0.95)
         self.gis_canvas.zoom_to_pku()
+
+    def fix_screen_resolution(self, percentage=0.9):
+        screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()  #获取屏幕分辨率
+        self.resize(screenRect.width()*percentage, screenRect.height()*percentage)
 
     def init_widgets(self):
         self.init_quickview_monitors_widgets()
         self.init_quickview_monitors_view(2, 2)
         self.init_gis_canvas()
+        self.init_fly_mission_widget()
         self.init_mission_widget()
         self.init_view()
         self.init_actions()
@@ -53,8 +59,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     
     def init_view(self):
         self.main_widget = PyQt5.QtWidgets.QWidget(self)
+        self.main_layout = PyQt5.QtWidgets.QVBoxLayout(self)
         self.main_vertical_layout = PyQt5.QtWidgets.QHBoxLayout(self)
-        self.main_widget.setLayout(self.main_vertical_layout)
+        self.main_widget.setLayout(self.main_layout)
         self.setCentralWidget(self.main_widget)
         self.refresh_widgets_visible()
 
@@ -62,6 +69,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.main_vertical_layout.addWidget(self.mission_widget, 1)
         self.main_vertical_layout.addWidget(self.gis_canvas, 2)
         self.main_vertical_layout.addWidget(self.quickview_widget, 2)
+        self.main_layout.addLayout(self.main_vertical_layout, 5)
+        self.main_layout.addWidget(self.fly_mission_widget, 1)
         for x in range(self.quickview_layout.maxcols):
             for y in range(self.quickview_layout.maxrows):
                 self.quickview_monitors_mat[y][x].clear_img()
@@ -78,6 +87,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
             self.gis_canvas.show()
         else:
             self.gis_canvas.hide()
+        
+        self.fly_mission_widget.show()
     
     def init_language(self):
         if self.use_chinese.isChecked():
@@ -151,6 +162,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
     def init_gis_canvas(self):
         self.gis_canvas = gis_canvas.Gis_Canvas(self, self.rc)
+
+    def init_fly_mission_widget(self):
+        self.fly_mission_widget = fly_mission_widget.Fly_Mission_Widget(self, self.rc)
     
     def init_quickview_monitors_widgets(self):
         self.quickview_widget = PyQt5.QtWidgets.QWidget(self)

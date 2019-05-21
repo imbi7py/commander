@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1412</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="mainmenu_map">
@@ -93,7 +93,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>quickview</string>
