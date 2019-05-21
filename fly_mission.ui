@@ -381,7 +381,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="generate_mission">
         <property name="text">
          <string>生成任务</string>
         </property>

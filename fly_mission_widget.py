@@ -19,6 +19,7 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         self.aerocraft_cbox.currentIndexChanged.connect(
             self.camera_or_aercraft_selected_changed)#平台选择发生变化
         self.create_area.clicked.connect(self.create_area_func)
+        self.generate_mission.clicked.connect(self.accept)
         self.init_areas()
     
     def create_area_func(self):
@@ -77,8 +78,8 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         PyQt5.QtWidgets.QDialog.done(self, r)
     
     def accept(self):
-        self.params = {
-            'area': self.area_object.polygon,
+        params = {
+            'area_name': self.area_cbox.currentText(),
             'mission_name': self.mission_name_textedit.toPlainText(),
             'application': self.application_textedit.toPlainText(),
             'cameras': self.camera_cbox.currentText(),
@@ -89,23 +90,6 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
             'aerocraft_num': self.aerocraft_num.toPlainText(),
         }
-        succ, ret = mission_planning.mission_planning(
-            area_points_list=self.params['area'],
-            mission_name=self.params['mission_name'],
-            aerocraft=self.params['aerocraft'],
-            camera=self.params['cameras'],
-            ground_resolution_m=self.params['ground_resolution_m'],
-            forward_overlap=self.params['forward_overlap'],
-            sideway_overlap=self.params['sideway_overlap'],
-            fly_direction=self.params['fly_direction'],
-            application=self.params['application'],
-            aerocraft_num=self.params['aerocraft_num'],
-            )
+        succ, ret = self.rc.mission_manager.add_fly_mission_to_area(params)
         if not succ:
             PyQt5.QtWidgets.QMessageBox.critical(self, '错误', str(ret))
-        else:
-            mission_attribute = ret
-            succ, ret = self.area_object.create_fly_mission(mission_attribute)
-            if not succ:
-                PyQt5.QtWidgets.QMessageBox.critical(self, '错误', str(ret))
-            self.close()

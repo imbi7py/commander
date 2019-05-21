@@ -6,6 +6,7 @@
 import json, logging
 import PyQt5, PyQt5.QtWidgets
 import mission_widget
+from mission_planning import mission_planning
 
 class Fly_Mission():
     """
@@ -225,3 +226,30 @@ class MissionManager():
     def del_area(self, area_name):
         self.rc.fly_mission_widget.init_areas()
         del self.areas[area_name]
+    
+    def add_fly_mission_to_area(self, params):
+        area_name = params['area_name']
+        area = self.areas.get(area_name, None)
+        if area is None:
+            return False, '不存在的区域:%s' % area_name
+        succ, ret = mission_planning.mission_planning(
+            area_points_list=area.polygon,
+            mission_name=params['mission_name'],
+            aerocraft=params['aerocraft'],
+            camera=params['cameras'],
+            ground_resolution_m=params['ground_resolution_m'],
+            forward_overlap=params['forward_overlap'],
+            sideway_overlap=params['sideway_overlap'],
+            fly_direction=params['fly_direction'],
+            application=params['application'],
+            aerocraft_num=params['aerocraft_num'],
+            )
+        if not succ:
+            return False, ret
+        else:
+            mission_attribute = ret
+            succ, ret = area.create_fly_mission(mission_attribute)
+            if not succ:
+                return False, ret
+            else:
+                return True, ''

@@ -112,7 +112,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             poly_to_show = self.on_draw_polygon_points + \
                 [(new_mouse_location.x(), new_mouse_location.y())] + \
                 self.on_draw_polygon_points[:1]
-            self.poly = self.show_temp_polyline_from_points_list(poly_to_show, self.get_projection())
+            self.poly = self.show_temp_polyline_from_points_list(poly_to_show, self.get_projection(), width=2)
             self.refresh()
     
     def finish_draw_a_polygon(self):
@@ -344,6 +344,9 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
 
     def zoom_to_pku(self):
         self.zoom_to_rectangle(116.294, 39.980, 116.315, 40, 'EPSG:4326')
+
+    def zoom_to_sihuan(self):
+        self.zoom_to_rectangle(116.280, 39.85, 116.46, 39.97, 'EPSG:4326')
     
     def zoom_to_aoxiang(self):
         self.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])

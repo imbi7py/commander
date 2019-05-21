@@ -19,7 +19,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.init_actions()
         self.init_language()
         self.fix_screen_resolution(percentage=0.95)
-        self.gis_canvas.zoom_to_pku()
+        self.gis_canvas.zoom_to_sihuan()
 
     def fix_screen_resolution(self, percentage=0.9):
         screenRect = PyQt5.QtWidgets.QApplication.desktop().screenGeometry()  #获取屏幕分辨率
