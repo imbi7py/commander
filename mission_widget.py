@@ -130,7 +130,7 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.coors_label.setText(str(self.polygon))
         self.rc.gis_canvas.stop_draw_polygon()
         self.polygon_rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
-            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.yellow)
+            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.gray)
     
     def clear_rubber_band(self):
         if 'polygon_rubber_band' in dir(self):

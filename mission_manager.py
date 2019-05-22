@@ -143,8 +143,10 @@ class Area():
         self.name = name
         self.polygon = polygon
         self.missions = {}
-        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
-            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
+        #self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
+        #    self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)
+        self.rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
+            self.polygon[:]+self.polygon[:1], 'EPSG:4326', color=PyQt5.QtCore.Qt.gray, width=2)
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
     
     @staticmethod
