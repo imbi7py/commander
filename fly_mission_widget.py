@@ -24,6 +24,7 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
     
     def create_area_func(self):
         dialog = mission_widget.Add_Area_Dialog(self.rc.main_window, self.rc)
+        dialog.move(self.pos())
         dialog.show()
     
     def init_areas(self):

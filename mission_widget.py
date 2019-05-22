@@ -140,9 +140,16 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
 
     def done(self, r):
         self.clear_rubber_band()
+        self.rc.gis_canvas.stop_draw_polygon()
         PyQt5.QtWidgets.QDialog.done(self, r)
     
+    def rejected(self, r):
+        self.clear_rubber_band()
+        self.rc.gis_canvas.stop_draw_polygon()
+        PyQt5.QtWidgets.QDialog.rejected(self, r)
+    
     def accept(self):#添加区域的框
+        self.rc.gis_canvas.stop_draw_polygon()
         if self.polygon is None:
             PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: please draw a polygon')
         else:
