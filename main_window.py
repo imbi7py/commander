@@ -31,7 +31,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.init_gis_canvas()
         self.init_fly_mission_widget()
         self.init_mission_widget()
-        self.init_logo_label()
+        # self.init_logo_label()
         self.init_view()
         self.init_actions()
 
