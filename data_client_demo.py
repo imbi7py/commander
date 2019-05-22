@@ -1,6 +1,7 @@
 # coding:utf-8
 import sys, socket, config, json, os, time, random
 import img_utils
+import numpy as np
 
 cfg = config.get_config()
 
@@ -44,12 +45,30 @@ def get_test_image_names(dir_):
         names_[i] = dir_ + '/' + names_[i]
     return names_
 
+def normalization(img_pil):
+    from PIL import Image
+    import numpy as np
+    img_np = np.array(img_pil)
+    min_ = np.min(img_np)
+    max_ = np.max(img_np)
+    img_np = np.array((img_np-min_)/max_*255, dtype=np.uint8)
+    img_new = Image.fromarray(img_np)
+    return img_new
+
+def is_color_img(img_pil):
+    import numpy as np
+    img_np = np.array(img_pil)
+    if len(img_np) == 3:
+        return True
+    else:
+        return False
+
 def main():
     from PIL import Image, ImageDraw
     ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
     send_string(ip, port, "Hello World 1")
     send_string(ip, port, "Hello World 2")
-    test_img_names = get_test_image_names('pics/uav_img')
+    test_img_names = get_test_image_names('pics/长光所红外地面')
     aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
     sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
     while True:
@@ -57,9 +76,15 @@ def main():
             aircraft_type = aircraft_types[random.randint(0, 2)]
             sensor_type = sensor_types[random.randint(0, 2)]
             img = Image.open(name_)
+            img = normalization(img)
+            is_color_img(img)
             img = img.resize((500,500))
             draw = ImageDraw.Draw(img)
-            draw.text((00, 00), 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type), fill = (255, 0 ,0))
+            text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
+            text_color = (255, 0, 0)
+            if not is_color_img(img):
+                text_color = 255
+            draw.text((00, 00), text_, fill = text_color)
             send_img(ip, port, img, aircraft_type, sensor_type)
             time.sleep(2)
 
