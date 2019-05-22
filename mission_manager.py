@@ -93,6 +93,8 @@ class Fly_Mission():
 
     def create_rubber_bands(self):
         mission_area = self.mission_attribute[0]['mission_area']
+        mission_area = mission_area[:] + mission_area[:1]
+        board_region = self.mission_attribute[0]['board_region']
         shoot_coors_geo = []
         for aerocraft_mission in self.mission_attribute:
             for coor in aerocraft_mission['route_coors']:
@@ -103,6 +105,12 @@ class Fly_Mission():
             polyline=mission_area,
             color=PyQt5.QtCore.Qt.red,
             width=1,
+            line_style=PyQt5.QtCore.Qt.DashLine)
+        self.create_polyline_rubber_band(
+            name='可飞行区域',
+            polyline=board_region,
+            color=PyQt5.QtCore.Qt.yellow,
+            width=2,
             line_style=PyQt5.QtCore.Qt.DashLine)
         self.create_polyline_rubber_band(
             name='航线',

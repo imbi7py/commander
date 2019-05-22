@@ -263,6 +263,7 @@ class Mission_Widget(PyQt5.QtWidgets.QTreeWidget):
     def show_add_area_dialog(self):#弹出添加区域的框
         dialog = Add_Area_Dialog(self.rc.main_window, self.rc)
         dialog.move(self.mapToGlobal(self.pos()))
+        dialog.move(1120, 580)
         dialog.show()
     
     def show_add_area_from_text_dialog(self):
