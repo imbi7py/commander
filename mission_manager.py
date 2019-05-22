@@ -94,12 +94,25 @@ class Fly_Mission():
     def create_rubber_bands(self):
         mission_area = self.mission_attribute[0]['mission_area']
         mission_area = mission_area[:] + mission_area[:1]
-        board_region = self.mission_attribute[0]['board_region']
-        shoot_coors_geo = []
-        for aerocraft_mission in self.mission_attribute:
+        for i in range(len(self.mission_attribute)):
+            aerocraft_mission = self.mission_attribute[i]
+            shoot_coors_geo = []
             for coor in aerocraft_mission['route_coors']:
                 x, y = coor['longitude'], coor['latitude']
                 shoot_coors_geo.append((x, y))
+            self.create_polyline_rubber_band(
+                name='航线%d' % i,
+                polyline=shoot_coors_geo,
+                color=PyQt5.QtCore.Qt.blue,
+                width=2,
+                line_style=PyQt5.QtCore.Qt.SolidLine)
+            self.create_points_rubber_band(
+                name='拍摄点%d' % i,
+                points=shoot_coors_geo,
+                color=PyQt5.QtCore.Qt.green,
+                width=2,
+                line_style=PyQt5.QtCore.Qt.SolidLine)
+        board_region = [(p_['longitude'], p_['latitude']) for p_ in self.mission_attribute[0]['board_region']]
         self.create_polyline_rubber_band(
             name='任务区域',
             polyline=mission_area,
@@ -112,18 +125,6 @@ class Fly_Mission():
             color=PyQt5.QtCore.Qt.yellow,
             width=2,
             line_style=PyQt5.QtCore.Qt.DashLine)
-        self.create_polyline_rubber_band(
-            name='航线',
-            polyline=shoot_coors_geo,
-            color=PyQt5.QtCore.Qt.blue,
-            width=2,
-            line_style=PyQt5.QtCore.Qt.SolidLine)
-        self.create_points_rubber_band(
-            name='拍摄点',
-            points=shoot_coors_geo,
-            color=PyQt5.QtCore.Qt.green,
-            width=2,
-            line_style=PyQt5.QtCore.Qt.SolidLine)
     
     def showtype(self):
         print(self.mission_attribute)
