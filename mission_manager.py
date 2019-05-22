@@ -199,10 +199,10 @@ class Area():
         self.rubber_band.hide()
         
     def create_fly_mission(self, mission_attribute):
-        newmission_name = mission_attribute[0]['name']
+        newmission_name = mission_attribute[0]['mission_name']
         if newmission_name in self.missions:
             return False, 'ERROR:该区域已有同名任务 %s' % newmission_name
-        newmission = Fly_Mission(self.rc, mission_attribute[0]['name'], self, mission_attribute)
+        newmission = Fly_Mission(self.rc, mission_attribute[0]['mission_name'], self, mission_attribute)
         self.missions[newmission_name] = newmission
         self.hide()
         return True, None
