@@ -31,6 +31,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.init_gis_canvas()
         self.init_fly_mission_widget()
         self.init_mission_widget()
+        self.init_logo_label()
         self.init_view()
         self.init_actions()
 
@@ -62,11 +63,24 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.main_layout = PyQt5.QtWidgets.QVBoxLayout(self)
         self.main_vertical_layout = PyQt5.QtWidgets.QHBoxLayout(self)
         self.main_widget.setLayout(self.main_layout)
+        self.left_widget = PyQt5.QtWidgets.QWidget(self)
+        self.left_layout = PyQt5.QtWidgets.QVBoxLayout(self)
+        self.left_widget.setLayout(self.left_layout)
         self.setCentralWidget(self.main_widget)
         self.refresh_widgets_visible()
 
+    def init_logo_label(self):
+        self.logolabel = PyQt5.QtWidgets.QLabel(self)
+        img = PyQt5.QtGui.QPixmap('logo.png')
+        print('size:', img.size())
+        img = img.scaledToWidth(400)
+        print('size:', img.size())
+        self.logolabel.setPixmap(img)
+
     def refresh_widgets_visible(self):
-        self.main_vertical_layout.addWidget(self.mission_widget, 1)
+        #self.left_layout.addWidget(self.logolabel , 1)
+        self.left_layout.addWidget(self.mission_widget, 5)
+        self.main_vertical_layout.addWidget(self.left_widget, 1)
         self.main_vertical_layout.addWidget(self.gis_canvas, 2)
         self.main_vertical_layout.addWidget(self.quickview_widget, 2)
         self.main_layout.addLayout(self.main_vertical_layout, 5)
@@ -80,9 +94,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         else:
             self.quickview_widget.hide()
         if self.show_mission.isChecked():
-            self.mission_widget.show()
+            self.left_widget.show()
         else:
-            self.mission_widget.hide()
+            self.left_widget.hide()
         if self.show_map.isChecked():
             self.gis_canvas.show()
         else:
@@ -92,7 +106,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     
     def init_language(self):
         if self.use_chinese.isChecked():
-            self.setWindowTitle('指挥车')
+            self.setWindowTitle('指挥车任务规划系统')
 
             self.mainmenu_mission.setTitle('任务')
             self.actioncreate_area.setText('添加飞行区域')
