@@ -6,6 +6,7 @@
 import json, logging
 import PyQt5, PyQt5.QtWidgets
 import mission_widget
+from mission_planning import mission_planning
 
 class Fly_Mission():
     """
@@ -91,26 +92,39 @@ class Fly_Mission():
         self.son_mission_widget_items.append(item)
 
     def create_rubber_bands(self):
-        shoot_coors_geo = [
-            (fly_route_point_info['longitude'], fly_route_point_info['latitude']) for fly_route_point_info in self.mission_attribute['route_coors']]
+        mission_area = self.mission_attribute[0]['mission_area']
+        mission_area = mission_area[:] + mission_area[:1]
+        for i in range(len(self.mission_attribute)):
+            aerocraft_mission = self.mission_attribute[i]
+            shoot_coors_geo = []
+            for coor in aerocraft_mission['route_coors']:
+                x, y = coor['longitude'], coor['latitude']
+                shoot_coors_geo.append((x, y))
+            self.create_polyline_rubber_band(
+                name='航线%d' % i,
+                polyline=shoot_coors_geo,
+                color=PyQt5.QtCore.Qt.blue,
+                width=2,
+                line_style=PyQt5.QtCore.Qt.SolidLine)
+            self.create_points_rubber_band(
+                name='拍摄点%d' % i,
+                points=shoot_coors_geo,
+                color=PyQt5.QtCore.Qt.green,
+                width=2,
+                line_style=PyQt5.QtCore.Qt.SolidLine)
+        board_region = [(p_['longitude'], p_['latitude']) for p_ in self.mission_attribute[0]['board_region']]
         self.create_polyline_rubber_band(
             name='任务区域',
-            polyline=self.mission_attribute['mission_area']+self.mission_attribute['mission_area'][:1],
+            polyline=mission_area,
             color=PyQt5.QtCore.Qt.red,
             width=1,
             line_style=PyQt5.QtCore.Qt.DashLine)
         self.create_polyline_rubber_band(
-            name='航线',
-            polyline=shoot_coors_geo,
-            color=PyQt5.QtCore.Qt.blue,
+            name='可飞行区域',
+            polyline=board_region,
+            color=PyQt5.QtCore.Qt.yellow,
             width=2,
-            line_style=PyQt5.QtCore.Qt.SolidLine)
-        self.create_points_rubber_band(
-            name='拍摄点',
-            points=shoot_coors_geo,
-            color=PyQt5.QtCore.Qt.green,
-            width=2,
-            line_style=PyQt5.QtCore.Qt.SolidLine)
+            line_style=PyQt5.QtCore.Qt.DashLine)
     
     def showtype(self):
         print(self.mission_attribute)
@@ -138,8 +152,10 @@ class Area():
         self.name = name
         self.polygon = polygon
         self.missions = {}
-        self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
-            self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)#画了一个临时的多边形
+        #self.rubber_band = self.rc.gis_canvas.show_temp_polygon_from_points_list(
+        #    self.polygon, 'EPSG:4326', edgecolor=PyQt5.QtCore.Qt.black, fillcolor=PyQt5.QtCore.Qt.blue)
+        self.rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
+            self.polygon[:]+self.polygon[:1], 'EPSG:4326', color=PyQt5.QtCore.Qt.gray, width=2)
         self.mission_widget_item = self.rc.mission_widget.add_area(self)
     
     @staticmethod
@@ -183,10 +199,10 @@ class Area():
         self.rubber_band.hide()
         
     def create_fly_mission(self, mission_attribute):
-        newmission_name = mission_attribute['name']
+        newmission_name = mission_attribute[0]['mission_name']
         if newmission_name in self.missions:
             return False, 'ERROR:该区域已有同名任务 %s' % newmission_name
-        newmission = Fly_Mission(self.rc, mission_attribute['name'], self, mission_attribute)
+        newmission = Fly_Mission(self.rc, mission_attribute[0]['mission_name'], self, mission_attribute)
         self.missions[newmission_name] = newmission
         self.hide()
         return True, None
@@ -215,7 +231,36 @@ class MissionManager():
         
         newarea = Area(self.rc, area_name, area_polygon)
         self.areas[area_name] = newarea
+        self.rc.fly_mission_widget.init_areas()
         return True, newarea
     
     def del_area(self, area_name):
+        self.rc.fly_mission_widget.init_areas()
         del self.areas[area_name]
+    
+    def add_fly_mission_to_area(self, params):
+        area_name = params['area_name']
+        area = self.areas.get(area_name, None)
+        if area is None:
+            return False, '不存在的区域:%s' % area_name
+        succ, ret = mission_planning.mission_planning(
+            area_points_list=area.polygon,
+            mission_name=params['mission_name'],
+            aerocraft=params['aerocraft'],
+            camera=params['cameras'],
+            ground_resolution_m=params['ground_resolution_m'],
+            forward_overlap=params['forward_overlap'],
+            sideway_overlap=params['sideway_overlap'],
+            fly_direction=params['fly_direction'],
+            application=params['application'],
+            aerocraft_num=params['aerocraft_num'],
+            )
+        if not succ:
+            return False, ret
+        else:
+            mission_attribute = ret
+            succ, ret = area.create_fly_mission(mission_attribute)
+            if not succ:
+                return False, ret
+            else:
+                return True, ''
