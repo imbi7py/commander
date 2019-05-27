@@ -35,12 +35,7 @@ class Fly_Mission():
             return False, None
     
     def to_text(self):
-        dic_ = {
-            'type': 'Fly_Mission',
-            'name': self.name,
-            'mission_attribute': self.mission_attribute,
-        }
-        return json.dumps(dic_)
+        return json.dumps(self.mission_attribute)
     
     def delete(self):
         self.hide()
