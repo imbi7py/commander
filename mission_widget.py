@@ -13,6 +13,7 @@
 import PyQt5, functools
 import mission_manager, gis_canvas
 from mission_planning import camera, aerocraft, preload_missions, mission_planning
+import geo_polygons
 
 class Add_Fly_Mission_Dialog(PyQt5.QtWidgets.QDialog):#添加飞行任务的框
     def __init__(self, parent, rc, area_object):
@@ -119,6 +120,9 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.polygon = None
         self.coors_label.setWordWrap(True)#坐标自动换行
         self.start_draw()
+        self.pku.clicked.connect(functools.partial(self.use_preload_polygon, 'pku'))
+        self.aoxiang.clicked.connect(functools.partial(self.use_preload_polygon, 'aoxiang'))
+        self.aoxiang_big.clicked.connect(functools.partial(self.use_preload_polygon, 'aoxiang_big'))
     
     def start_draw(self):
         self.clear_rubber_band()#
@@ -137,6 +141,18 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
             self.polygon_rubber_band.hide()
             del(self.polygon_rubber_band)
 
+    def use_preload_polygon(self, name_):
+        if name_ == 'pku':
+            area_polygon = geo_polygons.Polygons.pku['vertex']
+        elif name_ == 'aoxiang':
+            area_polygon = geo_polygons.Polygons.aoxiang['vertex']
+            self.rc.main_window.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])
+        elif name_ == 'aoxiang_big':
+            area_polygon = geo_polygons.Polygons.aoxiang_big['vertex']
+            self.rc.main_window.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang_big['vertex'], geo_polygons.Polygons.aoxiang_big['geo_ref'])
+        else:
+            raise '无法识别的多边形 %s' % name_
+        self.add_area(area_polygon)
 
     def done(self, r):
         self.clear_rubber_band()
@@ -153,13 +169,15 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         if self.polygon is None:
             PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: please draw a polygon')
         else:
-            area_name = self.area_name_textedit.toPlainText()#获取控件的信息：区域名字
-            area_polygon = self.polygon
-            success, ret = self.rc.mission_manager.add_area(area_name, area_polygon)
-            if not success:
-                PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: %s' % ret)
-            else:
-                self.close()
+            self.add_area(self.polygon)
+    
+    def add_area(self, area_polygon):
+        area_name = self.area_name_textedit.toPlainText()#获取控件的信息：区域名字
+        success, ret = self.rc.mission_manager.add_area(area_name, area_polygon)
+        if not success:
+            PyQt5.QtWidgets.QMessageBox.critical(self, 'ERROR', 'ERROR: %s' % ret)
+        else:
+            self.close()
 
 class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):#飞行区域的列表的创建
     def __init__(self, parent, rc, type_, binding_object):

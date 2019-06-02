@@ -337,6 +337,12 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             maxx = max(maxx, x)
             maxy = max(maxy, y)
             miny = min(miny, y)
+        centerx = (minx+maxx)/2.
+        centery = (miny+maxy)/2.
+        minx = minx*2-centerx
+        maxx = maxx*2-centerx
+        miny = miny*2-centery
+        maxy = maxy*2-centery
         self.zoom_to_rectangle(minx, miny, maxx, maxy, epsg_code)
 
     def zoom_to_china(self):
