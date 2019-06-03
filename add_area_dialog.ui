@@ -121,7 +121,7 @@ p, li { white-space: pre-wrap; }
     </rect>
    </property>
    <property name="text">
-    <string>翱翔基地 大</string>
+    <string>翱翔基地 中</string>
    </property>
   </widget>
   <widget class="QPushButton" name="aoxiang">
@@ -135,6 +135,19 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>翱翔基地</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="aoxiang_huge">
+   <property name="geometry">
+    <rect>
+     <x>510</x>
+     <y>140</y>
+     <width>81</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>翱翔基地 大</string>
    </property>
   </widget>
  </widget>

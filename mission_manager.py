@@ -246,7 +246,7 @@ class MissionManager():
             ground_resolution_m=params['ground_resolution_m'],
             forward_overlap=params['forward_overlap'],
             sideway_overlap=params['sideway_overlap'],
-            fly_direction=params['fly_direction'],
+            fly_direction_degree=params['fly_direction'],
             application=params['application'],
             aerocraft_num=params['aerocraft_num'],
             )

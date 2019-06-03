@@ -123,6 +123,7 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
         self.pku.clicked.connect(functools.partial(self.use_preload_polygon, 'pku'))
         self.aoxiang.clicked.connect(functools.partial(self.use_preload_polygon, 'aoxiang'))
         self.aoxiang_big.clicked.connect(functools.partial(self.use_preload_polygon, 'aoxiang_big'))
+        self.aoxiang_huge.clicked.connect(functools.partial(self.use_preload_polygon, 'aoxiang_huge'))
     
     def start_draw(self):
         self.clear_rubber_band()#
@@ -146,10 +147,13 @@ class Add_Area_Dialog(PyQt5.QtWidgets.QDialog):
             area_polygon = geo_polygons.Polygons.pku['vertex']
         elif name_ == 'aoxiang':
             area_polygon = geo_polygons.Polygons.aoxiang['vertex']
-            self.rc.main_window.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang['vertex'], geo_polygons.Polygons.aoxiang['geo_ref'])
+            self.rc.main_window.gis_canvas.zoom_to_polygon(area_polygon, 'EPSG:4326')
         elif name_ == 'aoxiang_big':
             area_polygon = geo_polygons.Polygons.aoxiang_big['vertex']
-            self.rc.main_window.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang_big['vertex'], geo_polygons.Polygons.aoxiang_big['geo_ref'])
+            self.rc.main_window.gis_canvas.zoom_to_polygon(area_polygon, 'EPSG:4326')
+        elif name_ == 'aoxiang_huge':
+            area_polygon = geo_polygons.Polygons.aoxiang_huge['vertex']
+            self.rc.main_window.gis_canvas.zoom_to_polygon(area_polygon, 'EPSG:4326')
         else:
             raise '无法识别的多边形 %s' % name_
         self.add_area(area_polygon)
