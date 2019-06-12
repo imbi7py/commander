@@ -29,12 +29,13 @@ def send_string(ip, port, message):
     print ('send string success')
     return 0
 
-def send_img(ip, port, pil_img, aircraft_type, sensor_type):
+def send_img(ip, port, pil_img, aircraft_type, sensor_type,monitor_type):
     data_ = json.dumps({
         'type': 'quickview',
         'data': img_utils.img_to_str(pil_img),
         'aircraft_type': aircraft_type,
         'sensor_type': sensor_type,
+        'monitor_type': monitor_type
     })
     send_data_to_ip_port(ip, port, data_)
     print ('send img success')
@@ -68,13 +69,14 @@ def main():
     ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
     send_string(ip, port, "Hello World 1")
     send_string(ip, port, "Hello World 2")
-    test_img_names = get_test_image_names('pics/长光所红外地面')
+    test_img_names = get_test_image_names('pics/realdata/多光谱')
     aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
     sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
     while True:
         for name_ in test_img_names:
             aircraft_type = aircraft_types[random.randint(0, 2)]
             sensor_type = sensor_types[random.randint(0, 2)]
+            monitor_type='quickview'
             img = Image.open(name_)
             img = normalization(img)
             is_color_img(img)
@@ -85,7 +87,7 @@ def main():
             if not is_color_img(img):
                 text_color = 255
             draw.text((00, 00), text_, fill = text_color)
-            send_img(ip, port, img, aircraft_type, sensor_type)
+            send_img(ip, port, img, aircraft_type, sensor_type,monitor_type)
             time.sleep(2)
 
 

@@ -30,12 +30,13 @@ def send_string(ip, port, message):
     print ('send string success')
     return 0
 
-def send_img(ip, port, pil_img, aircraft_type, sensor_type):
+def send_img(ip, port, pil_img, aircraft_type, sensor_type, monitor_type):
     data_ = json.dumps({
         'type': 'quickview',
         'data': img_utils.img_to_str(pil_img),
         'aircraft_type': aircraft_type,
         'sensor_type': sensor_type,
+        'monitor_type':monitor_type
     })
     send_data_to_ip_port(ip, port, data_)
     print ('send img success')
@@ -64,52 +65,57 @@ def is_color_img(img_pil):
     else:
         return False
 
+
+
 def main():
     from PIL import Image, ImageDraw, ImageFont
     ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
     send_string(ip, port, "Hello World 1")
     send_string(ip, port, "Hello World 2")
     #test_img_names = get_test_image_names('pics/长光所红外地面')
-    test_img_names='video/1.mp4'
-    aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
-    sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
-    cap = cv2.VideoCapture(test_img_names)
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
-    size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
-    ret, img = cap.read()
-    while(ret):
-        '''
-        for name_ in test_img_names:
+    while True:
+        test_img_names = 'pics/realdata/双波段视频吊舱_可见光/长光可见飞行.mp4'
+        aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
+        sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
+        cap = cv2.VideoCapture(test_img_names)
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
+        size = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        ret, img = cap.read()
+        while (ret):
+            '''
+            for name_ in test_img_names:
+                aircraft_type = aircraft_types[random.randint(0, 2)]
+                sensor_type = sensor_types[random.randint(0, 2)]
+                img = Image.open(name_)
+                img = normalization(img)
+                is_color_img(img)
+                img = img.resize((500,500))
+                draw = ImageDraw.Draw(img)
+                text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
+                text_color = (255, 0, 0)
+                if not is_color_img(img):
+                    text_color = 255
+                draw.text((00, 00), text_, fill = text_color)
+                send_img(ip, port, img, aircraft_type, sensor_type)
+                time.sleep(2)
+            '''
             aircraft_type = aircraft_types[random.randint(0, 2)]
             sensor_type = sensor_types[random.randint(0, 2)]
-            img = Image.open(name_)
+            monitor_type = 'video'
             img = normalization(img)
             is_color_img(img)
-            img = img.resize((500,500))
+            img = img.resize((100, 100))
             draw = ImageDraw.Draw(img)
-            text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
+            font = ImageFont.truetype("SansSerif_Italic.ttf", 16)
+            text_ = '%s\n%s' % (aircraft_type, sensor_type)
             text_color = (255, 0, 0)
             if not is_color_img(img):
                 text_color = 255
-            draw.text((00, 00), text_, fill = text_color)
-            send_img(ip, port, img, aircraft_type, sensor_type)
-            time.sleep(2)
-        '''
-        aircraft_type = aircraft_types[random.randint(0, 2)]
-        sensor_type = sensor_types[random.randint(0, 2)]
-        img = normalization(img)
-        is_color_img(img)
-        img = img.resize((100, 100))
-        draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("SansSerif Italic.ttf", 6)
-        text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
-        text_color = (255, 0, 0)
-        if not is_color_img(img):
-            text_color = 255
-        draw.text((00, 00), text_, fill=text_color,font=font)
-        send_img(ip, port, img, aircraft_type, sensor_type)
-        ret, img = cap.read()
-        #time.sleep(fps)
+            draw.text((00, 00), text_, fill=text_color, font=font)
+            send_img(ip, port, img, aircraft_type, sensor_type, monitor_type)
+            ret, img = cap.read()
+            # time.sleep(fps)
+
 
 
 
