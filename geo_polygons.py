@@ -1,3 +1,6 @@
+from mission_planning import route_planning
+import math
+
 class Rectangles:
     pku = {
         'min': (116.294, 39.980),
@@ -9,6 +12,30 @@ class Rectangles:
         'max': (135., 54.),
         'geo_ref': 'EPSG:4326'
     }
+
+def get_round(center, radius_m):
+    get_coor_trans_mat = route_planning.get_coor_trans_mat
+    one_point_coor_trans = route_planning.one_point_coor_trans
+
+    delta_ = 0.001
+    poly_ = [
+        (center[0] - delta_, center[1] - delta_),
+        (center[0] + delta_, center[1] - delta_),
+        (center[0] + delta_, center[1] + delta_),
+        (center[0] - delta_, center[1] + delta_),
+    ]
+    trans_mat, inv_trans_mat = get_coor_trans_mat(poly_, '4326', (1, 0))
+    center_trans = one_point_coor_trans(center[0], center[1], trans_mat)
+    vertex_num = 20
+    round_points = []
+    for i in range(vertex_num):
+        deg_ = float(i) / vertex_num * math.pi * 2
+        x = center_trans[0] + radius_m * math.cos(deg_)
+        y = center_trans[1] + radius_m * math.sin(deg_)
+        x, y = one_point_coor_trans(x, y, inv_trans_mat)
+        round_points.append((x, y))
+    return round_points
+
 
 class Polygons:
     pku = {
@@ -37,5 +64,10 @@ class Polygons:
 
     aoxiang_huge = {
         'vertex': [(float(x), float(y)) for x, y, z in [v_.split(',') for v_ in aoxiang_huge_str.split(' ')]],
+        'geo_ref': 'EPSG:4326'
+    }
+
+    aoxiang_fly_round = {
+        'vertex': get_round((117.3816166666, 39.543980555556), 5000),
         'geo_ref': 'EPSG:4326'
     }
