@@ -107,9 +107,9 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             'board_region_name': '',
         }
     
-    def res_attribute_changed(self):
+    #def res_attribute_changed(self):
 
-    def set_res_attribute(self):
+    #def set_res_attribute(self):
     
     def accept(self):
         params = {
