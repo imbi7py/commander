@@ -213,6 +213,8 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):#飞行区域的列�
             menu_item.triggered.connect(self.delete)
             menu_item = menu.addAction('转换为字符')
             menu_item.triggered.connect(self.to_text)
+            menu_item = menu.addAction('属性')
+            menu_item.triggered.connect(self.binding_object.show_attributes)
         return menu
     
     def to_text(self):

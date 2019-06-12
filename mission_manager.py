@@ -105,6 +105,15 @@ class Fly_Mission():
         )
         self.son_mission_widget_items.append(item)
     
+    def show_attributes(self):
+        area_msq = self.area.get_area()
+        attributes_tuples = [
+            ('任务名', self.name),
+            ('测区名', self.area.name),
+            ('测区总面积(平方米)', str(area_msq)),
+        ]
+        show_attributes_dialog(self.rc, attributes_tuples)
+    
     def create_points_rubber_band(self, name, points, color, width, line_style):
         rubber_band = self.rc.gis_canvas.show_temp_points_from_points_list(
             points,
@@ -254,7 +263,7 @@ class Area():
         area_hectare = area_msq/10000.
         area_kmsq = area_msq/1000000.
         attributes_tuples = [
-            ('名称', self.name),
+            ('测区名', self.name),
             ('面积(平方米)', str(area_msq)),
             ('面积(公顷)', str(area_hectare)),
             ('面积(平方千米)', str(area_kmsq)),
