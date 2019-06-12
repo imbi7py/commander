@@ -51,6 +51,7 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
     
     def fill_attribute_table(self, attribute_table_widget, attributes_dict):
         attribute_table_widget.clear()
+        attribute_table_widget.horizontalHeader().hide()
         attribute_table_widget.setColumnCount(2)
         attribute_table_widget.setRowCount(len(attributes_dict))
         i = 0

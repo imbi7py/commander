@@ -200,12 +200,14 @@ class Mission_Widget_Item(PyQt5.QtWidgets.QTreeWidgetItem):#飞行区域的列�
     def get_right_click_menu(self):
         menu = PyQt5.QtWidgets.QMenu(self.rc.main_window)
         if self.type == 'area':
-            menu_item = menu.addAction('添加飞行任务')#向QMeau小控件中添加一个操作按钮，其中包括文字或者涂图标，删除菜单菜单栏额内容用clear（）
-            menu_item.triggered.connect(self.show_add_fly_mission_dialog)
+            #menu_item = menu.addAction('添加飞行任务')#向QMeau小控件中添加一个操作按钮，其中包括文字或者涂图标，删除菜单菜单栏额内容用clear（）
+            #menu_item.triggered.connect(self.show_add_fly_mission_dialog)
             menu_item = menu.addAction('删除观测区域')
             menu_item.triggered.connect(self.delete)
             menu_item = menu.addAction('转换为字符')
             menu_item.triggered.connect(self.to_text)
+            menu_item = menu.addAction('属性')
+            menu_item.triggered.connect(self.binding_object.show_attributes)
         elif self.type == 'fly_mission':
             menu_item = menu.addAction('删除飞行任务')
             menu_item.triggered.connect(self.delete)

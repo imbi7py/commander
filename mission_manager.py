@@ -17,6 +17,25 @@ def get_random_qt_color_no_white():
     color = PyQt5.QtCore.Qt.GlobalColor(color)
     return color
 
+def show_attributes_dialog(rc, attributes_tuples):
+    attribute_table_dialog = PyQt5.QtWidgets.QMainWindow(rc.main_window)
+    sizex, sizey = 300, 500
+    attribute_table_dialog.resize(sizex, sizey)
+    attribute_table_dialog.setWindowTitle('属性')
+    attribute_table_widget = PyQt5.QtWidgets.QTableWidget()
+    attribute_table_widget.resize(sizex, sizey)
+    attribute_table_dialog.setCentralWidget(attribute_table_widget)
+
+    attribute_table_widget.clear()
+    attribute_table_widget.horizontalHeader().hide()
+    attribute_table_widget.setColumnCount(2)
+    attribute_table_widget.setRowCount(len(attributes_tuples))
+    for i in range(len(attributes_tuples)):
+        k, v = attributes_tuples[i]
+        attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(k))
+        attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(v))
+    attribute_table_dialog.show()
+
 class Fly_Mission():
     """
     飞行任务(Fly_Mission)
@@ -220,6 +239,16 @@ class Area():
         del self.mission_widget_item
         self.rc.mission_manager.del_area(self.name)
         del self
+    
+    def get_area(self):
+        return 100
+    
+    def show_attributes(self):
+        attributes_tuples = [
+            ('名称', self.name),
+            ('面积', self.get_area()),
+        ]
+        show_attributes_dialog(self.rc, attributes_tuples)
             
 class MissionManager():
     """
