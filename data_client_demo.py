@@ -1,7 +1,7 @@
 # coding:utf-8
-import sys, socket, config, json, os, time, random
-import img_utils
+import sys, socket, config, json, os, time, random, threading, cv2, img_utils
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
 
 cfg = config.get_config()
 
@@ -64,31 +64,68 @@ def is_color_img(img_pil):
     else:
         return False
 
-def main():
-    from PIL import Image, ImageDraw
-    ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
-    send_string(ip, port, "Hello World 1")
-    send_string(ip, port, "Hello World 2")
-    test_img_names = get_test_image_names('pics/realdata/多光谱')
-    aircraft_types = ['aircraft_type1', 'aircraft_type2', 'aircraft_type3']
-    sensor_types = ['sensor_typea', 'sensor_typeb', 'sensor_typec']
+def quickview_send(ip, port, folder,aircraft_type,sensor_type):
     while True:
+        test_img_names=get_test_image_names(folder)
         for name_ in test_img_names:
-            aircraft_type = aircraft_types[random.randint(0, 2)]
-            sensor_type = sensor_types[random.randint(0, 2)]
             monitor_type='quickview'
             img = Image.open(name_)
             img = normalization(img)
             is_color_img(img)
             img = img.resize((500,500))
             draw = ImageDraw.Draw(img)
+            font = ImageFont.truetype("SansSerif_Italic.ttf",35)
             text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
             text_color = (255, 0, 0)
             if not is_color_img(img):
                 text_color = 255
-            draw.text((00, 00), text_, fill = text_color)
+            draw.text((00, 00), text_, fill = text_color, font=font)
             send_img(ip, port, img, aircraft_type, sensor_type,monitor_type)
             time.sleep(2)
+
+def video_send(ip, port,folder,aircraft_type,sensor_type):
+    while True:
+        files = get_test_image_names(folder)
+        for file in files:
+            cap = cv2.VideoCapture(file)
+            fps = int(cap.get(cv2.CAP_PROP_FPS))
+            ret, img = cap.read()
+            while (ret):
+                monitor_type = 'video'
+                img = normalization(img)
+                is_color_img(img)
+                img = img.resize((100, 100))
+                draw = ImageDraw.Draw(img)
+                font = ImageFont.truetype("SansSerif_Italic.ttf", 12)
+                text_ = '%s\n%s' % (aircraft_type, sensor_type)
+                text_color = (255, 0, 0)
+                if not is_color_img(img):
+                    text_color = 255
+                draw.text((00, 00), text_, fill=text_color, font=font)
+                send_img(ip, port, img, aircraft_type, sensor_type, monitor_type)
+                ret, img = cap.read()
+                # time.sleep(fps)
+
+
+def main():
+    ip, port = cfg['data_server_ip'], int(cfg['data_server_port'])
+    #quickview_send(ip, port, 'pics/realdata/多光谱', 'aircraft_type1', 'sensor_typea')
+    #video_send(ip, port, 'pics/realdata/双波段视频吊舱_可见光', 'aircraft_type1', 'sensor_typea')
+    threads = []
+    t1 = threading.Thread(target=quickview_send, args=(ip, port, 'pics/realdata/可见光', 'aircraft_type1', 'sensor_typea',))
+    threads.append(t1)
+    t2 = threading.Thread(target=quickview_send, args=(ip, port, 'pics/realdata/多光谱', 'aircraft_type1', 'sensor_typeb',))
+    threads.append(t2)
+    t3 = threading.Thread(target=video_send, args=(ip, port, 'pics/realdata/双波段视频吊舱_可见光', 'aircraft_type2', 'sensor_typea',))
+    threads.append(t3)
+    t4 = threading.Thread(target=video_send, args=(ip, port, 'pics/realdata/双波段视频吊舱_红外', 'aircraft_type2', 'sensor_typeb',))
+    threads.append(t4)
+    for t in threads:
+        t.setDaemon(True)
+        t.start()
+
+    t.join()
+
 
 
 if __name__ == '__main__':
