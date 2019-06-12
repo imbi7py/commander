@@ -17,6 +17,12 @@ def get_random_qt_color_no_white():
     color = PyQt5.QtCore.Qt.GlobalColor(color)
     return color
 
+def calculate_polyogn_area_metersquare(points_list, epsgcode='4326'):
+    trans_mat, inv_trans_mat = route_planning.get_coor_trans_mat(points_list, epsgcode, (1, 0))
+    trans_points_list = route_planning.coor_trans(points_list, trans_mat)
+    gdal_polygon = route_planning.points_to_gdal_polygon(trans_points_list)
+    return gdal_polygon.Area()
+
 def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_dialog = PyQt5.QtWidgets.QMainWindow(rc.main_window)
     sizex, sizey = 300, 500
@@ -241,12 +247,17 @@ class Area():
         del self
     
     def get_area(self):
-        return 100
+        return calculate_polyogn_area_metersquare(self.polygon)
     
     def show_attributes(self):
+        area_msq = self.get_area()
+        area_hectare = area_msq/10000.
+        area_kmsq = area_msq/1000000.
         attributes_tuples = [
             ('名称', self.name),
-            ('面积', self.get_area()),
+            ('面积(平方米)', str(area_msq)),
+            ('面积(公顷)', str(area_hectare)),
+            ('面积(平方千米)', str(area_kmsq)),
         ]
         show_attributes_dialog(self.rc, attributes_tuples)
             
