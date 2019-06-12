@@ -28,7 +28,7 @@ def get_round(center, radius_m):
     center_trans = one_point_coor_trans(center[0], center[1], trans_mat)
     vertex_num = 20
     round_points = []
-    for i in range(vertex_num):
+    for i in range(vertex_num+1):
         deg_ = float(i) / vertex_num * math.pi * 2
         x = center_trans[0] + radius_m * math.cos(deg_)
         y = center_trans[1] + radius_m * math.sin(deg_)

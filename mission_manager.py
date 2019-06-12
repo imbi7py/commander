@@ -7,6 +7,8 @@ import json, logging, random
 import PyQt5, PyQt5.QtWidgets
 import mission_widget
 from mission_planning import mission_planning
+from mission_planning import route_planning
+import geo_polygons
 
 def get_random_qt_color_no_white():
     color = random.randint(1, 19)
@@ -229,6 +231,17 @@ class MissionManager():
         self.rc.mission_manager = self
         self.areas = {}
     
+    def get_preload_board_regions(self):
+        board_regions = {
+            '翱翔5km圆': {
+                'polygon': geo_polygons.Polygons.aoxiang_fly_round,
+                'epsg': 'EPSG:4326',
+                'height_m': 300,
+            },
+            '无限制': None,
+        }
+        return board_regions
+    
     def add_area(self, area_name, area_polygon):
         if area_name in self.areas:
             return False, 'area_name %s alread in areas' % area_name
@@ -247,6 +260,9 @@ class MissionManager():
         area = self.areas.get(area_name, None)
         if area is None:
             return False, '不存在的区域:%s' % area_name
+        board_region = self.get_preload_board_regions()[params['board_region_name']]
+        if board_region is not None:
+            board_region = route_planning.get_structured_board_region(board_region['polygon']['vertex'])
         succ, ret = mission_planning.mission_planning(
             area_points_list=area.polygon,
             mission_name=params['mission_name'],
@@ -258,6 +274,7 @@ class MissionManager():
             fly_direction_degree=params['fly_direction'],
             application=params['application'],
             aerocraft_num=params['aerocraft_num'],
+            board_region=board_region,
             )
         if not succ:
             return False, ret

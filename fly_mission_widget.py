@@ -32,6 +32,8 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             self.area_cbox.removeItem(0)
         for area_name in self.rc.mission_manager.areas.keys():
             self.area_cbox.addItem(area_name)
+        for area_name in self.rc.mission_manager.get_preload_board_regions().keys():
+            self.available_area_cbox.addItem(area_name)
     
     def preload_mission_selected_changed(self):
         selected_mission_name = self.preload_missions_listwidget.selectedItems()[0].text()#初始化
@@ -90,6 +92,7 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
             'forward_overlap': self.forward_overlap_textedit.toPlainText(),
             'aerocraft_num': self.aerocraft_num.toPlainText(),
+            'board_region_name': self.available_area_cbox.currentText(),
         }
         succ, ret = self.rc.mission_manager.add_fly_mission_to_area(params)
         if not succ:
