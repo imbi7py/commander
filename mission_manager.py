@@ -3,10 +3,17 @@
 任务数据实体
 """
 
-import json, logging
+import json, logging, random
 import PyQt5, PyQt5.QtWidgets
 import mission_widget
 from mission_planning import mission_planning
+
+def get_random_qt_color_no_white():
+    color = random.randint(1, 19)
+    if color <= 3:
+        color -= 1
+    color = PyQt5.QtCore.Qt.GlobalColor(color)
+    return color
 
 class Fly_Mission():
     """
@@ -98,13 +105,15 @@ class Fly_Mission():
             self.create_polyline_rubber_band(
                 name='航线%d' % i,
                 polyline=shoot_coors_geo,
-                color=PyQt5.QtCore.Qt.blue,
+                #color=PyQt5.QtCore.Qt.blue,
+                color=get_random_qt_color_no_white(),
                 width=2,
                 line_style=PyQt5.QtCore.Qt.SolidLine)
             self.create_points_rubber_band(
                 name='拍摄点%d' % i,
                 points=shoot_coors_geo,
-                color=PyQt5.QtCore.Qt.green,
+                #color=PyQt5.QtCore.Qt.green,
+                color=get_random_qt_color_no_white(),
                 width=2,
                 line_style=PyQt5.QtCore.Qt.SolidLine)
         board_region = [(p_['longitude'], p_['latitude']) for p_ in self.mission_attribute[0]['board_region']]
