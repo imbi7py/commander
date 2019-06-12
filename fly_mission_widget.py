@@ -10,8 +10,6 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         PyQt5.uic.loadUi('fly_mission.ui', self)
 
         self.init_data()
-        self.camera_attribute_label.setWordWrap(True)#自动换行
-        self.aerocraft_attribute_label.setWordWrap(True)#自动换行
         self.preload_missions_listwidget.itemSelectionChanged.connect(
             self.preload_mission_selected_changed)#预设任务里的列表选择项发生变化
         self.camera_cbox.currentIndexChanged.connect(
@@ -49,11 +47,23 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         self.aerocraft_num.setText(str(mission_attribute['aerocraft_num']))
         self.fly_direction.setText(str(mission_attribute['fly_direction']))
     
+    def fill_attribute_table(self, attribute_table_widget, attributes_dict):
+        attribute_table_widget.clear()
+        attribute_table_widget.setColumnCount(2)
+        attribute_table_widget.setRowCount(len(attributes_dict))
+        i = 0
+        for k in attributes_dict:
+            v = str(attributes_dict[k])
+            attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(k))
+            attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(v))
+            i += 1
+
     def camera_or_aercraft_selected_changed(self):
         self.selected_camera = self.camera_cbox.currentText()#currentText()获取当前cbox的文本，是QString类型
-        self.camera_attribute_label.setText(str(self.preload_cameras[self.selected_camera]))#平台发生变化，平台参数也会发生变化
         self.selected_aerocraft = self.aerocraft_cbox.currentText()
-        self.aerocraft_attribute_label.setText(str(self.preload_aerocrafts[self.selected_aerocraft]))#载荷发生变化，参数label也发生变化
+        self.fill_attribute_table(self.aerocraft_attribute, self.preload_aerocrafts[self.selected_aerocraft])
+        self.fill_attribute_table(self.camera_attribute, self.preload_cameras[self.selected_camera])
+        
     #currentData(int role = Qt::UserRole)获取当前comBox绑定的数据，是QVariant类型。
     def preload_data(self):#几个字典的调用
         self.preload_missions = preload_missions.missions
