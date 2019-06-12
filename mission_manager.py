@@ -17,6 +17,31 @@ def get_random_qt_color_no_white():
     color = PyQt5.QtCore.Qt.GlobalColor(color)
     return color
 
+def calculate_polyogn_area_metersquare(points_list, epsgcode='4326'):
+    trans_mat, inv_trans_mat = route_planning.get_coor_trans_mat(points_list, epsgcode, (1, 0))
+    trans_points_list = route_planning.coor_trans(points_list, trans_mat)
+    gdal_polygon = route_planning.points_to_gdal_polygon(trans_points_list)
+    return gdal_polygon.Area()
+
+def show_attributes_dialog(rc, attributes_tuples):
+    attribute_table_dialog = PyQt5.QtWidgets.QMainWindow(rc.main_window)
+    sizex, sizey = 300, 500
+    attribute_table_dialog.resize(sizex, sizey)
+    attribute_table_dialog.setWindowTitle('属性')
+    attribute_table_widget = PyQt5.QtWidgets.QTableWidget()
+    attribute_table_widget.resize(sizex, sizey)
+    attribute_table_dialog.setCentralWidget(attribute_table_widget)
+
+    attribute_table_widget.clear()
+    attribute_table_widget.horizontalHeader().hide()
+    attribute_table_widget.setColumnCount(2)
+    attribute_table_widget.setRowCount(len(attributes_tuples))
+    for i in range(len(attributes_tuples)):
+        k, v = attributes_tuples[i]
+        attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(k))
+        attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(v))
+    attribute_table_dialog.show()
+
 class Fly_Mission():
     """
     飞行任务(Fly_Mission)
@@ -79,6 +104,15 @@ class Fly_Mission():
             binding_object=rubber_band
         )
         self.son_mission_widget_items.append(item)
+    
+    def show_attributes(self):
+        area_msq = self.area.get_area()
+        attributes_tuples = [
+            ('任务名', self.name),
+            ('测区名', self.area.name),
+            ('测区总面积(平方米)', str(area_msq)),
+        ]
+        show_attributes_dialog(self.rc, attributes_tuples)
     
     def create_points_rubber_band(self, name, points, color, width, line_style):
         rubber_band = self.rc.gis_canvas.show_temp_points_from_points_list(
@@ -220,6 +254,21 @@ class Area():
         del self.mission_widget_item
         self.rc.mission_manager.del_area(self.name)
         del self
+    
+    def get_area(self):
+        return calculate_polyogn_area_metersquare(self.polygon)
+    
+    def show_attributes(self):
+        area_msq = self.get_area()
+        area_hectare = area_msq/10000.
+        area_kmsq = area_msq/1000000.
+        attributes_tuples = [
+            ('测区名', self.name),
+            ('面积(平方米)', str(area_msq)),
+            ('面积(公顷)', str(area_hectare)),
+            ('面积(平方千米)', str(area_kmsq)),
+        ]
+        show_attributes_dialog(self.rc, attributes_tuples)
             
 class MissionManager():
     """

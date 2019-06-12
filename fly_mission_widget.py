@@ -46,9 +46,12 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         self.sideway_overlap_textedit.setText(str(mission_attribute['sideway_overlap']))
         self.aerocraft_num.setText(str(mission_attribute['aerocraft_num']))
         self.fly_direction.setText(str(mission_attribute['fly_direction']))
+
+        self.fill_attribute_table(self.mission_attribute, mission_attribute)
     
     def fill_attribute_table(self, attribute_table_widget, attributes_dict):
         attribute_table_widget.clear()
+        attribute_table_widget.horizontalHeader().hide()
         attribute_table_widget.setColumnCount(2)
         attribute_table_widget.setRowCount(len(attributes_dict))
         i = 0
@@ -89,6 +92,25 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
 
     def done(self, r):
         PyQt5.QtWidgets.QDialog.done(self, r)
+    
+    def init_res_attribute(self):
+        self.res_attribute = {
+            'area_name': '',
+            'mission_name': '',
+            'application': '',
+            'cameras': '',
+            'aerocraft': '',
+            'fly_direction': '',
+            'ground_resolution_m': '',
+            'sideway_overlap': '',
+            'forward_overlap': '',
+            'aerocraft_num': '',
+            'board_region_name': '',
+        }
+    
+    #def res_attribute_changed(self):
+
+    #def set_res_attribute(self):
     
     def accept(self):
         params = {
