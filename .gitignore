@@ -1,4 +1,6 @@
 mission_planning/*
+mission_planning
+cache/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
