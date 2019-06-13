@@ -1,6 +1,7 @@
 mission_planning/*
 mission_planning
 cache/*
+*quickview_monitor_tmp*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
