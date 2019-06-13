@@ -310,7 +310,9 @@ class MissionManager():
         if area is None:
             return False, '不存在的区域:%s' % area_name
         board_region = self.get_preload_board_regions()[params['board_region_name']]
+        board_region_max_fly_height_m = None
         if board_region is not None:
+            board_region_max_fly_height_m = board_region['height_m']
             board_region = route_planning.get_structured_board_region(board_region['polygon']['vertex'])
         succ, ret = mission_planning.mission_planning(
             area_points_list=area.polygon,
@@ -324,6 +326,7 @@ class MissionManager():
             application=params['application'],
             aerocraft_num=params['aerocraft_num'],
             board_region=board_region,
+            board_region_max_fly_height_m=board_region_max_fly_height_m,
             )
         if not succ:
             return False, ret
