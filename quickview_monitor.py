@@ -13,10 +13,12 @@ class Filter_Combobox(PyQt5.QtWidgets.QComboBox):
 
     def init_items(self):
         self.items = ['All', 'None']
+        '''
         if self.rc is not None:  # 测试时self.rc可能是None
             self.items = self.items + self.rc.cfg.get(
                 'quickview_filter_item_preload', {}).get(
                     self.filter_name, [])
+        '''
         for item in self.items:
             self.addItem(item)
         self.setCurrentIndex(self.findText('All'))

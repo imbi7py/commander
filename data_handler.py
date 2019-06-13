@@ -10,24 +10,28 @@ class DataHandler():
         str_img = data['data']
         pil_img = img_utils.str_to_img(str_img)
         self.rc.main_window.show_realtime_quickview(data)
+        '''
         self.rc.quickview_store.add_a_quickview(
             pil_img,
             sensor_type=data.get('sensor_type', 'unknown'),
             aircraft_type=data.get('aircraft_type', 'unknown'),
-            monitor_type='video'
         )
+        '''
+
         print ('[data handler]recv an img from a video')
 
     def process_received_quickview(self, data):
         str_img = data['data']
         pil_img = img_utils.str_to_img(str_img)
         self.rc.main_window.show_realtime_quickview(data)
+        '''
         self.rc.quickview_store.add_a_quickview(
             pil_img,
             sensor_type=data.get('sensor_type', 'unknown'),
             aircraft_type=data.get('aircraft_type', 'unknown'),
-            monitor_type='quickview'
         )
+        '''
+
         print('[data handler]recv an img')
 
     def process_received_data(self, data):
