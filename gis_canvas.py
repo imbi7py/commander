@@ -48,7 +48,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.base_map_layers = []
         self.mission_layers = []
         self.on_draw_polygon = False
-        self.load_online_map('google_sate')
+        self.load_online_map('amap6')
         self.zoom_to_aoxiang()
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
