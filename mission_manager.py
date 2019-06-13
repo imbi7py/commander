@@ -107,11 +107,22 @@ class Fly_Mission():
     
     def show_attributes(self):
         area_msq = self.area.get_area()
+        line_length_m_tuples = []
+        for i in range(len(self.mission_attribute)):
+            aerocraft_mission = self.mission_attribute[i]
+            length_m = aerocraft_mission['length_m']
+            line_length_m_tuples.append((
+                '%d#飞机航线(米)' % i,
+                str(length_m)
+            ))
+                
         attributes_tuples = [
             ('任务名', self.name),
             ('测区名', self.area.name),
             ('测区总面积(平方米)', str(area_msq)),
+            ('飞机数量', str(len(self.mission_attribute))),
         ]
+        attributes_tuples.extend(line_length_m_tuples)
         show_attributes_dialog(self.rc, attributes_tuples)
     
     def create_points_rubber_band(self, name, points, color, width, line_style):
