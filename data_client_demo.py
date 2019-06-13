@@ -46,6 +46,20 @@ def get_test_image_names(dir_):
         names_[i] = dir_ + '/' + names_[i]
     return names_
 
+def get_test_image_names_with_sensorname(dir_):
+    res = []
+    dirs_ = os.listdir(dir_)
+    for subdir_ in dirs_:
+        abs_subdir_ = dir_ + '/' + subdir_
+        names_ = os.listdir(abs_subdir_)
+        for i in range(len(names_)):
+            sensor_type_ = subdir_
+            name_ = dir_ + '/' + subdir_ + '/' + names_[i]
+            res.append((name_, sensor_type_))
+    import random
+    random.shuffle(res)
+    return res
+
 def normalization(img_pil):
     from PIL import Image
     import numpy as np
