@@ -8,6 +8,7 @@ import PyQt5, PyQt5.QtWidgets
 import mission_widget
 from mission_planning import mission_planning
 from mission_planning import route_planning
+import mission_simulate
 import geo_polygons
 
 def get_random_qt_color_no_white():
@@ -71,6 +72,14 @@ class Fly_Mission():
     def to_text(self):
         return json.dumps(self.mission_attribute)
     
+    def simulate(self):
+        #simulation = mission_simulate.Fly_Mission_Simulation(self.rc, self)
+        #simulation.begin()
+        for aerocraft_mission in self.mission_attribute:
+            shoot_coors_geo = [(coor['longitude'], coor['latitude']) for coor in aerocraft_mission['route_coors']]
+            one_simulation = mission_simulate.Polyline_Simulation(self.rc, shoot_coors_geo)
+            one_simulation.begin()
+
     def delete(self):
         self.hide()
         del self.rubber_bands[:]

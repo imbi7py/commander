@@ -80,10 +80,17 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.roam_check_box.set_checked = lambda checked: self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Checked) if checked else self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Unchecked)
         self.roam_check_box.set_checked(True)
 
-    def to_window_point(self, point):
+    def show_test_label(self):
+        testlabel = PyQt5.QtWidgets.QLabel(self)
+        testlabel.move(100, 100)
+        testlabel.resize(300, 300)
+        testlabel.setText('this is a test label')
+        testlabel.show()
+
+    def to_window_point(self, x, y):
         center=self.getCoordinateTransform().toMapCoordinates(self.center().x(),self.center().y())
-        point_window_x=self.center().x()+(point.x()-center.x())/self.mapUnitsPerPixel()
-        point_window_y=self.center().y()-(point.y()-center.y())/self.mapUnitsPerPixel()
+        point_window_x=self.center().x()+(x-center.x())/self.mapUnitsPerPixel()
+        point_window_y=self.center().y()-(y-center.y())/self.mapUnitsPerPixel()
         return (point_window_x, point_window_y)
     
     def start_draw_polygon(self, handler_func):
@@ -461,6 +468,10 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         b = PyQt5.QtWidgets.QPushButton('exit fullscreen', self)
         self.button_layout.addWidget(b, 0, 10)
         b.clicked.connect(self.canvas.exit_fullscreen)
+
+        b = PyQt5.QtWidgets.QPushButton('show test label', self)
+        self.button_layout.addWidget(b, 0, 11)
+        b.clicked.connect(self.canvas.show_test_label)
 
         self.main_layout.addLayout(self.hbox)
 
