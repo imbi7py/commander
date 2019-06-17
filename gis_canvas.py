@@ -267,12 +267,16 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.setLineStyle(line_style)
         poly.show()
         return poly
+    
+    def to_map_point(self, point, epsgcode):
+        map_epsgcode = self.get_projection()
+        x, y = point
+        return trans_point(epsgcode, map_epsgcode, x, y)
 
     def show_temp_points_from_points_list(self, points_list, epsgcode, width=1, color=PyQt5.QtCore.Qt.black):
         poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.PointGeometry)
-        map_epsgcode = self.get_projection()
         for x, y in points_list:
-            x, y = trans_point(epsgcode, map_epsgcode, x, y)
+            x, y = self.to_map_point((x, y), epsgcode)
             poly.addPoint(qgis.core.QgsPointXY(x, y))
         poly.setColor(color)
         poly.setWidth(width)
