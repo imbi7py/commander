@@ -81,10 +81,18 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.roam_check_box.set_checked(True)
 
     def show_test_label(self):
+        move_x=100
+        move_y=100
+        angle=90
         testlabel = PyQt5.QtWidgets.QLabel(self)
-        testlabel.move(100, 100)
-        testlabel.resize(300, 300)
-        testlabel.setText('this is a test label')
+        icon_path="pics/emojis/0.png"
+        testlabel.move(move_x, move_y)
+        icon=PyQt5.QtGui.QPixmap(icon_path)
+        icon =icon.scaled(PyQt5.QtCore.QSize(50, 50))
+        icon_transform=PyQt5.QtGui.QTransform()
+        icon_transform.rotate(angle)
+        testlabel.setAlignment(PyQt5.QtCore.Qt.AlignCenter)
+        testlabel.setPixmap(icon.transformed(icon_transform))
         testlabel.show()
 
     def to_window_point(self, x, y):
