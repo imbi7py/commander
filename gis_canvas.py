@@ -85,7 +85,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         move_y=100
         angle=90
         testlabel = PyQt5.QtWidgets.QLabel(self)
-        icon_path="pics/emojis/0.png"
+        icon_path="pics/icon/aoxiang.png"
         testlabel.move(move_x, move_y)
         icon=PyQt5.QtGui.QPixmap(icon_path)
         icon =icon.scaled(PyQt5.QtCore.QSize(50, 50))
