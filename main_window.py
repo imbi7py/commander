@@ -1,5 +1,5 @@
 # coding:utf-8
-import os, sys, logging, functools
+import os, sys, logging, functools, threading, time
 import mysql.connector
 import load_libs
 import PyQt5
@@ -8,6 +8,7 @@ import quickview_monitor
 import gis_canvas
 import mission_widget
 import fly_mission_widget
+import start_logo_form
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -223,6 +224,12 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
-    form = Commonder_Main()
-    form.show()
+    start_logo_form = start_logo_form.Start_LOGO_Form()
+    start_logo_form.show()
+    main_window_form = Commonder_Main()
+    main_window_form.show()
+    def close_start_logo_form():
+        time.sleep(3)
+        start_logo_form.close()
+    threading.Thread(target = close_start_logo_form, daemon=True).start()
     sys.exit(app.exec_())
