@@ -1,6 +1,7 @@
-import PyQt5, PyQt5.QtWidgets
+import PyQt5, PyQt5.QtWidgets, functools
 from mission_planning import camera, aerocraft, preload_missions, mission_planning
 import mission_widget
+import mission_manager
 
 class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
     def __init__(self, parent, rc):
@@ -8,6 +9,7 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         self.rc.fly_mission_widget = self
         PyQt5.QtWidgets.QWidget.__init__(self, parent)
         PyQt5.uic.loadUi('fly_mission.ui', self)
+        self.SHOW_CAMERA_AND_AEROCRAFT_ATTRIBUTES = False
 
         self.init_data()
         self.preload_missions_listwidget.itemSelectionChanged.connect(
@@ -18,6 +20,10 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             self.camera_or_aercraft_selected_changed)#平台选择发生变化
         self.create_area.clicked.connect(self.create_area_func)
         self.generate_mission.clicked.connect(self.accept)
+        self.pushButton_show_aerocraft_detail.clicked.connect(functools.partial(
+            self.show_detail_dialog, 'aerocraft'))
+        self.pushButton_show_camera_detail.clicked.connect(functools.partial(
+            self.show_detail_dialog, 'camera'))
         self.init_areas()
     
     def create_area_func(self):
@@ -61,11 +67,22 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(v))
             i += 1
 
+    def show_detail_dialog(self, type_):
+        attributes_dict = None
+        if type_ == 'aerocraft':
+            attributes_dict = self.preload_aerocrafts[self.selected_aerocraft]
+        elif type_ == 'camera':
+            attributes_dict = self.preload_cameras[self.selected_camera]
+        else:
+            raise 'unknown type %s' % str(type_)
+        mission_manager.show_attributes_dialog(self.rc, [(k, attributes_dict[k]) for k in attributes_dict])
+
     def camera_or_aercraft_selected_changed(self):
         self.selected_camera = self.camera_cbox.currentText()#currentText()获取当前cbox的文本，是QString类型
         self.selected_aerocraft = self.aerocraft_cbox.currentText()
-        self.fill_attribute_table(self.aerocraft_attribute, self.preload_aerocrafts[self.selected_aerocraft])
-        self.fill_attribute_table(self.camera_attribute, self.preload_cameras[self.selected_camera])
+        if self.SHOW_CAMERA_AND_AEROCRAFT_ATTRIBUTES:
+            self.fill_attribute_table(self.aerocraft_attribute, self.preload_aerocrafts[self.selected_aerocraft])
+            self.fill_attribute_table(self.camera_attribute, self.preload_cameras[self.selected_camera])
         
     #currentData(int role = Qt::UserRole)获取当前comBox绑定的数据，是QVariant类型。
     def preload_data(self):#几个字典的调用
