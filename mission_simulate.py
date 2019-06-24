@@ -36,16 +36,29 @@ class Point_Simulation():
         self.label.hide()
 
 class Polyline_Simulation():
-    def __init__(self, rc, polyline):
+    def __init__(self, rc, polyline, area_name, mission_name):
         self.rc = rc
         self.polyline = polyline
+        self.area_name, self.mission_name = area_name, mission_name
+
+    def judge_if_mission_exist(self):
+        return self.rc.mission_manager.exist_mission(self.area_name, self.mission_name)
     
     def begin(self):
         self.point_simu = Point_Simulation(self.rc, self.polyline[0])
         self.simulation_steps = self.get_simulation_steps()
         
-        self.simulate_thread = threading.Thread(target = self.run, daemon=True)
-        self.simulate_thread.start()
+        self.step_i = 0
+        self.next_step()
+
+    def next_step(self):
+        if self.step_i < len(self.simulation_steps) and self.judge_if_mission_exist():
+            step = self.simulation_steps[self.step_i]
+            self.step_i += 1
+            self.point_simu.move_to(step['point'], step['direction'])
+            PyQt5.QtCore.QTimer.singleShot(int(step['sleep_s']*1000), lambda: self.next_step())
+        else:
+            self.point_simu.hide()
     
     def get_simulation_steps(self):
         def get_direction_to_east(p1, p2):
@@ -83,6 +96,10 @@ class Polyline_Simulation():
                 })
         return simulation_steps
     
+    
+    # Old thread way, crash sometimes. Can be deleted.
+    # self.simulate_thread = threading.Thread(target = self.run, daemon=True)
+    # self.simulate_thread.start()
     def run(self):
         try:
             for step in self.simulation_steps:

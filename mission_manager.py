@@ -77,7 +77,7 @@ class Fly_Mission():
         #simulation.begin()
         for aerocraft_mission in self.mission_attribute:
             shoot_coors_geo = [(coor['longitude'], coor['latitude']) for coor in aerocraft_mission['route_coors']]
-            one_simulation = mission_simulate.Polyline_Simulation(self.rc, shoot_coors_geo)
+            one_simulation = mission_simulate.Polyline_Simulation(self.rc, shoot_coors_geo, self.area.name, self.name)
             one_simulation.begin()
 
     def delete(self):
@@ -305,6 +305,12 @@ class MissionManager():
         self.rc = rc
         self.rc.mission_manager = self
         self.areas = {}
+    
+    def exist_mission(self, area_name, mission_name):
+        if area_name in self.areas:
+            if mission_name in self.areas[area_name].missions:
+                return True
+        return False
     
     def get_preload_board_regions(self):
         board_regions = {
