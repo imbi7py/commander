@@ -132,6 +132,10 @@ class Fly_Mission():
             ('测区总面积(平方米)', str(area_msq)),
             ('飞机数量', str(len(self.mission_attribute))),
             ('航高(米)', str(fly_height_m)),
+            ('航向地面副宽(米)', str(self.mission_attribute[0]['forward_photo_ground_meters'])),
+            ('旁向地面副宽(米)', str(self.mission_attribute[0]['side_photo_ground_meters'])),
+            ('航向拍摄间隔(米)', str(self.mission_attribute[0]['forward_shooting_space_meters'])),
+            ('旁向拍摄间隔(米)', str(self.mission_attribute[0]['side_shooting_space_meters'])),
         ]
         attributes_tuples.extend(line_length_m_tuples)
         show_attributes_dialog(self.rc, attributes_tuples)
