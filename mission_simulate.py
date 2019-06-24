@@ -1,4 +1,5 @@
 import PyQt5.QtCore, time, threading, qgis.gui, qgis.core, math, logging
+from mission_planning import route_planning
 
 class Point_Simulation():
     def __init__(self, rc, start_position):
@@ -41,35 +42,52 @@ class Polyline_Simulation():
     
     def begin(self):
         self.point_simu = Point_Simulation(self.rc, self.polyline[0])
+        self.simulation_steps = self.get_simulation_steps()
         
         self.simulate_thread = threading.Thread(target = self.run, daemon=True)
         self.simulate_thread.start()
     
+    def get_simulation_steps(self):
+        def get_direction_to_east(p1, p2):
+            delta_x = p2[0] - p1[0]
+            delta_y = p2[1] - p1[1]
+            direction = 90.
+            if abs(delta_x) < 0.000001:
+                if delta_y > 0:
+                    direction = 90.
+                else:
+                    direction = -90
+            else:
+                direction = math.atan(delta_y / delta_x) / math.pi * 180.
+                if delta_x < 0:
+                    direction += 180.
+            return direction
+
+        step_m = 30.
+        space_s = 0.1
+        simulation_steps = []
+        for i in range(len(self.polyline)-1):
+            p_start, p_end = self.polyline[i], self.polyline[i+1]
+            direction = get_direction_to_east(p_start, p_end)
+            segment_length_m = route_planning.get_meters_between_2_gps_points(p_start[0], p_start[1], p_end[0], p_end[1])
+            steps = int(segment_length_m // step_m)
+            real_step_m = segment_length_m / float(steps)
+            real_space_s = real_step_m / step_m * space_s
+            delta_y, delta_x = p_end[1] - p_start[1], p_end[0] - p_start[0]
+            for j in range(steps):
+                x, y = p_start[0] + delta_x / steps * j, p_start[1] + delta_y / steps * j
+                simulation_steps.append({
+                    'point': (x, y),
+                    'direction': direction,
+                    'sleep_s': real_space_s,
+                })
+        return simulation_steps
+    
     def run(self):
         try:
-            def get_direction_to_east(p1, p2):
-                delta_x = p2[0] - p1[0]
-                delta_y = p2[1] - p1[1]
-                direction = 90.
-                if abs(delta_x) < 0.000001:
-                    if delta_y > 0:
-                        direction = 90.
-                    else:
-                        direction = -90
-                else:
-                    direction = math.atan(delta_y / delta_x) / math.pi * 180.
-                    if delta_x < 0:
-                        direction += 180.
-                return direction
-
-            for i in range(len(self.polyline)):
-                direction = 0.
-                if i == len(self.polyline) - 1:
-                    direction = get_direction_to_east(self.polyline[i-1], self.polyline[i])
-                else:
-                    direction = get_direction_to_east(self.polyline[i], self.polyline[i+1])
-                self.point_simu.move_to(self.polyline[i], direction)
-                time.sleep(0.2)
+            for step in self.simulation_steps:
+                self.point_simu.move_to(step['point'], step['direction'])
+                time.sleep(step['sleep_s'])
             self.point_simu.hide()
         except Exception as e:
             logging.exception(e)
