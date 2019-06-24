@@ -9,6 +9,7 @@ import gis_canvas
 import mission_widget
 import fly_mission_widget
 import start_logo_form
+import login_dialog
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -224,12 +225,26 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
-    start_logo_form = start_logo_form.Start_LOGO_Form()
-    start_logo_form.show()
-    main_window_form = Commonder_Main()
-    main_window_form.show()
-    def close_start_logo_form():
-        time.sleep(3)
-        start_logo_form.close()
-    threading.Thread(target = close_start_logo_form, daemon=True).start()
+    
+    SHOW_LOGO = ('-show_logo' in sys.argv)
+    NEED_LOGIN = ('-login' in sys.argv)
+
+    if SHOW_LOGO:
+        start_logo_form = start_logo_form.Start_LOGO_Form()
+        start_logo_form.show()
+    
+    def show_mainwindow():
+        main_window_form = Commonder_Main()
+        main_window_form.show()
+    
+    if NEED_LOGIN:
+        login_dialog = login_dialog.Login_Dialog(show_mainwindow)
+        login_dialog.show()
+    else:
+        show_mainwindow()
+    if SHOW_LOGO:
+        def close_start_logo_form():
+            time.sleep(3)
+            start_logo_form.close()
+        threading.Thread(target = close_start_logo_form, daemon=True).start()
     sys.exit(app.exec_())
