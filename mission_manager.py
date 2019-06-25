@@ -39,8 +39,8 @@ def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_widget.setRowCount(len(attributes_tuples))
     for i in range(len(attributes_tuples)):
         k, v = attributes_tuples[i]
-        attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(k))
-        attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(v))
+        attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(str(k)))
+        attribute_table_widget.setItem(i, 1, PyQt5.QtWidgets.QTableWidgetItem(str(v)))
     attribute_table_dialog.show()
 
 class Fly_Mission():
