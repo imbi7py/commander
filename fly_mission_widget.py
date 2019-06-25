@@ -24,6 +24,8 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             self.show_detail_dialog, 'aerocraft'))
         self.pushButton_show_camera_detail.clicked.connect(functools.partial(
             self.show_detail_dialog, 'camera'))
+        self.pushButton_show_mission_detail.clicked.connect(functools.partial(
+            self.show_detail_dialog, 'mission'))
         self.init_areas()
     
     def create_area_func(self):
@@ -52,9 +54,8 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         self.sideway_overlap_textedit.setText(str(mission_attribute['sideway_overlap']))
         self.aerocraft_num.setText(str(mission_attribute['aerocraft_num']))
         self.fly_direction.setText(str(mission_attribute['fly_direction']))
-
-        self.fill_attribute_table(self.mission_attribute, mission_attribute)
     
+    # Can delete
     def fill_attribute_table(self, attribute_table_widget, attributes_dict):
         attribute_table_widget.clear()
         attribute_table_widget.horizontalHeader().hide()
@@ -73,6 +74,20 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             attributes_dict = self.preload_aerocrafts[self.selected_aerocraft]
         elif type_ == 'camera':
             attributes_dict = self.preload_cameras[self.selected_camera]
+        elif type_ == 'mission':
+            attributes_dict = {
+                'area_name': self.area_cbox.currentText(),
+                'mission_name': self.mission_name_textedit.toPlainText(),
+                'application': self.application_textedit.toPlainText(),
+                'cameras': self.camera_cbox.currentText(),
+                'aerocraft': self.aerocraft_cbox.currentText(),
+                'fly_direction': self.fly_direction.toPlainText(),
+                'ground_resolution_m': self.ground_resolution_m_textedit.toPlainText(),
+                'sideway_overlap': self.sideway_overlap_textedit.toPlainText(),
+                'forward_overlap': self.forward_overlap_textedit.toPlainText(),
+                'aerocraft_num': self.aerocraft_num.toPlainText(),
+                'board_region_name': self.available_area_cbox.currentText(),
+            }
         else:
             raise 'unknown type %s' % str(type_)
         mission_manager.show_attributes_dialog(self.rc, [(k, attributes_dict[k]) for k in attributes_dict])
