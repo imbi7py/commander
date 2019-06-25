@@ -26,6 +26,13 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
             self.show_detail_dialog, 'camera'))
         self.pushButton_show_mission_detail.clicked.connect(functools.partial(
             self.show_detail_dialog, 'mission'))
+        
+        self.fly_direction_mode_cbox.addItem('最长边原则')
+        self.fly_direction_mode_cbox.addItem('自定义')
+        self.fly_direction_mode_cbox.currentTextChanged.connect(
+            self.fly_direction_mode_cbox_selected_changed)
+        self.fly_direction_mode_cbox_selected_changed()
+
         self.init_areas()
     
     def create_area_func(self):
@@ -41,6 +48,15 @@ class Fly_Mission_Widget(PyQt5.QtWidgets.QWidget):
         for area_name in self.rc.mission_manager.get_preload_board_regions().keys():
             self.available_area_cbox.addItem(area_name)
     
+    def fly_direction_mode_cbox_selected_changed(self):
+        selected_mode_name = self.fly_direction_mode_cbox.currentText()
+        if selected_mode_name == '最长边原则':
+            self.fly_direction.setText('longest_edge')
+            self.fly_direction.setEnabled(False)
+        elif selected_mode_name == '自定义':
+            self.fly_direction.setText('0')
+            self.fly_direction.setEnabled(True)
+
     def preload_mission_selected_changed(self):
         selected_mission_name = self.preload_missions_listwidget.selectedItems()[0].text()#初始化
         mission_attribute = self.preload_missions[selected_mission_name]#任务的字典
