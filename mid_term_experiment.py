@@ -1,5 +1,6 @@
-import PyQt5, PyQt5, time
+import PyQt5, time, logging
 import geo_polygons
+import mission_simulate
 
 def create_mid_term_experiment(rc):
     rc.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang_fly_round['vertex'], geo_polygons.Polygons.aoxiang_fly_round['geo_ref'])
@@ -37,7 +38,7 @@ def create_mid_term_experiment(rc):
         'area_name': '人、车目标跟踪观测区（区域3）',
         'mission_name': '人、车目标跟踪',
         'aerocraft': '猛牛-轻小型固定翼无人机',
-        'cameras': '轻型双波段相机(红外)',
+        'cameras': '轻型双波段相机(可见光)',
         'ground_resolution_m': 0.1,
         'forward_overlap': None,
         'sideway_overlap': 0.2,
@@ -48,12 +49,11 @@ def create_mid_term_experiment(rc):
     })
 
 
-generate_files_last_execute_time = None
+g_last_execute_time = None
 def generate_files(rc):
-    global generate_files_last_execute_time
-    if generate_files_last_execute_time and time.time() - generate_files_last_execute_time < 1.:
+    global g_last_execute_time
+    if g_last_execute_time and time.time() - g_last_execute_time < 1.:
         return
-    generate_files_last_execute_time = time.time()
 
     generate_dir = PyQt5.QtWidgets.QFileDialog.getExistingDirectory(rc.main_window, '选取文件夹', './')
     version = 'test'
@@ -67,4 +67,30 @@ def generate_files(rc):
             f.close()
             print('write to %s' % filename)
 
-    generate_files_last_execute_time = time.time()
+    g_last_execute_time = time.time()
+
+def show_wpt_routes(rc):
+    global g_last_execute_time
+    if g_last_execute_time and time.time() - g_last_execute_time < 1.:
+        return
+
+    filenames, _ = PyQt5.QtWidgets.QFileDialog.getOpenFileNames(rc.main_window, '请选择航迹文件', './', "WPT Files (*.wpt);;All Files (*)")
+    routes = []
+    for wptfile in filenames:
+        try:
+            f = open(wptfile, 'r')
+            point_num = int(f.readline().strip().split(',')[0])
+            coors = []
+            for i_point in range(point_num):
+                line = f.readline().strip().split(',')
+                lon, lat = float(line[1]), float(line[2])
+                coors.append((lon, lat))
+            routes.append(coors)
+        except Exception as e:
+            logging.exception(e)
+    
+    print(routes)
+    for route in routes:
+        mission_simulate.Polyline_Simulation(rc, route, need_judge_if_mission_exist=False).begin()
+
+    g_last_execute_time = time.time()

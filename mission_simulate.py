@@ -36,13 +36,17 @@ class Point_Simulation():
         self.label.hide()
 
 class Polyline_Simulation():
-    def __init__(self, rc, polyline, area_name, mission_name):
+    def __init__(self, rc, polyline, area_name = '', mission_name = '', need_judge_if_mission_exist = True):
         self.rc = rc
         self.polyline = polyline
         self.area_name, self.mission_name = area_name, mission_name
+        self.need_judge_if_mission_exist = need_judge_if_mission_exist
 
     def judge_if_mission_exist(self):
-        return self.rc.mission_manager.exist_mission(self.area_name, self.mission_name)
+        if self.need_judge_if_mission_exist:
+            return self.rc.mission_manager.exist_mission(self.area_name, self.mission_name)
+        else:
+            return True
     
     def begin(self):
         self.point_simu = Point_Simulation(self.rc, self.polyline[0])

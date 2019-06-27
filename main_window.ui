@@ -69,6 +69,7 @@
     </property>
     <addaction name="actionmid_term"/>
     <addaction name="actiongenerate_files"/>
+    <addaction name="actionopen_route_files"/>
     <addaction name="actioncreate_area"/>
    </widget>
    <widget class="QMenu" name="mainmenu_debug">
@@ -221,6 +222,11 @@
   <action name="actiongenerate_files">
    <property name="text">
     <string>生成输出文件</string>
+   </property>
+  </action>
+  <action name="actionopen_route_files">
+   <property name="text">
+    <string>打开路径文件</string>
    </property>
   </action>
  </widget>
