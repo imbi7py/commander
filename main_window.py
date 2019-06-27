@@ -10,6 +10,7 @@ import mission_widget
 import fly_mission_widget
 import start_logo_form
 import login_dialog
+import mid_term_experiment
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -46,6 +47,7 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_mission.triggered.connect(self.refresh_widgets_visible)
         self.show_map.triggered.connect(self.refresh_widgets_visible)
         self.actioncreate_area.triggered.connect(self.rc.mission_widget.show_add_area_dialog)
+        self.actionmid_term.triggered.connect(functools.partial(mid_term_experiment.create_mid_term_experiment, self.rc))
 
         self.actionshow_1_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 1))
         self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))

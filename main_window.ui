@@ -20,7 +20,7 @@
      <x>0</x>
      <y>0</y>
      <width>1412</width>
-     <height>26</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="mainmenu_map">
@@ -68,6 +68,7 @@
      <string>mission</string>
     </property>
     <addaction name="actioncreate_area"/>
+    <addaction name="actionmid_term"/>
    </widget>
    <widget class="QMenu" name="mainmenu_debug">
     <property name="title">
@@ -209,6 +210,11 @@
   <action name="actionuse_epsg3857">
    <property name="text">
     <string>use epsg3857</string>
+   </property>
+  </action>
+  <action name="actionmid_term">
+   <property name="text">
+    <string>建立中期实验任务</string>
    </property>
   </action>
  </widget>
