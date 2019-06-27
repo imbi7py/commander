@@ -131,6 +131,7 @@ class Fly_Mission():
             line_length_m_tuples.append(('%d#飞机航线(米)' % i, str(length_m)))
             line_length_m_tuples.append(('%d#飞机航线数' % i, line_num))
             line_length_m_tuples.append(('%d#飞机拍摄点数' % i, point_num))
+            line_length_m_tuples.append(('%d#任务id' % i, aerocraft_mission['mission_aerocraft_id']))
         fly_height_m = self.mission_attribute[0]['fly_height_m']
         calculate_fly_height = self.mission_attribute[0]['calculate_fly_height']
 
