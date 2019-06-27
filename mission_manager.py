@@ -353,7 +353,7 @@ class MissionManager():
         area = self.areas.get(area_name, None)
         if area is None:
             return False, '不存在的区域:%s' % area_name
-        board_region = self.get_preload_board_regions()[params['board_region_name']]
+        board_region = self.get_preload_board_regions().get(params['board_region_name'], None)
         board_region_max_fly_height_m = None
         if board_region is not None:
             board_region_max_fly_height_m = board_region['height_m']

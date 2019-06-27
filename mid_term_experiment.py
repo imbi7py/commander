@@ -32,7 +32,7 @@ def create_mid_term_experiment(rc):
         'fly_direction': 'longest_edge',
         'application': '大尺度生态应用(中期实验)',
         'aerocraft_num': 8,
-        'board_region_name': '翱翔5km圆',
+        'board_region_name': '无限制',
     })
     mm.add_fly_mission_to_area({
         'area_name': '水域观测区（区域2）',
