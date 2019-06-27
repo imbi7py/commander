@@ -68,5 +68,3 @@ def generate_files(rc):
             print('write to %s' % filename)
 
     generate_files_last_execute_time = time.time()
-    
-    
