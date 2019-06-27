@@ -22,7 +22,7 @@ def create_mid_term_experiment(rc):
     mm.add_fly_mission_to_area({
         'area_name': '水域观测区（区域2）',
         'mission_name': '水域提取_Sar',
-        'aerocraft': '猛牛-轻小型固定翼无人机',
+        'aerocraft': '猛牛-轻小型固定翼无人机(搭载sar)',
         'cameras': 'minisar',
         'ground_resolution_m': 0.1,
         'forward_overlap': None,
