@@ -2,10 +2,23 @@ import PyQt5, time, logging
 import geo_polygons
 import mission_simulate
 
+def parse_kml(kml_str):
+    points_str = kml_str.strip().split(' ')
+    points = []
+    for point_str in points_str:
+        lon, lat, height = point_str.strip().split(',')
+        lon, lat = float(lon), float(lat)
+        points.append((lon, lat))
+    return points
+
+
 def create_mid_term_experiment(rc):
     rc.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang_fly_round['vertex'], geo_polygons.Polygons.aoxiang_fly_round['geo_ref'])
     mm = rc.mission_manager
-    mm.add_area('生态监测区（区域1）', [(117.3906, 39.5637), (117.4201, 39.5637), (117.4201, 39.5428), (117.3906, 39.5428)])
+    #mm.add_area('生态监测区（区域1）', [(117.3906, 39.5637), (117.4201, 39.5637), (117.4201, 39.5428), (117.3906, 39.5428)])
+    mm.add_area('生态监测区（区域1）', parse_kml(
+        '117.3491379572283,39.48294753602178,0 117.4682815990997,39.4768342897785,0 117.4073868950992,39.57253199053769,0 117.3921564836651,39.56987558402626,0 117.401568354145,39.54819851183547,0 117.3340229206388,39.53991091692195,0 117.3491379572283,39.48294753602178,0'
+    ))
     mm.add_area('水域观测区（区域2）', [(117.4006, 39.5637), (117.4006, 39.5562), (117.4201, 39.5562), (117.4201, 39.5637)])
     mm.add_area('人、车目标跟踪观测区（区域3）', [(117.3906, 39.5543), (117.3906, 39.5505), (117.4100, 39.5505), (117.4100, 39.5543)])
     mm.add_fly_mission_to_area({
