@@ -15,10 +15,10 @@ def parse_kml(kml_str):
 def create_mid_term_experiment(rc):
     rc.gis_canvas.zoom_to_polygon(geo_polygons.Polygons.aoxiang_fly_round['vertex'], geo_polygons.Polygons.aoxiang_fly_round['geo_ref'])
     mm = rc.mission_manager
-    #mm.add_area('生态监测区（区域1）', [(117.3906, 39.5637), (117.4201, 39.5637), (117.4201, 39.5428), (117.3906, 39.5428)])
-    mm.add_area('生态监测区（区域1）', parse_kml(
-        '117.3491379572283,39.48294753602178,0 117.4682815990997,39.4768342897785,0 117.4073868950992,39.57253199053769,0 117.3921564836651,39.56987558402626,0 117.401568354145,39.54819851183547,0 117.3340229206388,39.53991091692195,0 117.3491379572283,39.48294753602178,0'
-    ))
+    mm.add_area('生态监测区（区域1）', [(117.3906, 39.5637), (117.4201, 39.5637), (117.4201, 39.5428), (117.3906, 39.5428)])
+    #mm.add_area('生态监测区（区域1）', parse_kml(
+    #    '117.3491379572283,39.48294753602178,0 117.4682815990997,39.4768342897785,0 117.4073868950992,39.57253199053769,0 117.3921564836651,39.56987558402626,0 117.401568354145,39.54819851183547,0 117.3340229206388,39.53991091692195,0 117.3491379572283,39.48294753602178,0'
+    #))
     mm.add_area('水域观测区（区域2）', [(117.4006, 39.5637), (117.4006, 39.5562), (117.4201, 39.5562), (117.4201, 39.5637)])
     mm.add_area('人、车目标跟踪观测区（区域3）', [(117.3906, 39.5543), (117.3906, 39.5505), (117.4100, 39.5505), (117.4100, 39.5543)])
     mm.add_fly_mission_to_area({
@@ -69,7 +69,7 @@ def generate_files(rc):
         return
 
     generate_dir = PyQt5.QtWidgets.QFileDialog.getExistingDirectory(rc.main_window, '选取文件夹', './')
-    version = 'test'
+    version = 'v2'
 
     for area in rc.mission_manager.areas.values():
         for mission in area.missions.values():
@@ -99,10 +99,10 @@ def show_wpt_routes(rc):
                 lon, lat = float(line[1]), float(line[2])
                 coors.append((lon, lat))
             routes.append(coors)
+            rc.mission_manager.create_route_simulations(wptfile, coors)
         except Exception as e:
             logging.exception(e)
     
-    print(routes)
     for route in routes:
         mission_simulate.Polyline_Simulation(rc, route, need_judge_if_mission_exist=False).begin()
 

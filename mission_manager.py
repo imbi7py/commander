@@ -221,6 +221,82 @@ class Fly_Mission():
         for item in self.son_mission_widget_items:
             item.set_checked(False)
 
+
+class Route_Simulate():
+    def __init__(self, rc, name, polyline):
+        self.rc = rc
+        self.name = name
+        self.polyline = polyline
+        self.son_mission_widget_items = []
+        self.rubber_bands = []
+        self.mission_widget_item = self.create_mission_widget_item()
+        self.create_rubber_bands()
+    
+    def simulate(self):
+        #simulation = mission_simulate.Fly_Mission_Simulation(self.rc, self)
+        #simulation.begin()
+        for aerocraft_mission in self.mission_attribute:
+            shoot_coors_geo = [(coor['longitude'], coor['latitude']) for coor in aerocraft_mission['route_coors']]
+            one_simulation = mission_simulate.Polyline_Simulation(self.rc, shoot_coors_geo, self.area.name, self.name)
+            one_simulation.begin()
+
+    def delete(self):
+        self.hide()
+        del self.rubber_bands[:]
+        for item in self.son_mission_widget_items:
+            item.parent.removeChild(item)
+        self.mission_widget_item.parent.removeChild(self.mission_widget_item)
+        del self.area.missions[self.name]
+        del self
+        
+    def create_mission_widget_item(self):
+        item = mission_widget.Mission_Widget_Item(
+            rc=self.rc,
+            parent=self.rc.mission_widget,
+            type_='route_simulate',
+            binding_object=self
+        )
+        item.setExpanded(True)
+        return item
+    
+    def create_polyline_rubber_band(self, name, polyline, color, width, line_style):
+        rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
+            polyline,
+            'EPSG:4326',
+            color=color, width=width, line_style=line_style)
+        rubber_band.name = name
+        self.rubber_bands.append(rubber_band)
+        item = mission_widget.Mission_Widget_Item(
+            rc=self.rc,
+            parent=self.mission_widget_item,
+            type_='geometry',
+            binding_object=rubber_band
+        )
+        self.son_mission_widget_items.append(item)
+
+    def create_rubber_bands(self):
+        self.create_polyline_rubber_band(
+            name='航线',
+            polyline=self.polyline,
+            #color=PyQt5.QtCore.Qt.blue,
+            color=get_random_qt_color_no_white(),
+            width=2,
+            line_style=PyQt5.QtCore.Qt.SolidLine)
+
+    def show(self):
+        if 'mission_widget_item' in dir(self):
+            if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Checked:
+                self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Checked)
+        for item in self.son_mission_widget_items:
+            item.set_checked(True)
+    
+    def hide(self):
+        if 'mission_widget_item' in dir(self):
+            if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Unchecked:
+                self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
+        for item in self.son_mission_widget_items:
+            item.set_checked(False)
+
 class Area():
     """
     飞行区域(Area)
@@ -317,6 +393,7 @@ class MissionManager():
         self.rc = rc
         self.rc.mission_manager = self
         self.areas = {}
+        self.route_simulations = {}
     
     def exist_mission(self, area_name, mission_name):
         if area_name in self.areas:
@@ -343,6 +420,9 @@ class MissionManager():
         self.areas[area_name] = newarea
         self.rc.fly_mission_widget.init_areas()
         return True, newarea
+    
+    def create_route_simulations(self, name, polyline):
+        self.route_simulations[name] = Route_Simulate(self.rc, name, polyline)
     
     def del_area(self, area_name):
         self.rc.fly_mission_widget.init_areas()
