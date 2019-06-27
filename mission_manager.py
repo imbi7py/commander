@@ -26,7 +26,7 @@ def calculate_polyogn_area_metersquare(points_list, epsgcode='4326'):
 
 def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_dialog = PyQt5.QtWidgets.QMainWindow(rc.main_window)
-    sizex, sizey = 300, 500
+    sizex, sizey = 500, 800
     attribute_table_dialog.resize(sizex, sizey)
     attribute_table_dialog.setWindowTitle('属性')
     attribute_table_widget = PyQt5.QtWidgets.QTableWidget()
@@ -37,6 +37,8 @@ def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_widget.horizontalHeader().hide()
     attribute_table_widget.setColumnCount(2)
     attribute_table_widget.setRowCount(len(attributes_tuples))
+    attribute_table_widget.setColumnWidth(0, 250)
+    attribute_table_widget.setColumnWidth(1, 250)
     for i in range(len(attributes_tuples)):
         k, v = attributes_tuples[i]
         attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(str(k)))
@@ -117,25 +119,35 @@ class Fly_Mission():
     def show_attributes(self):
         area_msq = self.area.get_area()
         line_length_m_tuples = []
+        tatol_line_num = 0
+        total_point_num = 0
         for i in range(len(self.mission_attribute)):
             aerocraft_mission = self.mission_attribute[i]
             length_m = aerocraft_mission['length_m']
-            line_length_m_tuples.append((
-                '%d#飞机航线(米)' % i,
-                str(length_m)
-            ))
+            line_num = aerocraft_mission['line_num']
+            tatol_line_num += line_num
+            point_num = len(aerocraft_mission['route_coors'])
+            total_point_num += point_num
+            line_length_m_tuples.append(('%d#飞机航线(米)' % i, str(length_m)))
+            line_length_m_tuples.append(('%d#飞机航线数' % i, line_num))
+            line_length_m_tuples.append(('%d#飞机拍摄点数' % i, point_num))
         fly_height_m = self.mission_attribute[0]['fly_height_m']
+        calculate_fly_height = self.mission_attribute[0]['calculate_fly_height']
 
         attributes_tuples = [
             ('任务名', self.name),
             ('测区名', self.area.name),
             ('测区总面积(平方米)', str(area_msq)),
             ('飞机数量', str(len(self.mission_attribute))),
-            ('航高(米)', str(fly_height_m)),
+            ('飞行航高(米)', str(fly_height_m)),
+            ('航线数量', str(tatol_line_num)),
+            ('拍摄点数量', str(total_point_num)),
             ('航向地面副宽(米)', str(self.mission_attribute[0]['forward_photo_ground_meters'])),
             ('旁向地面副宽(米)', str(self.mission_attribute[0]['side_photo_ground_meters'])),
             ('航向拍摄间隔(米)', str(self.mission_attribute[0]['forward_shooting_space_meters'])),
             ('旁向拍摄间隔(米)', str(self.mission_attribute[0]['side_shooting_space_meters'])),
+            ('计算出的航高/米(用于调试)', str(calculate_fly_height)),
+            ('实际拍摄出的地面分辨率', str(self.mission_attribute[0]['actually_ground_resolution_m']))
         ]
         attributes_tuples.extend(line_length_m_tuples)
         show_attributes_dialog(self.rc, attributes_tuples)
