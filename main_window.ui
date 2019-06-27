@@ -67,8 +67,9 @@
     <property name="title">
      <string>mission</string>
     </property>
-    <addaction name="actioncreate_area"/>
     <addaction name="actionmid_term"/>
+    <addaction name="actiongenerate_files"/>
+    <addaction name="actioncreate_area"/>
    </widget>
    <widget class="QMenu" name="mainmenu_debug">
     <property name="title">
@@ -215,6 +216,11 @@
   <action name="actionmid_term">
    <property name="text">
     <string>建立中期实验任务</string>
+   </property>
+  </action>
+  <action name="actiongenerate_files">
+   <property name="text">
+    <string>生成输出文件</string>
    </property>
   </action>
  </widget>
