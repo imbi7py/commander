@@ -421,27 +421,27 @@ p, li { white-space: pre-wrap; }
         </item>
        </layout>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="title">
-      <string>操作</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
       <item>
-       <widget class="QPushButton" name="generate_mission">
-        <property name="text">
-         <string>生成任务</string>
+       <widget class="QGroupBox" name="groupBox_6">
+        <property name="title">
+         <string>操作</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="generate_mission_2">
-        <property name="text">
-         <string>加载实际航线</string>
-        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_7">
+         <item>
+          <widget class="QPushButton" name="generate_mission">
+           <property name="text">
+            <string>生成任务</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="load_flying_route">
+           <property name="text">
+            <string>加载实际航线</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
