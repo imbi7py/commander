@@ -26,7 +26,7 @@ def calculate_polyogn_area_metersquare(points_list, epsgcode='4326'):
 
 def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_dialog = PyQt5.QtWidgets.QMainWindow(rc.main_window)
-    sizex, sizey = 300, 500
+    sizex, sizey = 500, 800
     attribute_table_dialog.resize(sizex, sizey)
     attribute_table_dialog.setWindowTitle('属性')
     attribute_table_widget = PyQt5.QtWidgets.QTableWidget()
@@ -37,6 +37,8 @@ def show_attributes_dialog(rc, attributes_tuples):
     attribute_table_widget.horizontalHeader().hide()
     attribute_table_widget.setColumnCount(2)
     attribute_table_widget.setRowCount(len(attributes_tuples))
+    attribute_table_widget.setColumnWidth(0, 250)
+    attribute_table_widget.setColumnWidth(1, 250)
     for i in range(len(attributes_tuples)):
         k, v = attributes_tuples[i]
         attribute_table_widget.setItem(i, 0, PyQt5.QtWidgets.QTableWidgetItem(str(k)))
@@ -117,25 +119,36 @@ class Fly_Mission():
     def show_attributes(self):
         area_msq = self.area.get_area()
         line_length_m_tuples = []
+        tatol_line_num = 0
+        total_point_num = 0
         for i in range(len(self.mission_attribute)):
             aerocraft_mission = self.mission_attribute[i]
             length_m = aerocraft_mission['length_m']
-            line_length_m_tuples.append((
-                '%d#飞机航线(米)' % i,
-                str(length_m)
-            ))
+            line_num = aerocraft_mission['line_num']
+            tatol_line_num += line_num
+            point_num = len(aerocraft_mission['route_coors'])
+            total_point_num += point_num
+            line_length_m_tuples.append(('%d#飞机航线(米)' % i, str(length_m)))
+            line_length_m_tuples.append(('%d#飞机航线数' % i, line_num))
+            line_length_m_tuples.append(('%d#飞机拍摄点数' % i, point_num))
+            line_length_m_tuples.append(('%d#任务id' % i, aerocraft_mission['mission_aerocraft_id']))
         fly_height_m = self.mission_attribute[0]['fly_height_m']
+        calculate_fly_height = self.mission_attribute[0]['calculate_fly_height']
 
         attributes_tuples = [
             ('任务名', self.name),
             ('测区名', self.area.name),
             ('测区总面积(平方米)', str(area_msq)),
             ('飞机数量', str(len(self.mission_attribute))),
-            ('航高(米)', str(fly_height_m)),
+            ('飞行航高(米)', str(fly_height_m)),
+            ('航线数量', str(tatol_line_num)),
+            ('拍摄点数量', str(total_point_num)),
             ('航向地面副宽(米)', str(self.mission_attribute[0]['forward_photo_ground_meters'])),
             ('旁向地面副宽(米)', str(self.mission_attribute[0]['side_photo_ground_meters'])),
             ('航向拍摄间隔(米)', str(self.mission_attribute[0]['forward_shooting_space_meters'])),
             ('旁向拍摄间隔(米)', str(self.mission_attribute[0]['side_shooting_space_meters'])),
+            ('计算出的航高/米(用于调试)', str(calculate_fly_height)),
+            ('实际拍摄出的地面分辨率', str(self.mission_attribute[0]['actually_ground_resolution_m']))
         ]
         attributes_tuples.extend(line_length_m_tuples)
         show_attributes_dialog(self.rc, attributes_tuples)
@@ -194,6 +207,82 @@ class Fly_Mission():
     
     def showtype(self):
         print(self.mission_attribute)
+
+    def show(self):
+        if 'mission_widget_item' in dir(self):
+            if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Checked:
+                self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Checked)
+        for item in self.son_mission_widget_items:
+            item.set_checked(True)
+    
+    def hide(self):
+        if 'mission_widget_item' in dir(self):
+            if self.mission_widget_item.checkState(0) != PyQt5.QtCore.Qt.Unchecked:
+                self.mission_widget_item.setCheckState(0, PyQt5.QtCore.Qt.Unchecked)
+        for item in self.son_mission_widget_items:
+            item.set_checked(False)
+
+
+class Route_Simulate():
+    def __init__(self, rc, name, polyline):
+        self.rc = rc
+        self.name = name
+        self.polyline = polyline
+        self.son_mission_widget_items = []
+        self.rubber_bands = []
+        self.mission_widget_item = self.create_mission_widget_item()
+        self.create_rubber_bands()
+    
+    def simulate(self):
+        #simulation = mission_simulate.Fly_Mission_Simulation(self.rc, self)
+        #simulation.begin()
+        for aerocraft_mission in self.mission_attribute:
+            shoot_coors_geo = [(coor['longitude'], coor['latitude']) for coor in aerocraft_mission['route_coors']]
+            one_simulation = mission_simulate.Polyline_Simulation(self.rc, shoot_coors_geo, self.area.name, self.name)
+            one_simulation.begin()
+
+    def delete(self):
+        self.hide()
+        del self.rubber_bands[:]
+        for item in self.son_mission_widget_items:
+            item.parent.removeChild(item)
+        self.mission_widget_item.parent.removeChild(self.mission_widget_item)
+        del self.area.missions[self.name]
+        del self
+        
+    def create_mission_widget_item(self):
+        item = mission_widget.Mission_Widget_Item(
+            rc=self.rc,
+            parent=self.rc.mission_widget,
+            type_='route_simulate',
+            binding_object=self
+        )
+        item.setExpanded(True)
+        return item
+    
+    def create_polyline_rubber_band(self, name, polyline, color, width, line_style):
+        rubber_band = self.rc.gis_canvas.show_temp_polyline_from_points_list(
+            polyline,
+            'EPSG:4326',
+            color=color, width=width, line_style=line_style)
+        rubber_band.name = name
+        self.rubber_bands.append(rubber_band)
+        item = mission_widget.Mission_Widget_Item(
+            rc=self.rc,
+            parent=self.mission_widget_item,
+            type_='geometry',
+            binding_object=rubber_band
+        )
+        self.son_mission_widget_items.append(item)
+
+    def create_rubber_bands(self):
+        self.create_polyline_rubber_band(
+            name='航线',
+            polyline=self.polyline,
+            #color=PyQt5.QtCore.Qt.blue,
+            color=get_random_qt_color_no_white(),
+            width=2,
+            line_style=PyQt5.QtCore.Qt.SolidLine)
 
     def show(self):
         if 'mission_widget_item' in dir(self):
@@ -305,6 +394,7 @@ class MissionManager():
         self.rc = rc
         self.rc.mission_manager = self
         self.areas = {}
+        self.route_simulations = {}
     
     def exist_mission(self, area_name, mission_name):
         if area_name in self.areas:
@@ -332,6 +422,9 @@ class MissionManager():
         self.rc.fly_mission_widget.init_areas()
         return True, newarea
     
+    def create_route_simulations(self, name, polyline):
+        self.route_simulations[name] = Route_Simulate(self.rc, name, polyline)
+    
     def del_area(self, area_name):
         self.rc.fly_mission_widget.init_areas()
         del self.areas[area_name]
@@ -341,7 +434,7 @@ class MissionManager():
         area = self.areas.get(area_name, None)
         if area is None:
             return False, '不存在的区域:%s' % area_name
-        board_region = self.get_preload_board_regions()[params['board_region_name']]
+        board_region = self.get_preload_board_regions().get(params['board_region_name'], None)
         board_region_max_fly_height_m = None
         if board_region is not None:
             board_region_max_fly_height_m = board_region['height_m']

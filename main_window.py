@@ -48,6 +48,8 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_map.triggered.connect(self.refresh_widgets_visible)
         self.actioncreate_area.triggered.connect(self.rc.mission_widget.show_add_area_dialog)
         self.actionmid_term.triggered.connect(functools.partial(mid_term_experiment.create_mid_term_experiment, self.rc))
+        self.actiongenerate_files.triggered.connect(functools.partial(mid_term_experiment.generate_files, self.rc))
+        self.actionopen_route_files.triggered.connect(functools.partial(mid_term_experiment.show_wpt_routes, self.rc))
 
         self.actionshow_1_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 1))
         self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))
