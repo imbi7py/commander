@@ -1,3 +1,4 @@
+import PyQt5, PyQt5, time
 import geo_polygons
 
 def create_mid_term_experiment(rc):
@@ -45,3 +46,27 @@ def create_mid_term_experiment(rc):
         'aerocraft_num': 1,
         'board_region_name': '翱翔5km圆',
     })
+
+
+generate_files_last_execute_time = None
+def generate_files(rc):
+    global generate_files_last_execute_time
+    if generate_files_last_execute_time and time.time() - generate_files_last_execute_time < 1.:
+        return
+    generate_files_last_execute_time = time.time()
+
+    generate_dir = PyQt5.QtWidgets.QFileDialog.getExistingDirectory(rc.main_window, '选取文件夹', './')
+    version = 'test'
+
+    for area in rc.mission_manager.areas.values():
+        for mission in area.missions.values():
+            text = mission.to_text()
+            filename = '%s/%s_%s.json' % (generate_dir, version, mission.name)
+            f = open(filename, 'w')
+            f.write(text)
+            f.close()
+            print('write to %s' % filename)
+
+    generate_files_last_execute_time = time.time()
+    
+    
