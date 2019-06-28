@@ -97,6 +97,25 @@ def quickview_send(ip, port, folder,aircraft_type,sensor_type):
             send_img(ip, port, img, aircraft_type, sensor_type,monitor_type)
             time.sleep(2)
 
+def picproduct_send(ip, port, folder,aircraft_type,sensor_type):
+    while True:
+        test_img_names=get_test_image_names(folder)
+        for name_ in test_img_names:
+            monitor_type='picproduct'
+            img = Image.open(name_)
+            img = normalization(img)
+            is_color_img(img)
+            img = img.resize((1000,500))
+            draw = ImageDraw.Draw(img)
+            font = ImageFont.truetype("songti.TTF",35)
+            text_ = 'aircrafttype: %s\nsensor_type: %s' % (aircraft_type, sensor_type)
+            text_color = (255, 0, 0)
+            if not is_color_img(img):
+                text_color = 255
+            draw.text((00, 00), text_, fill = text_color, font=font)
+            send_img(ip, port, img, aircraft_type, sensor_type,monitor_type)
+            time.sleep(2)
+
 def video_send(ip, port,folder,aircraft_type,sensor_type):
     while True:
         files = get_test_image_names(folder)
@@ -126,6 +145,7 @@ def main():
     #quickview_send(ip, port, 'pics/realdata/多光谱', 'aircraft_type1', 'sensor_typea')
     #video_send(ip, port, 'pics/realdata/双波段视频吊舱_可见光', 'aircraft_type1', 'sensor_typea')
     threads = []
+    
     t1 = threading.Thread(target=quickview_send, args=(ip, port, 'pics/realdata/光学相机影像', '北航猛牛', '光学相机影像',))
     threads.append(t1)
     #t2 = threading.Thread(target=quickview_send, args=(ip, port, 'pics/realdata/minisar', '北航猛牛', 'minisar',))
@@ -142,6 +162,9 @@ def main():
     threads.append(t7)
     t8 = threading.Thread(target=video_send, args=(ip, port, 'pics/realdata/光学相机视频', '北航猛牛2', '光学相机视频',))
     threads.append(t8)
+    
+    t9 = threading.Thread(target=picproduct_send, args=(ip, port, 'pics/realdata/快视遥感产品/', '猛牛', '测绘相机快视图',))
+    threads.append(t9)#快视产品显示
     
     for t in threads:
         t.setDaemon(True)
