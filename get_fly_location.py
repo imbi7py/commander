@@ -1,5 +1,26 @@
 import os
 
+def bin_to_int(bin):
+    bin=list(bin)
+    int1=0
+    if(bin[0]=='0'):
+        int1=int(''.join(bin),2)
+    else:
+        for i in range(len(bin)):
+            if(bin[i]=='0'):
+                bin[i]='1'
+            else:
+                bin[i]='0'
+        for i in range(len(bin)):
+            if(bin[len(bin)-i-1]=='0'):
+                bin[len(bin)-i-1]='1'
+                break
+            else:
+                bin[len(bin)-i-1]='0'
+        int1=int(''.join(bin),2)
+        int1=-int1
+    return int1
+
 def bin_to_hex(input_file, output_file, block_size=256):
     num_system_conversion(input_file, output_file,blocksize=block_size)
 
@@ -50,13 +71,16 @@ def get_fly_location(input_file):
                 if(now+105>=text_len):
                     break
             while(now+105<text_len):
-                lon=text[now+57]+text[now+58]+text[now+59]+text[now+60]
-                lat=text[now+61]+text[now+62]+text[now+63]+text[now+64]
-                height=text[now+65]+text[now+66]
-                height=height[0]+'0'*8+height[1:]
-                lon=float(int(lon,2))/1000000
-                lat=float(int(lat,2))/1000000
-                height=float(int(height,2))
+                lon=text[now+60]+text[now+59]+text[now+58]+text[now+57]
+                lat=text[now+64]+text[now+63]+text[now+62]+text[now+61]
+                height=text[now+66]+text[now+65]
+                if height[0]=='1':
+                    height='1'*16+height
+                else:
+                    height='0'*16+height
+                lon=float(bin_to_int(lon))/1000000
+                lat=float(bin_to_int(lat))/1000000
+                height=float(bin_to_int(height))
                 fly_location.append((lon,lat,height))
                 now=now+105
                 while (text[now] != '11101011' or text[now + 1] != '10010000'):

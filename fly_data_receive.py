@@ -1,4 +1,24 @@
 import socketserver, logging, threading,math
+def bin_to_int(bin):
+    bin=list(bin)
+    int1=0
+    if(bin[0]=='0'):
+        int1=int(''.join(bin),2)
+    else:
+        for i in range(len(bin)):
+            if(bin[i]=='0'):
+                bin[i]='1'
+            else:
+                bin[i]='0'
+        for i in range(len(bin)):
+            if(bin[len(bin)-i-1]=='0'):
+                bin[len(bin)-i-1]='1'
+                break
+            else:
+                bin[len(bin)-i-1]='0'
+        int1=int(''.join(bin),2)
+        int1=-int1
+    return int1
 
 class FlyDataServer():
     _instance = None
@@ -42,21 +62,17 @@ class FlyDataServer():
             fly_num = '0'* 3 * 4 + fly_num
             print(fly_num)
             fly_num=int(fly_num,2)
-            lon = text[now + 4] + text[now + 5]+text[now + 6] + text[now + 7]
-            lat = text[now + 8] + text[now + 9]+text[now + 10] + text[now + 11]
-            height = text[now + 12]+text[now + 13]
-            height = height[0] + '0' * 8 + height[1:]
-            lon1 = float(int(lon[1:], 2)) / 1000000
-            lat1 = float(int(lat[1:], 2)) / 1000000
-            if(lon[0]=='1'):
-                lon1=-lon1
-            if (lat[0] == '1'):
-                lat1 = -lat1
-            height1 = float(int(height[1:], 2))
-            if (height[0] == '1'):
-                height1 = -height1
-            print([fly_num, lon1, lat1, height1])
-            return [fly_num, lon1, lat1, height1]
+            lon = text[now + 7] + text[now + 6]+text[now + 5] + text[now + 4]
+            lat = text[now + 11] + text[now + 10]+text[now + 9] + text[now + 8]
+            height = text[now + 13]+text[now + 12]
+            if height[0] == '1':
+                height = '1' * 16 + height
+            else:
+                height = '0' * 16 + height
+            lon = float(bin_to_int(lon)) / 1000000
+            lat = float(bin_to_int(lat)) / 1000000
+            height = float(bin_to_int(height))
+            print([fly_num, lon, lat, height])
+            return [fly_num, lon, lat, height]
 
 a=FlyDataServer()
-#print(a.Handler_Class.get_fly_location())
