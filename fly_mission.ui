@@ -434,13 +434,6 @@ p, li { white-space: pre-wrap; }
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="load_flying_route">
-           <property name="text">
-            <string>加载实际航线</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
