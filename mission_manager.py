@@ -134,6 +134,7 @@ class Fly_Mission():
             line_length_m_tuples.append(('%d#任务id' % i, aerocraft_mission['mission_aerocraft_id']))
         fly_height_m = self.mission_attribute[0]['fly_height_m']
         calculate_fly_height = self.mission_attribute[0]['calculate_fly_height']
+        look_angle_degrees=self.mission_attribute[0]['look_angle_degrees']
 
         attributes_tuples = [
             ('任务名', self.name),
@@ -148,7 +149,8 @@ class Fly_Mission():
             ('航向拍摄间隔(米)', str(self.mission_attribute[0]['forward_shooting_space_meters'])),
             ('旁向拍摄间隔(米)', str(self.mission_attribute[0]['side_shooting_space_meters'])),
             ('计算出的航高/米(用于调试)', str(calculate_fly_height)),
-            ('实际拍摄出的地面分辨率', str(self.mission_attribute[0]['actually_ground_resolution_m']))
+            ('实际拍摄出的地面分辨率', str(self.mission_attribute[0]['actually_ground_resolution_m'])),
+            ('sar的安装角度（右侧视为正）', str(look_angle_degrees))
         ]
         attributes_tuples.extend(line_length_m_tuples)
         show_attributes_dialog(self.rc, attributes_tuples)
