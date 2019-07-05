@@ -94,6 +94,7 @@ class Fly_Mission():
     def create_mission_widget_item(self):
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
+            area_name=self.area.name,
             parent=self.area.mission_widget_item,
             type_='fly_mission',
             binding_object=self
@@ -110,6 +111,7 @@ class Fly_Mission():
         self.rubber_bands.append(rubber_band)
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
+            area_name=self.area.name,
             parent=self.mission_widget_item,
             type_='geometry',
             binding_object=rubber_band
@@ -164,6 +166,7 @@ class Fly_Mission():
         self.rubber_bands.append(rubber_band)
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
+            area_name=self.area.name,
             parent=self.mission_widget_item,
             type_='geometry',
             binding_object=rubber_band
@@ -255,6 +258,7 @@ class Route_Simulate():
     def create_mission_widget_item(self):
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
+            area_name=self.area_name,
             parent=self.rc.mission_widget,
             type_='route_simulate',
             binding_object=self
@@ -271,6 +275,7 @@ class Route_Simulate():
         self.rubber_bands.append(rubber_band)
         item = mission_widget.Mission_Widget_Item(
             rc=self.rc,
+            area_name=self.area_name,
             parent=self.mission_widget_item,
             type_='geometry',
             binding_object=rubber_band
@@ -442,6 +447,7 @@ class MissionManager():
             board_region_max_fly_height_m = board_region['height_m']
             board_region = route_planning.get_structured_board_region(board_region['polygon']['vertex'])
         succ, ret = mission_planning.mission_planning(
+            area_name=area_name,
             area_points_list=area.polygon,
             mission_name=params['mission_name'],
             aerocraft=params['aerocraft'],
