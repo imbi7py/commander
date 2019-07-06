@@ -51,7 +51,6 @@ class Polyline_Simulation():
     def begin(self):
         self.point_simu = Point_Simulation(self.rc, self.polyline[0])
         self.simulation_steps = self.get_simulation_steps()
-        
         self.step_i = 0
         self.next_step()
 
@@ -88,6 +87,8 @@ class Polyline_Simulation():
             direction = get_direction_to_east(p_start, p_end)
             segment_length_m = route_planning.get_meters_between_2_gps_points(p_start[0], p_start[1], p_end[0], p_end[1])
             steps = int(segment_length_m // step_m)
+            if steps==0:
+                steps=1
             real_step_m = segment_length_m / float(steps)
             real_space_s = real_step_m / step_m * space_s
             delta_y, delta_x = p_end[1] - p_start[1], p_end[0] - p_start[0]
