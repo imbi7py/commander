@@ -1,5 +1,5 @@
 # coding:utf-8
-import os, sys, logging, functools
+import os, sys, logging, functools, threading, time
 import mysql.connector
 import load_libs
 import PyQt5
@@ -8,6 +8,9 @@ import quickview_monitor
 import gis_canvas
 import mission_widget
 import fly_mission_widget
+import start_logo_form
+import login_dialog
+import mid_term_experiment
 
 class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
     def __init__(self):
@@ -44,6 +47,9 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
         self.show_mission.triggered.connect(self.refresh_widgets_visible)
         self.show_map.triggered.connect(self.refresh_widgets_visible)
         self.actioncreate_area.triggered.connect(self.rc.mission_widget.show_add_area_dialog)
+        self.actionmid_term.triggered.connect(functools.partial(mid_term_experiment.create_mid_term_experiment, self.rc))
+        self.actiongenerate_files.triggered.connect(functools.partial(mid_term_experiment.generate_files, self.rc))
+        self.actionopen_route_files.triggered.connect(functools.partial(mid_term_experiment.show_wpt_routes, self.rc))
 
         self.actionshow_1_quickviews.triggered.connect(functools.partial(self.init_quickview_monitors_view, 1, 1))
         self.actionshow_2_quickviews_h.triggered.connect(functools.partial(self.init_quickview_monitors_view, 2, 1))
@@ -223,6 +229,26 @@ class Commonder_Main(PyQt5.QtWidgets.QMainWindow):
 
 if __name__ == '__main__':
     app = PyQt5.QtWidgets.QApplication(sys.argv)
-    form = Commonder_Main()
-    form.show()
+    
+    SHOW_LOGO = ('-show_logo' in sys.argv)
+    NEED_LOGIN = ('-login' in sys.argv)
+
+    if SHOW_LOGO:
+        start_logo_form = start_logo_form.Start_LOGO_Form()
+        start_logo_form.show()
+    
+    def show_mainwindow():
+        main_window_form = Commonder_Main()
+        main_window_form.show()
+    
+    if NEED_LOGIN:
+        login_dialog = login_dialog.Login_Dialog(show_mainwindow)
+        login_dialog.show()
+    else:
+        show_mainwindow()
+    if SHOW_LOGO:
+        def close_start_logo_form():
+            time.sleep(3)
+            start_logo_form.close()
+        threading.Thread(target = close_start_logo_form, daemon=True).start()
     sys.exit(app.exec_())

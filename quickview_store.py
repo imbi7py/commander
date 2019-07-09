@@ -16,6 +16,7 @@ class QuickviewStore():
                         sensor_id='unknown',
                         aircraft_type='unknown',
                         aircraft_id='unknown',
+                        monitor_type='unknown',
                         ):
         assert isinstance(img_pil, PIL.Image.Image), 'Please use pillow image'
         img_str_data = img_utils.img_to_str(img_pil).replace('\'', '\"')

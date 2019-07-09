@@ -13,10 +13,12 @@ class Filter_Combobox(PyQt5.QtWidgets.QComboBox):
 
     def init_items(self):
         self.items = ['All', 'None']
+        '''
         if self.rc is not None:  # 测试时self.rc可能是None
             self.items = self.items + self.rc.cfg.get(
                 'quickview_filter_item_preload', {}).get(
                     self.filter_name, [])
+        '''
         for item in self.items:
             self.addItem(item)
         self.setCurrentIndex(self.findText('All'))
@@ -40,6 +42,35 @@ class Filter_Combobox(PyQt5.QtWidgets.QComboBox):
                 return True
             else:
                 return False
+
+class Monitor_Combobox(PyQt5.QtWidgets.QComboBox):
+    def __init__(self, parent, quickview_monitor):
+        PyQt5.QtWidgets.QComboBox.__init__(self, parent)
+        self.quickview_monitor = quickview_monitor
+        self.activated[str].connect(self.on_selected_changed)
+        self.init_items()
+
+    def init_items(self):
+        self.items = ['quickview', 'video']
+        for item in self.items:
+            self.addItem(item)
+        self.setCurrentIndex(self.findText('quickview'))
+        self.on_selected_changed('quickview')
+
+    def on_selected_changed(self, selected_item):
+        self.selected_item = selected_item
+        self.quickview_monitor.clear_img()
+
+    def passed_filter(self, value):
+        if len(value) > 0 and value not in self.items:
+            self.items.append(value)
+            self.addItem(value)
+
+        if value == self.selected_item:
+            return True
+        else:
+            return False
+
 
 
 class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
@@ -68,6 +99,16 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
     def clear_img(self):
         self.imglabel.clear()
         self.img = None
+    
+    def get_name_text(self, name):
+        if name == 'aircraft_type':
+            return '飞机' + ':'
+        elif name == 'sensor_type':
+            return '传感器' + ':'
+        elif name == 'monitor_type':
+            return '视频/图像' + ':'
+        else:
+            return name + ':'
 
     def init_layout(self):
         vertical_layout = PyQt5.QtWidgets.QVBoxLayout()
@@ -75,7 +116,7 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
         horizontal_layout = PyQt5.QtWidgets.QHBoxLayout()
         for filter_name, combobox in self.filter_comboboxes.items():
             namelabel = PyQt5.QtWidgets.QLabel(self)
-            namelabel.setText(filter_name+':')
+            namelabel.setText(self.get_name_text(filter_name))
             label_cb_layout = PyQt5.QtWidgets.QVBoxLayout()
             label_cb_layout.addWidget(namelabel)
             label_cb_layout.addWidget(combobox)
@@ -92,11 +133,13 @@ class Quickview_Monitor(PyQt5.QtWidgets.QWidget):
 
         init_comboboxe('aircraft_type')
         init_comboboxe('sensor_type')
+        self.filter_comboboxes['monitor_type']=Monitor_Combobox(self, self)
 
     def passed_filters(self, one_quickview_data):
         if self.filter_comboboxes['aircraft_type'].passed_filter(one_quickview_data['aircraft_type']):
             if self.filter_comboboxes['sensor_type'].passed_filter(one_quickview_data['sensor_type']):
-                return True
+                if self.filter_comboboxes['monitor_type'].passed_filter(one_quickview_data['monitor_type']):
+                    return True
         return False
 
     def check_and_show_quickview(self, one_quickview_data):

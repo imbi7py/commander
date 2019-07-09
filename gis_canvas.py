@@ -48,7 +48,7 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.base_map_layers = []
         self.mission_layers = []
         self.on_draw_polygon = False
-        self.load_online_map('google_sate')
+        self.load_online_map('amap6')
         self.zoom_to_aoxiang()
         self.setParallelRenderingEnabled(True)
         self.setCachingEnabled(True)
@@ -80,10 +80,25 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         self.roam_check_box.set_checked = lambda checked: self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Checked) if checked else self.roam_check_box.setCheckState(PyQt5.QtCore.Qt.Unchecked)
         self.roam_check_box.set_checked(True)
 
-    def to_window_point(self, point):
+    def show_test_label(self):
+        move_x=100
+        move_y=100
+        angle=90
+        testlabel = PyQt5.QtWidgets.QLabel(self)
+        icon_path="pics/icon/aoxiang.png"
+        testlabel.move(move_x, move_y)
+        icon=PyQt5.QtGui.QPixmap(icon_path)
+        icon =icon.scaled(PyQt5.QtCore.QSize(50, 50))
+        icon_transform=PyQt5.QtGui.QTransform()
+        icon_transform.rotate(angle)
+        testlabel.setAlignment(PyQt5.QtCore.Qt.AlignCenter)
+        testlabel.setPixmap(icon.transformed(icon_transform))
+        testlabel.show()
+
+    def to_window_point(self, x, y):
         center=self.getCoordinateTransform().toMapCoordinates(self.center().x(),self.center().y())
-        point_window_x=self.center().x()+(point.x()-center.x())/self.mapUnitsPerPixel()
-        point_window_y=self.center().y()-(point.y()-center.y())/self.mapUnitsPerPixel()
+        point_window_x=self.center().x()+(x-center.x())/self.mapUnitsPerPixel()
+        point_window_y=self.center().y()-(y-center.y())/self.mapUnitsPerPixel()
         return (point_window_x, point_window_y)
     
     def start_draw_polygon(self, handler_func):
@@ -267,12 +282,16 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
         poly.setLineStyle(line_style)
         poly.show()
         return poly
+    
+    def to_map_point(self, point, epsgcode):
+        map_epsgcode = self.get_projection()
+        x, y = point
+        return trans_point(epsgcode, map_epsgcode, x, y)
 
     def show_temp_points_from_points_list(self, points_list, epsgcode, width=1, color=PyQt5.QtCore.Qt.black):
         poly = qgis.gui.QgsRubberBand(self, qgis.core.QgsWkbTypes.PointGeometry)
-        map_epsgcode = self.get_projection()
         for x, y in points_list:
-            x, y = trans_point(epsgcode, map_epsgcode, x, y)
+            x, y = self.to_map_point((x, y), epsgcode)
             poly.addPoint(qgis.core.QgsPointXY(x, y))
         poly.setColor(color)
         poly.setWidth(width)
@@ -337,6 +356,12 @@ class Gis_Canvas(qgis.gui.QgsMapCanvas):
             maxx = max(maxx, x)
             maxy = max(maxy, y)
             miny = min(miny, y)
+        centerx = (minx+maxx)/2.
+        centery = (miny+maxy)/2.
+        minx = minx*2-centerx
+        maxx = maxx*2-centerx
+        miny = miny*2-centery
+        maxy = maxy*2-centery
         self.zoom_to_rectangle(minx, miny, maxx, maxy, epsg_code)
 
     def zoom_to_china(self):
@@ -451,6 +476,10 @@ class MyWnd_fortest(PyQt5.QtWidgets.QMainWindow):
         b = PyQt5.QtWidgets.QPushButton('exit fullscreen', self)
         self.button_layout.addWidget(b, 0, 10)
         b.clicked.connect(self.canvas.exit_fullscreen)
+
+        b = PyQt5.QtWidgets.QPushButton('show test label', self)
+        self.button_layout.addWidget(b, 0, 11)
+        b.clicked.connect(self.canvas.show_test_label)
 
         self.main_layout.addLayout(self.hbox)
 

@@ -1,1 +1,1 @@
-python main_window.py
+python main_window.py -login
